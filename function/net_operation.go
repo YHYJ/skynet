@@ -40,7 +40,7 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 					"name": netInterfaceInfo.Name,
 					"ip":   ipnet.IP.String(),
 				}
-			} else if !ok && ipnet.IP.To4() == nil {
+			} else if !ok || ipnet.IP.To4() == nil {
 				// 不符合if条件的网卡虽然不显示也会使count加1，所以这里要减1
 				count -= 1
 			}
