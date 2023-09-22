@@ -75,7 +75,7 @@ var httpserverCmd = &cobra.Command{
 
 		// 启动http server
 		fmt.Printf("\n\x1b[32;1mStarting http server at %s ...\x1b[0m\n", absDir)
-		fmt.Printf("\x1b[32;1mServing HTTP on %s port %s (http://%s:%s).\x1b[0m\n", address, fmt.Sprint(portFlag), address, fmt.Sprint(portFlag))
+		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (http://%s:%v).\x1b[0m\n", address, portFlag, address, portFlag)
 		fmt.Printf("\x1b[33;1m%s\x1b[0m\n", "Press Ctrl+C to stop.")
 		function.HttpServer(address, fmt.Sprint(portFlag), dirFlag)
 	},
