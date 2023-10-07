@@ -86,6 +86,6 @@ func init() {
 	httpserverCmd.Flags().StringP("dir", "d", ".", "Directory to serve")
 	httpserverCmd.Flags().BoolP("interface", "i", false, "Select the net interface to use (default 0.0.0.0)")
 
-	httpserverCmd.Flags().BoolP("help", "h", false, "help for httpserver")
+	httpserverCmd.Flags().BoolP("help", "h", false, "help for httpserver command")
 	rootCmd.AddCommand(httpserverCmd)
 }
