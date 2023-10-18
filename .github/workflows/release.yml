@@ -1,4 +1,4 @@
-name: Create Release on Tag
+name: "Go Build and Release"
 
 on:
   push:
@@ -6,15 +6,29 @@ on:
       - "v*.*.*"
 
 jobs:
-  create-release:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: "Checkout code"
         uses: actions/checkout@v3
+      - name: "Determine Repository Name"
+        id: repo-name
+        run: echo "::set-output name=REPO_NAME::$(basename $GITHUB_REPOSITORY)"
+      - name: "Set up Go"
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+      - name: "Build package"
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o build/${{ steps.repo-name.outputs.REPO_NAME }}-linux-amd64 main.go
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
       - name: Check for Tag
         run: echo "Creating release for tag $GITHUB_REF"
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            build/*
