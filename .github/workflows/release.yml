@@ -22,11 +22,12 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o build/${{ steps.repo-name.outputs.REPO_NAME }}-linux-amd64 main.go
 
   release:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Check for Tag
+      - name: "Check for Tag"
         run: echo "Creating release for tag $GITHUB_REF"
-      - name: Create Release
+      - name: "Create Release"
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
