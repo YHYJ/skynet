@@ -14,7 +14,7 @@ jobs:
       - name: "Determine Repository Name"
         id: repo-name
         run: |
-          echo "::set-output name=REPO_NAME::$(basename $GITHUB_REPOSITORY)"
+          echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_OUTPUT
       - name: "Set up Go"
         uses: actions/setup-go@v4
         with:
