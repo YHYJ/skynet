@@ -1,4 +1,4 @@
-name: "Go Build and Release"
+name: "Go Build and Release by GoReleaser"
 
 on:
   push:
@@ -11,40 +11,15 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v4
-      - name: "Determine Repository Name"
-        id: repo-name
-        run: |
-          echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_OUTPUT
       - name: "Set up Go"
         uses: actions/setup-go@v4
         with:
           go-version: "1.20"
-      - name: "Build Go project"
-        run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o build/${{ steps.repo-name.outputs.REPO_NAME }}-linux-amd64 main.go
-      - name: "Archive artifacts"
-        uses: actions/upload-artifact@v3
+      - name: "Run GoReleaser"
+        uses: goreleaser/goreleaser-action@v5
         with:
-          name: transit-artifacts
-          path: ./build
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout code"
-        uses: actions/checkout@v4
-      - name: "Download artifacts"
-        uses: actions/download-artifact@v3
-        with:
-          name: transit-artifacts
-          path: ./build
-      - name: "Check for Tag"
-        run: |
-          echo "Creating release for tag $GITHUB_REF"
-      - name: "Create Release"
-        uses: softprops/action-gh-release@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-            build/*
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
