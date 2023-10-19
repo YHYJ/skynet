@@ -28,6 +28,8 @@ archives:
       {{ .ProjectName }}_
       {{ .Tag }}_
       {{- .Os }}_{{ .Arch }}
+      {{- if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     format_overrides:
       - goos: windows
