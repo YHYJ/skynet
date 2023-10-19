@@ -26,8 +26,8 @@ archives:
   - format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
-      {{ .Tag }}_
-      {{- .Os }}_{{ .Arch }}
+      {{- .Tag }}_
+      {{- .Os }}_
       {{- if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
