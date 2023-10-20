@@ -39,7 +39,7 @@ checksum:
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
 changelog:
-  sort: desc
+  sort: asc
   filters:
     exclude:
       - "^docs:"
