@@ -1,0 +1,59 @@
+[FolderNotExist]
+description = "The folder specified by the parameter does not exist."
+one = "Folder does not exist."
+other = "Folder does not exist."
+
+[HelpInfoDirFlag]
+description = "Specify the folder to use."
+one = "Service startup directory"
+other = "Service startup directory"
+
+[HelpInfoHelpFlag]
+description = "Show this help message."
+one = "help for httpserver command"
+other = "help for httpserver command"
+
+[HelpInfoInterfaceFlag]
+description = "Specify the net interface to use."
+one = "Select the net interface to use"
+other = "Select the net interface to use"
+
+[HelpInfoPortFlag]
+description = "Specify the port to use."
+one = "Port to listen on [1-65535]"
+other = "Port to listen on [1-65535]"
+
+[HowToStopService]
+description = "How to stop the service."
+one = "Press Ctrl+C to stop."
+other = "Press {{.ActionKey}} to stop."
+
+[NetInterfaceUnavailable]
+description = "Network interface is unavailable."
+one = "Interface number is invalid, using default interface."
+other = "Interface number is invalid, using default interface."
+
+[PortNeedPrivilege]
+description = "Listening on certain ports requires elevated privileges."
+one = "You need root privileges to listen on ports below {{.RootPort}}."
+other = "You need root privileges to listen on ports below {{.RootPort}}."
+
+[SelectNetInterface]
+description = "Select the net interface to use."
+one = "Please select the net interface to use: "
+other = "Please select the net interface to use: "
+
+[ServiceInformation]
+description = "Service information"
+one = "Starting HTTP server on {{.Address}} port {{.Port}} (http://{{.Address}}:{{.Port}})."
+other = "Starting HTTP server on {{.Address}} port {{.Port}} (http://{{.Address}}:{{.Port}})."
+
+[StartService]
+description = "Start the service."
+one = "Starting HTTP server at {{.Folder}}."
+other = "Starting HTTP server at '{{.Folder}}'."
+
+[UseDefaultPort]
+description = "Use the default port."
+one = "Port number is invalid ([1-65535]), using default port {{.DefaultPort}}."
+other = "Port number is invalid ([1-65535]), using default port {{.DefaultPort}}."
