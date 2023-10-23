@@ -19,8 +19,8 @@ import (
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print program version",
-	Long:  `Print program version and exit.`,
+	Short: function.Translate(function.Localizer, "CmdVersionShort", function.TemplateData),
+	Long:  function.Translate(function.Localizer, "CmdVersionLong", function.TemplateData),
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
 		onlyFlag, _ := cmd.Flags().GetBool("only")
@@ -31,8 +31,8 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
-	versionCmd.Flags().BoolP("only", "", false, "Only print the version number, like 'v0.0.1'")
+	versionCmd.Flags().BoolP("only", "", false, function.Translate(function.Localizer, "CmdVersionOnlyFlag", function.TemplateData))
 
-	versionCmd.Flags().BoolP("help", "h", false, "help for version command")
+	versionCmd.Flags().BoolP("help", "h", false, function.Translate(function.Localizer, "CmdVersionHelpFlag", function.TemplateData))
 	rootCmd.AddCommand(versionCmd)
 }

@@ -1,84 +1,104 @@
 [CmdHttpserverDirFlag]
-description = "Specify the folder to use."
-hash = "sha1-16a75b914fdc24df6647c3cc33b2a3e3b1265639"
+description = "Specify the folder to use"
+hash = "sha1-2e8af1f4a8f01d53a6c4bf97b347e2e56b813f39"
 other = "服务启动目录"
 
 [CmdHttpserverHelpFlag]
-description = "Show this help message."
-hash = "sha1-8a53b611107395ca3b55cc335769dd223d481b1b"
+description = "Show this help message"
+hash = "sha1-a10413200ceb3430dd85bc6f756dc57ccf74b3d9"
 other = "httpserver子命令的帮助信息"
 
 [CmdHttpserverInterfaceFlag]
-description = "Specify the net interface to use."
-hash = "sha1-9621cd6435a443abc349d2876b3a8c26c06d371a"
-other = "服务使用的网络接口"
+description = "Specify the net interface to use"
+hash = "sha1-eadfd629f2fff13521f65e870f6fd74f936ae4d5"
+other = "选择服务使用的网络接口"
 
 [CmdHttpserverLong]
-description = "Long description of httpserver command."
-hash = "sha1-695b53116d3b7d59a5521dd937ba44fac872c1a0"
+description = "Long description of httpserver command"
+hash = "sha1-fb238a42b75bbf69f4b96017a6d2344b96fedd13"
 other = "启动HTTP服务并管理其生命周期"
 
 [CmdHttpserverPortFlag]
-description = "Specify the port to use."
-hash = "sha1-bd5fea7f86ff05263004c0782331f4360b87f43a"
+description = "Specify the port to use"
+hash = "sha1-fba3dbcc9d2845b8dca4a6711f1eba1e4672c45e"
 other = "服务监听的端口[1-65535]"
 
 [CmdHttpserverShort]
-description = "Short description of httpserver command."
-hash = "sha1-2294285c3ad676c50d3cd842b2c24cef1274e0a8"
+description = "Short description of httpserver command"
+hash = "sha1-acc9cee2686b94f1417dad5a55cc9a8ff88dd4b4"
 other = "启动HTTP服务"
 
 [CmdRootHelpFlag]
-description = "Show this help message."
-hash = "sha1-b95749f649c82fc7dd91e22f0b3872379a1fca01"
+description = "Show this help message"
+hash = "sha1-d9bd5517d705f127325f81244f01decffa1df1dd"
 other = "skynet的帮助信息"
 
 [CmdRootLong]
-description = "Long description of skynet."
-hash = "sha1-ca35f443de3d69e8a12ca951856c3452fbbbea7c"
+description = "Long description of skynet"
+hash = "sha1-8de1d3cf84c94bf440fb87dd90f52b16c44b555a"
 other = "skynet是系统网络事务管理员"
 
 [CmdRootShort]
-description = "Short description of skynet."
-hash = "sha1-e3d209dbf5b2415ac43908b7e4d50fdfaafd64b0"
+description = "Short description of skynet"
+hash = "sha1-2f89ef3efcc2261f4c7f1721523e9a795cecd63a"
 other = "网络事务管理员"
 
+[CmdVersionHelpFlag]
+description = "Show this help message"
+hash = "sha1-6ae065caf1e3220599f4e7cdc307814f9ad30511"
+other = "version子命令的帮助信息"
+
+[CmdVersionLong]
+description = "Long description of version command"
+hash = "sha1-2d7769908e0becfa711eb1fcb94187f0f6e496e1"
+other = "显示版本信息并退出"
+
+[CmdVersionOnlyFlag]
+description = "Show version number only"
+hash = "sha1-4244282e2c57f9049f4a84c2ed927ab46b4694df"
+other = "仅输出版本号，例如'v0.0.1'"
+
+[CmdVersionShort]
+description = "Short description of version command"
+hash = "sha1-dbb9accc937af433d625f07779d35885ae79cd5b"
+other = "显示版本信息"
+
 [FolderNotExist]
-description = "The folder specified by the parameter does not exist."
-hash = "sha1-a3e0d200b66a04bd76d6bde7e09815b5f3ec988c"
+description = "The folder specified by the parameter does not exist"
+hash = "sha1-9a102dedcec3ff97dc905817ee6cba5349fb74f0"
 other = "文件不存在"
 
 [HowToStopService]
-description = "How to stop the service."
-hash = "sha1-75590506caec39d80edc6c1eaa00812bb6440ed3"
+description = "How to stop the service"
+hash = "sha1-4966f38f405894d516fe3cf669677d75d23c6849"
 other = "按 {{.ActionKey}} 停止服务"
 
 [NetInterfaceUnavailable]
-description = "Network interface is unavailable."
-hash = "sha1-8c7e3f304804da17248e22d3b2990816173732ab"
+description = "Network interface is unavailable"
+hash = "sha1-faf8b908c0151e4e08e333b556c8022f6cb4d456"
 other = "选择的网络接口不可用，使用默认接口"
 
 [PortNeedPrivilege]
-description = "Listening on certain ports requires elevated privileges."
-hash = "sha1-511c838a1af62562ed586fb5d1d6fd582b020451"
+description = "Listening on certain ports requires elevated privileges"
+hash = "sha1-d38500b0e351ff778dd95248a1ec530a24d52e2e"
 other = "使用小于 {{.RootPort}} 的端口需要 root 权限"
 
 [SelectNetInterface]
-description = "Select the net interface to use."
-hash = "sha1-721aa2ed9e2f01a5613c705bb5a9a24f859b8ae3"
+description = "Select the net interface to use"
+hash = "sha1-85a2db373bc7dd189c4ce9121d6d9761a54c6f63"
 other = "请选择要使用的网络接口："
 
 [ServiceInformation]
 description = "Service information"
-hash = "sha1-61ccfdfcba064280f28d421f98e124719591df9d"
+hash = "sha1-c7366c9b5c14f811ab6ff489aaf3f11b9392c3c2"
 other = "HTTP服务运行于地址 {{.Address}} 端口 {{.Port}} (http://{{.Address}}:{{.Port}})"
 
 [StartService]
-description = "Start the service."
-hash = "sha1-87eeed00706a85cce4797c87d0df41c165e42b68"
+description = "Start the service"
+hash = "sha1-052a563232e892bd11395215261f6db5b1f995b1"
 other = "HTTP服务启动于地址 {{.Folder}}"
 
 [UseDefaultPort]
-description = "Use the default port."
-hash = "sha1-ea0a13055b992decbf9f79d70c9213251d182857"
+description = "Use the default port"
+hash = "sha1-eb4cfa5a7afec921ea6c32b7d0a291d00a400a90"
 other = "短则的端口[1-65535]不可用，使用默认端口 {{.DefaultPort}}"
