@@ -13,7 +13,7 @@ import "fmt"
 
 // 程序信息
 var (
-	name    string = "Skynet"
+	name    string = "skynet"
 	version string = "v0.4.0"
 )
 
