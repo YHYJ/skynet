@@ -19,8 +19,8 @@ import (
 // httpserverCmd represents the httpserver command
 var httpserverCmd = &cobra.Command{
 	Use:   "httpserver",
-	Short: "Start an http server",
-	Long:  `Start an http server and manage its life cycle.`,
+	Short: function.Translate(function.Localizer, "CmdHttpserverShort", function.TemplateData),
+	Long:  function.Translate(function.Localizer, "CmdHttpserverLong", function.TemplateData),
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
 		portFlag, _ := cmd.Flags().GetInt("port")

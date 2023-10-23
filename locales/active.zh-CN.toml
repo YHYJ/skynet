@@ -1,3 +1,13 @@
+[CmdHttpserverLong]
+description = "Long description of httpserver command."
+hash = "sha1-695b53116d3b7d59a5521dd937ba44fac872c1a0"
+other = "启动HTTP服务并管理其生命周期"
+
+[CmdHttpserverShort]
+description = "Short description of httpserver command."
+hash = "sha1-2294285c3ad676c50d3cd842b2c24cef1274e0a8"
+other = "启动HTTP服务"
+
 [FolderNotExist]
 description = "The folder specified by the parameter does not exist."
 hash = "sha1-a3e0d200b66a04bd76d6bde7e09815b5f3ec988c"

@@ -24,7 +24,7 @@ func CreateLocalizer() *i18n.Localizer {
 	// 在初始化时，将翻译文件加载到 Bundle 中
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	bundle.LoadMessageFile("locales/active.en.toml")
-	bundle.LoadMessageFile("locales/active.zh_CN.toml")
+	bundle.LoadMessageFile("locales/active.zh-CN.toml")
 	// 定义语言顺序
 	langs := strings.Split(GetVariable("LANG"), ".")[0]
 	langs += ",en_US"

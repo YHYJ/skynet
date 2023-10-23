@@ -1,3 +1,13 @@
+[CmdHttpserverLong]
+description = "Long description of httpserver command."
+one = "Start an http server and manage its life cycle."
+other = "Start an http server and manage its life cycle."
+
+[CmdHttpserverShort]
+description = "Short description of httpserver command."
+one = "Start an http server"
+other = "Start an http server"
+
 [FolderNotExist]
 description = "The folder specified by the parameter does not exist."
 one = "Folder does not exist."
