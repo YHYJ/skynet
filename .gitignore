@@ -21,6 +21,3 @@
 go.work
 
 dist/
-
-# go-i18n
-translate.*.toml

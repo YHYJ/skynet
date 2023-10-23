@@ -11,6 +11,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/yhyj/skynet/function"
@@ -19,8 +20,8 @@ import (
 // httpserverCmd represents the httpserver command
 var httpserverCmd = &cobra.Command{
 	Use:   "httpserver",
-	Short: function.Translate(function.Localizer, "CmdHttpserverShort", function.TemplateData),
-	Long:  function.Translate(function.Localizer, "CmdHttpserverLong", function.TemplateData),
+	Short: "Start an http server",
+	Long:  `Start an http server and manage its life cycle.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
 		portFlag, _ := cmd.Flags().GetInt("port")
@@ -31,21 +32,18 @@ var httpserverCmd = &cobra.Command{
 		// 如果portFlag参数不在[1, 65535]范围内，则使用默认值8080
 		if portFlag < 1 || portFlag > 65535 {
 			portFlag = 8080
-			function.TemplateData = map[string]interface{}{"DefaultPort": portFlag}
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", function.Translate(function.Localizer, "UseDefaultPort", function.TemplateData))
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Port number is invalid, using default port 8080.")
 		}
-		// 如果portFlag参数小于1024，则提示需要root权限并退出程序
+		// 如果portFlag参数小于1024，则提示需要root权限
 		if portFlag < 1024 {
-			function.TemplateData = map[string]interface{}{"RootPort": 1024}
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", function.Translate(function.Localizer, "PortNeedPrivilege", function.TemplateData))
-			return
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "You need root privileges to listen on ports below 1024.")
 		}
 
 		// 使用dirFlag参数
 		// 如果dirFlag参数不是一个目录，则提示目录不存在并退出程序
 		if !function.FileExist(dirFlag) {
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", function.Translate(function.Localizer, "FolderNotExist", function.TemplateData))
-			return
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Directory does not exist.")
+			os.Exit(1)
 		}
 		// 获取dirFlag参数的绝对路径
 		absDir := function.GetAbsPath(dirFlag)
@@ -60,13 +58,13 @@ var httpserverCmd = &cobra.Command{
 				fmt.Printf("\x1b[36;1m[%d]\x1b[0m %s: %s\n", i, netInterfacesData[i]["name"], netInterfacesData[i]["ip"])
 			}
 			// 选择网卡编号
-			fmt.Printf("\n\x1b[34;1m%s\x1b[0m", function.Translate(function.Localizer, "SelectNetInterface", function.TemplateData))
+			fmt.Printf("\n\x1b[34;1m%s\x1b[0m", "Please select the net interface to use: ")
 			// 接收用户输入并赋值给interfaceNumber
 			fmt.Scanln(&netInterfaceNumber)
 			// 如果interfaceNumber不在[0, len(netinterfacesData))范围内，则使用默认值0
 			if netInterfaceNumber < 1 || netInterfaceNumber > len(netInterfacesData) {
 				netInterfaceNumber = 1
-				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", function.Translate(function.Localizer, "NetInterfaceUnavailable", function.TemplateData))
+				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Interface number is invalid, using default interface. ")
 			}
 		} else {
 			netInterfaceNumber = 1
@@ -76,21 +74,18 @@ var httpserverCmd = &cobra.Command{
 		address := netInterfacesData[netInterfaceNumber]["ip"]
 
 		// 启动http server
-		function.TemplateData = map[string]interface{}{"Address": address, "Port": portFlag}
-		fmt.Printf("\n\x1b[32;1m%s\x1b[0m\n", function.Translate(function.Localizer, "ServiceInformation", function.TemplateData))
-		function.TemplateData = map[string]interface{}{"Folder": absDir}
-		fmt.Printf("\x1b[32;1m%s\x1b[0m\n", function.Translate(function.Localizer, "StartService", function.TemplateData))
-		function.TemplateData = map[string]interface{}{"ActionKey": "Ctrl+C"}
-		fmt.Printf("\n\x1b[33;1m%s\x1b[0m\n", function.Translate(function.Localizer, "HowToStopService", function.TemplateData))
+		fmt.Printf("\n\x1b[32;1mStarting http server at %s ...\x1b[0m\n", absDir)
+		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (http://%s:%v).\x1b[0m\n", address, portFlag, address, portFlag)
+		fmt.Printf("\x1b[33;1m%s\x1b[0m\n", "Press Ctrl+C to stop.")
 		function.HttpServer(address, fmt.Sprint(portFlag), dirFlag)
 	},
 }
 
 func init() {
-	httpserverCmd.Flags().IntP("port", "p", 8080, function.Translate(function.Localizer, "CmdHttpserverPortFlag", function.TemplateData))
-	httpserverCmd.Flags().StringP("dir", "d", ".", function.Translate(function.Localizer, "CmdHttpserverDirFlag", function.TemplateData))
-	httpserverCmd.Flags().BoolP("interface", "i", false, function.Translate(function.Localizer, "CmdHttpserverInterfaceFlag", function.TemplateData))
+	httpserverCmd.Flags().IntP("port", "p", 8080, "Port to listen on")
+	httpserverCmd.Flags().StringP("dir", "d", ".", "Directory to serve")
+	httpserverCmd.Flags().BoolP("interface", "i", false, "Select the net interface to use (default 0.0.0.0)")
 
-	httpserverCmd.Flags().BoolP("help", "h", false, function.Translate(function.Localizer, "CmdHttpserverHelpFlag", function.TemplateData))
+	httpserverCmd.Flags().BoolP("help", "h", false, "help for httpserver command")
 	rootCmd.AddCommand(httpserverCmd)
 }
