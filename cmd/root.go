@@ -13,12 +13,13 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/yhyj/skynet/function"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "skynet",
-	Short: "Network affairs administrator",
-	Long:  `Skynet is the system network affairs administrator.`,
+	Short: function.Translate(function.Localizer, "CmdRootShort", function.TemplateData),
+	Long:  function.Translate(function.Localizer, "CmdRootLong", function.TemplateData),
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -32,5 +33,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("help", "h", false, "help for Skynet")
+	rootCmd.Flags().BoolP("help", "h", false, function.Translate(function.Localizer, "CmdRootHelpFlag", function.TemplateData))
 }

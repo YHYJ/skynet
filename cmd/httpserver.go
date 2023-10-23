@@ -87,10 +87,10 @@ var httpserverCmd = &cobra.Command{
 }
 
 func init() {
-	httpserverCmd.Flags().IntP("port", "p", 8080, function.Translate(function.Localizer, "HelpInfoPortFlag", function.TemplateData))
-	httpserverCmd.Flags().StringP("dir", "d", ".", function.Translate(function.Localizer, "HelpInfoDirFlag", function.TemplateData))
-	httpserverCmd.Flags().BoolP("interface", "i", false, function.Translate(function.Localizer, "HelpInfoInterfaceFlag", function.TemplateData))
+	httpserverCmd.Flags().IntP("port", "p", 8080, function.Translate(function.Localizer, "CmdHttpserverPortFlag", function.TemplateData))
+	httpserverCmd.Flags().StringP("dir", "d", ".", function.Translate(function.Localizer, "CmdHttpserverDirFlag", function.TemplateData))
+	httpserverCmd.Flags().BoolP("interface", "i", false, function.Translate(function.Localizer, "CmdHttpserverInterfaceFlag", function.TemplateData))
 
-	httpserverCmd.Flags().BoolP("help", "h", false, function.Translate(function.Localizer, "HelpInfoHelpFlag", function.TemplateData))
+	httpserverCmd.Flags().BoolP("help", "h", false, function.Translate(function.Localizer, "CmdHttpserverHelpFlag", function.TemplateData))
 	rootCmd.AddCommand(httpserverCmd)
 }
