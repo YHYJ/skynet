@@ -18,13 +18,12 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 	}
 
 	netInterfacesData := make(map[int]map[string]string)
-	count := 2
-
 	// 手动添加无法自动获取的0.0.0.0
 	netInterfacesData[1] = map[string]string{
 		"name": "any",
 		"ip":   "0.0.0.0",
 	}
+	count := 1 // 网卡编号
 
 	for _, netInterfaceInfo := range netInterfacesInfo {
 		addrs, err := netInterfaceInfo.Addrs()
@@ -35,17 +34,14 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 
 		for _, addr := range addrs {
 			ipnet, ok := addr.(*net.IPNet)
-			if ok && ipnet.IP.To4() != nil {
+			if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() {
+				count += 1
 				netInterfacesData[count] = map[string]string{
 					"name": netInterfaceInfo.Name,
 					"ip":   ipnet.IP.String(),
 				}
-			} else if !ok || ipnet.IP.To4() == nil {
-				// 不符合if条件的网卡虽然不显示也会使count加1，所以这里要减1
-				count -= 1
 			}
 		}
-		count += 1
 	}
 	return netInterfacesData, err
 }
