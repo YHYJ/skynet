@@ -9,7 +9,10 @@ Description: 网络操作
 
 package function
 
-import "net"
+import (
+	"net"
+	"strings"
+)
 
 func GetNetInterfaces() (map[int]map[string]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
@@ -34,7 +37,7 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 
 		for _, addr := range addrs {
 			ipnet, ok := addr.(*net.IPNet)
-			if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() {
+			if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() && !isDockerInterface(netInterfaceInfo) {
 				count += 1
 				netInterfacesData[count] = map[string]string{
 					"name": netInterfaceInfo.Name,
@@ -44,4 +47,13 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 		}
 	}
 	return netInterfacesData, err
+}
+
+// 判断是否是Docker的虚拟接口
+func isDockerInterface(iface net.Interface) bool {
+	// 通过接口名称前缀
+	if strings.HasPrefix(iface.Name, "br-") || strings.HasPrefix(iface.Name, "veth") || strings.HasPrefix(iface.Name, "docker") {
+		return true
+	}
+	return false
 }
