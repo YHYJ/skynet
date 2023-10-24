@@ -75,8 +75,18 @@ var httpserverCmd = &cobra.Command{
 
 		// 启动http server
 		fmt.Printf("\n\x1b[32;1mStarting http server at %s ...\x1b[0m\n", absDir)
-		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (http://%s:%v).\x1b[0m\n", address, portFlag, address, portFlag)
-		fmt.Printf("\x1b[33;1m%s\x1b[0m\n", "Press Ctrl+C to stop.")
+		url := fmt.Sprintf("http://%s:%v", address, portFlag)
+		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s).\x1b[0m\n", address, portFlag, url)
+		// 输出二维码
+		codeString, err := function.QrCode(url)
+		if err != nil {
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+		} else {
+			fmt.Printf("\n%s", codeString)
+		}
+
+		// 显示服务停止快捷键
+		fmt.Printf("\n\x1b[33;1m%s\x1b[0m\n", "Press Ctrl+C to stop.")
 		function.HttpServer(address, fmt.Sprint(portFlag), dirFlag)
 	},
 }

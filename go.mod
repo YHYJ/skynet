@@ -3,10 +3,8 @@ module github.com/yhyj/skynet
 go 1.20
 
 require (
-	github.com/BurntSushi/toml v1.0.0
-	github.com/nicksnyder/go-i18n/v2 v2.2.1
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/spf13/cobra v1.7.0
-	golang.org/x/text v0.4.0
 )
 
 require (
