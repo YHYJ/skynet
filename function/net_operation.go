@@ -49,10 +49,10 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 	return netInterfacesData, err
 }
 
-// 判断是否是Docker的虚拟接口
+// 通过接口名称前缀判断是否是虚拟接口
 func isDockerInterface(iface net.Interface) bool {
-	// 通过接口名称前缀
-	if strings.HasPrefix(iface.Name, "br-") || strings.HasPrefix(iface.Name, "veth") || strings.HasPrefix(iface.Name, "docker") {
+	ifaceName := strings.ToLower(iface.Name)
+	if strings.HasPrefix(ifaceName, "br-") || strings.HasPrefix(ifaceName, "veth") || strings.HasPrefix(ifaceName, "docker") {
 		return true
 	}
 	return false
