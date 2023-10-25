@@ -35,13 +35,15 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 			continue
 		}
 
-		for _, addr := range addrs {
-			ipnet, ok := addr.(*net.IPNet)
-			if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() && !isDockerInterface(netInterfaceInfo) {
-				count += 1
-				netInterfacesData[count] = map[string]string{
-					"name": netInterfaceInfo.Name,
-					"ip":   ipnet.IP.String(),
+		if netInterfaceInfo.Flags&net.FlagUp != 0 {
+			for _, addr := range addrs {
+				ipnet, ok := addr.(*net.IPNet)
+				if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() && !isDockerInterface(netInterfaceInfo) {
+					count += 1
+					netInterfacesData[count] = map[string]string{
+						"name": netInterfaceInfo.Name,
+						"ip":   ipnet.IP.String(),
+					}
 				}
 			}
 		}
