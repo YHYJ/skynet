@@ -22,12 +22,29 @@ var guiCmd = &cobra.Command{
 	Short: "Start the GUI version of skynet",
 	Long:  `Start the skynet Graphical User Interface`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// 设置字体
-		if err := function.SetFont(); err != nil {
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+		if function.Platform == "linux" {
+			if function.GetVariable("DISPLAY") != "" {
+				// 设置字体
+				if err := function.SetFont(); err != nil {
+					fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+				}
+				// 启动GUI
+				function.StartGraphicalUserInterface()
+			} else {
+				fmt.Println("The DISPLAY environment variable is missing, please use the Terminal version")
+			}
+		} else if function.Platform == "windows" {
+			// 设置字体
+			if err := function.SetFont(); err != nil {
+				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+			}
+			// 启动GUI
+			function.StartGraphicalUserInterface()
+		} else if function.Platform == "darwin" {
+			fmt.Println("macOS platform is not supported yet")
+		} else {
+			fmt.Println("Current platform is not supported")
 		}
-		// 启动GUI
-		function.StartGraphicalUserInterface()
 	},
 }
 
