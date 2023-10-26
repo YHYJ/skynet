@@ -14,9 +14,9 @@ builds:
           {{- if eq .Arch "amd64" }}CC=x86_64-w64-mingw32-gcc{{- end }}
         {{- end }}
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
-      # - >-
-      #   {{- if eq .Os "windows" }}-s -w -H windowsgui -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser{{- end }}
+      - >-
+        {{- if eq .Os "windows" }}-s -w -H windowsgui -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+        {{- else }}-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser{{- end }}
     goos:
       - linux
       - windows
