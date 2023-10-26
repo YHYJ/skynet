@@ -17,7 +17,9 @@ import (
 // 启动HTTP服务（Terminal使用）
 func HttpServer(address string, port string, dir string) {
 	http.Handle("/", http.FileServer(http.Dir(dir)))
-	http.ListenAndServe(address+":"+port, nil)
+	if err := http.ListenAndServe(address+":"+port, nil); err != http.ErrServerClosed {
+		fmt.Printf("HTTP server error: \x1b[31;1m%s\x1b[0m\n", err)
+	}
 }
 
 // 启动HTTP服务（GUI使用）
