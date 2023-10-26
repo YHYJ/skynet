@@ -32,7 +32,7 @@ func StartGraphicalUserInterface() {
 	mainWindow.SetFixedSize(true)                                           // 固定窗口大小
 
 	// 获取网卡信息
-	interfaceLabel := widget.NewLabel("选择网卡:")
+	interfaceLabel := widget.NewLabel("选择接口:")
 	nics, err := GetNetInterfacesForGui()
 	if err != nil {
 		fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
@@ -46,13 +46,13 @@ func StartGraphicalUserInterface() {
 
 	// 目录选择
 	selectedFolderEntry := widget.NewEntry()
-	selectedFolderEntry.SetPlaceHolder("选择服务目录")
+	selectedFolderEntry.SetPlaceHolder("设置服务目录")
 	folderButton := widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 		// 固定文件选择对话框大小不可修改
 		const width float32 = 770
 		const height float32 = 481
 		// 创建一个新窗口用于文件夹选择
-		folderWindow := app.NewWindow("选择服务目录")
+		folderWindow := app.NewWindow("Directory Selection")
 		folderWindow.Resize(fyne.NewSize(width, height))
 		folderWindow.SetFixedSize(true) // 固定窗口大小
 		folderWindow.CenterOnScreen()   // 居中显示
@@ -79,6 +79,9 @@ func StartGraphicalUserInterface() {
 	// 将selectedFolderEntry和folderButton放置在同一行
 	dirRow := container.NewBorder(nil, nil, folderButton, nil, selectedFolderEntry)
 
+	// 分隔线
+	separator := widget.NewSeparator()
+
 	// 服务状态显示
 	statusAnimation := widget.NewProgressBarInfinite()
 	statusAnimation.Stop()
@@ -94,7 +97,7 @@ func StartGraphicalUserInterface() {
 		// HTTP服务默认启动参数
 		defaultIP   = "0.0.0.0"
 		defaultPort = "8080"
-		defaultDir  = "."
+		defaultDir  = GetVariable("HOME")
 	)
 
 	// 按钮状态标识
@@ -166,6 +169,7 @@ func StartGraphicalUserInterface() {
 		portEntry,       // 端口配置
 		dirRow,          // 文件夹选择
 		statusAnimation, // 状态显示
+		separator,       // 分隔线
 		button,          // 启动按钮
 	)
 	mainWindow.SetContent(content)

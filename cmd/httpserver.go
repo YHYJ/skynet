@@ -39,9 +39,14 @@ var httpserverCmd = &cobra.Command{
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "You need root privileges to listen on ports below 1024.")
 		}
 
+		// 处理dirFlag默认参数
+		if dirFlag == "PWD" {
+			dirFlag = function.GetVariable("PWD")
+		}
+
 		// 使用dirFlag参数
-		// 如果dirFlag参数不是一个目录，则提示目录不存在并退出程序
 		if !function.FileExist(dirFlag) {
+			// 如果dirFlag参数不是一个目录，则提示目录不存在并退出程序
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Directory does not exist.")
 			os.Exit(1)
 		}
@@ -93,7 +98,7 @@ var httpserverCmd = &cobra.Command{
 
 func init() {
 	httpserverCmd.Flags().IntP("port", "p", 8080, "Port to listen on")
-	httpserverCmd.Flags().StringP("dir", "d", ".", "Directory to serve")
+	httpserverCmd.Flags().StringP("dir", "d", "PWD", "Directory to serve")
 	httpserverCmd.Flags().BoolP("interface", "i", false, "Select the net interface to use (default 0.0.0.0)")
 
 	httpserverCmd.Flags().BoolP("help", "h", false, "help for httpserver command")
