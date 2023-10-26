@@ -89,8 +89,9 @@ func StartGraphicalUserInterface() {
 	// 将selectedFolderEntry和folderButton放置在同一行
 	dirRow := container.NewBorder(nil, nil, folderButton, nil, selectedFolderEntry)
 
-	// 状态框
-	statusLabel := widget.NewLabelWithStyle("Stop", fyne.TextAlignCenter, fyne.TextStyle{})
+	// 服务状态显示
+	statusAnimation := widget.NewProgressBarInfinite()
+	statusAnimation.Stop()
 
 	// 启动按钮
 	startButtonClicked := false // 创建一个标志，用于跟踪按钮是否已经被点击
@@ -123,9 +124,9 @@ func StartGraphicalUserInterface() {
 		url := fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
 		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s).\x1b[0m\n", selectedInterfaceIP, selectedPort, url)
 
-		// 在这里执行启动HTTP服务的代码
-		server = HttpServerForGui(selectedInterfaceIP, selectedPort, selectedDir)
-		statusLabel.SetText("Running")
+		// 启动HTTP服务
+		server = HttpServerForGui(selectedInterfaceIP, selectedPort, selectedDir) // 启动HTTP服务
+		statusAnimation.Start()                                                   // 启动状态动画
 
 		// 生成二维码
 		qrCodeImage, err := QrCodeImage(url)
@@ -158,16 +159,16 @@ func StartGraphicalUserInterface() {
 		if err := server.Shutdown(nil); err != nil {
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
 		}
-		statusLabel.SetText("Stop")
+		statusAnimation.Stop()
 	})
 
 	content := container.NewVBox(
 		interfaceLabel, interfaceRadio, // 网卡选择
-		portEntry,   // 端口配置
-		dirRow,      // 文件夹选择
-		statusLabel, // 状态显示
-		startButton, // 启动按钮
-		stopButton,  // 停止按钮
+		portEntry,       // 端口配置
+		dirRow,          // 文件夹选择
+		statusAnimation, // 状态显示
+		startButton,     // 启动按钮
+		stopButton,      // 停止按钮
 	)
 	mainWindow.SetContent(content)
 	mainWindow.ShowAndRun()
