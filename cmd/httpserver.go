@@ -79,9 +79,9 @@ var httpserverCmd = &cobra.Command{
 		address := netInterfacesData[netInterfaceNumber]["ip"]
 
 		// 启动http server
-		fmt.Printf("\n\x1b[32;1mStarting http server at %s ...\x1b[0m\n", absDir)
+		fmt.Printf("\n\x1b[32;1mStarting http server at %s\x1b[0m\n", absDir)
 		url := fmt.Sprintf("http://%s:%v", address, portFlag)
-		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s).\x1b[0m\n", address, portFlag, url)
+		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s)\x1b[0m\n", address, portFlag, url)
 		// 输出二维码
 		codeString, err := function.QrCodeString(url)
 		if err != nil {
