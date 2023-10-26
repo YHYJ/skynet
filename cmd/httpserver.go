@@ -78,7 +78,7 @@ var httpserverCmd = &cobra.Command{
 		url := fmt.Sprintf("http://%s:%v", address, portFlag)
 		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s).\x1b[0m\n", address, portFlag, url)
 		// 输出二维码
-		codeString, err := function.QrCode(url)
+		codeString, err := function.QrCodeString(url)
 		if err != nil {
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
 		} else {

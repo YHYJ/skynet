@@ -10,24 +10,27 @@ Description: 子命令`httpserver`功能函数
 package function
 
 import (
+	"fmt"
 	"net/http"
-
-	"github.com/skip2/go-qrcode"
 )
 
 // 启动HTTP服务
-func HttpServer(address string, port string, dir string) {
-	http.Handle("/", http.FileServer(http.Dir(dir)))
-	http.ListenAndServe(address+":"+port, nil)
-}
-
-// 生成二维码
-func QrCode(url string) (string, error) {
-	code, err := qrcode.New(url, qrcode.Medium)
-	if err != nil {
-		return "", err
+func HttpServer(address string, port string, dir string) *http.Server {
+	// 创建一个HTTP服务器
+	server := &http.Server{
+		Addr: address + ":" + port,
 	}
-	codeString := code.ToSmallString(false)
 
-	return codeString, nil
+	// 定义一个处理函数
+	http.Handle("/", http.FileServer(http.Dir(dir)))
+	// 启动HTTP服务器
+	go func() {
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+			fmt.Printf("HTTP server error: \x1b[31;1m%s\x1b[0m\n", err)
+		} else if err == nil {
+			fmt.Printf("HTTP server started\n")
+		}
+	}()
+
+	return server
 }
