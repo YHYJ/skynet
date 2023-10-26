@@ -186,7 +186,6 @@ func StartGraphicalUserInterface() {
 			statusAnimation.Stop()  // 服务状态动画
 			button.SetText("Start") // 修改按钮文字
 			qrWindow.Hide()         // 隐藏二维码窗口
-			fmt.Println("Stop service")
 		} else {
 			customErrText := "Unknown error"
 			errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)

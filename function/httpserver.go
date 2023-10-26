@@ -37,8 +37,10 @@ func HttpServer(address string, port string, dir string) {
 		// 创建请求处理器
 		handler := http.FileServer(http.Dir(dir))
 		// 启动服务器
-		if err := http.Serve(listener, handler); err != nil && err != http.ErrServerClosed {
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+		if err := http.Serve(listener, handler); err == http.ErrServerClosed {
+			fmt.Printf("HTTP Server closed\n")
+		} else if err != nil {
+			fmt.Printf("HTTP server error: \x1b[31;1m%s\x1b[0m\n", err)
 		}
 	}
 }
@@ -58,7 +60,9 @@ func HttpServerForGui(address string, port string, dir string) (*http.Server, er
 	} else {
 		// 启动HTTP服务器
 		go func() {
-			if err := server.Serve(listener); err != nil && err != http.ErrServerClosed {
+			if err := server.Serve(listener); err == http.ErrServerClosed {
+				fmt.Printf("HTTP Server closed\n")
+			} else if err != nil {
 				fmt.Printf("HTTP server error: \x1b[31;1m%s\x1b[0m\n", err)
 			}
 		}()
