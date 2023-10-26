@@ -35,7 +35,7 @@ func makeErrorDialog(title, dismiss, text string, size fyne.Size, parent fyne.Wi
 // 启动GUI
 func StartGraphicalUserInterface() {
 	// 创建一个新应用
-	app := app.New()
+	app := app.NewWithID("Skynet")
 
 	// 创建主窗口
 	mainWindow := app.NewWindow("Skynet")
