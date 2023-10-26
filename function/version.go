@@ -14,7 +14,7 @@ import "fmt"
 // 程序信息
 var (
 	name    string = "skynet"
-	version string = "v0.5.5"
+	version string = "v0.5.6"
 )
 
 func ProgramInfo(only bool) string {
