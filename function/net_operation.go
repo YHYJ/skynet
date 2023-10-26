@@ -10,14 +10,16 @@ Description: 网络操作
 package function
 
 import (
+	"fmt"
 	"net"
 	"strings"
 )
 
+// 获取网卡信息（Terminal使用）
 func GetNetInterfaces() (map[int]map[string]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	netInterfacesData := make(map[int]map[string]string)
@@ -29,11 +31,7 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 	count := 1 // 网卡编号
 
 	for _, netInterfaceInfo := range netInterfacesInfo {
-		addrs, err := netInterfaceInfo.Addrs()
-		if err != nil {
-			println(err)
-			continue
-		}
+		addrs, _ := netInterfaceInfo.Addrs()
 
 		if netInterfaceInfo.Flags&net.FlagUp != 0 {
 			for _, addr := range addrs {
@@ -48,7 +46,34 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 			}
 		}
 	}
-	return netInterfacesData, err
+	return netInterfacesData, nil
+}
+
+// 获取网卡信息（GUI使用）
+func GetNetInterfacesForGui() ([]string, error) {
+	netInterfacesInfo, err := net.Interfaces()
+	if err != nil {
+		return nil, err
+	}
+
+	// 手动添加无法自动获取的0.0.0.0
+	nic := fmt.Sprintf("%s - %s", "any", "0.0.0.0")
+	netInterfacesData := []string{nic}
+
+	for _, netInterfaceInfo := range netInterfacesInfo {
+		addrs, _ := netInterfaceInfo.Addrs()
+
+		if netInterfaceInfo.Flags&net.FlagUp != 0 {
+			for _, addr := range addrs {
+				ipnet, ok := addr.(*net.IPNet)
+				if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() && !isDockerInterface(netInterfaceInfo) {
+					nic = fmt.Sprintf("%s - %s", netInterfaceInfo.Name, ipnet.IP.String())
+					netInterfacesData = append(netInterfacesData, nic)
+				}
+			}
+		}
+	}
+	return netInterfacesData, nil
 }
 
 // 通过接口名称前缀判断是否是虚拟接口

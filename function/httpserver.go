@@ -14,8 +14,14 @@ import (
 	"net/http"
 )
 
-// 启动HTTP服务
-func HttpServer(address string, port string, dir string) *http.Server {
+// 启动HTTP服务（Terminal使用）
+func HttpServer(address string, port string, dir string) {
+	http.Handle("/", http.FileServer(http.Dir(dir)))
+	http.ListenAndServe(address+":"+port, nil)
+}
+
+// 启动HTTP服务（GUI使用）
+func HttpServerForGui(address string, port string, dir string) *http.Server {
 	// 创建一个HTTP服务器
 	server := &http.Server{
 		Addr: address + ":" + port,
