@@ -24,22 +24,12 @@ import (
 )
 
 func StartGraphicalUserInterface() {
-	// HTTP服务变量
-	var server *http.Server
-	// 参数
-	var (
-		// HTTP服务启动参数
-		selectedInterfaceIP = "0.0.0.0"
-		selectedPort        = "8080"
-		selectedDir         = "."
-	)
-
 	// 创建一个新应用
 	app := app.New()
-	mainWindow := app.NewWindow("HTTP服务启动器")
-	mainWindow.SetMaster() // 设置主窗口
-	mainWindow.Resize(fyne.NewSize(300, mainWindow.Canvas().Size().Height))
-	mainWindow.SetFixedSize(true) // 固定窗口大小
+	mainWindow := app.NewWindow("Skynet")
+	mainWindow.SetMaster()                                                  // 设置为主窗口
+	mainWindow.Resize(fyne.NewSize(300, mainWindow.Canvas().Size().Height)) // 设置窗口大小
+	mainWindow.SetFixedSize(true)                                           // 固定窗口大小
 
 	// 获取网卡信息
 	interfaceLabel := widget.NewLabel("选择网卡:")
@@ -93,40 +83,45 @@ func StartGraphicalUserInterface() {
 	statusAnimation := widget.NewProgressBarInfinite()
 	statusAnimation.Stop()
 
-	// 启动按钮
-	startButtonClicked := false // 创建一个标志，用于跟踪按钮是否已经被点击
-	startButton := widget.NewButton("Start", func() {
-		// 检查按钮是否已经被点击，如果已经点击则返回
-		if startButtonClicked {
-			return
-		}
+	var (
+		server   *http.Server   // HTTP服务
+		button   *widget.Button // 服务的启动/停止按钮
+		qrWindow fyne.Window    // 二维码窗口
+	)
+
+	// 参数
+	var (
+		// HTTP服务默认启动参数
+		defaultIP   = "0.0.0.0"
+		defaultPort = "8080"
+		defaultDir  = "."
+	)
+
+	// 按钮状态标识
+	serviceStatus := 0 // 0是服务未启动，1是服务已启动
+
+	button = widget.NewButton("Start", func() {
 		// 获取参数信息，如果参数为空则使用默认值
-		selectedInterfaceIP = func() string {
+		selectedInterfaceIP := func() string {
 			parts := strings.Split(interfaceRadio.Selected, " ")
 			if len(parts) > 1 {
 				return parts[len(parts)-1]
 			}
-			return "0.0.0.0"
+			return defaultIP
 		}()
-		selectedPort = func() string {
-			if portEntry.Text == "" {
-				return "8080"
+		selectedPort := func() string {
+			if portEntry.Text != "" {
+				return portEntry.Text
 			}
-			return portEntry.Text
+			return defaultPort
 		}()
-		selectedDir = func() string {
-			if selectedFolderEntry.Text == "" {
-				return "."
+		selectedDir := func() string {
+			if selectedFolderEntry.Text != "" {
+				return selectedFolderEntry.Text
 			}
-			return selectedFolderEntry.Text
+			return defaultDir
 		}()
-
 		url := fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
-		fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s).\x1b[0m\n", selectedInterfaceIP, selectedPort, url)
-
-		// 启动HTTP服务
-		server = HttpServerForGui(selectedInterfaceIP, selectedPort, selectedDir) // 启动HTTP服务
-		statusAnimation.Start()                                                   // 启动状态动画
 
 		// 生成二维码
 		qrCodeImage, err := QrCodeImage(url)
@@ -138,28 +133,32 @@ func StartGraphicalUserInterface() {
 		// 设置图像填充模式为 ImageFillOriginal，以确保不拉伸
 		qrImage.FillMode = canvas.ImageFillOriginal
 
-		// 创建一个新窗口用于显示二维码
-		qrWindow := app.NewWindow("QR Code")
-		// 将二维码图像添加到窗口（
-		qrWindow.SetContent(qrImage) // NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距
-		// 设置窗口内边距为零以确保图像与窗口边框贴合
-		qrWindow.SetPadded(false)
-		// 显示窗口
-		qrWindow.Show()
-
-		// 按钮已被点击
-		startButtonClicked = true
-	})
-
-	// 停止按钮
-	stopButton := widget.NewButton("Stop", func() {
-		fmt.Println("Stop service")
-
-		// 在这里执行停止HTTP服务的代码
-		if err := server.Shutdown(nil); err != nil {
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+		if serviceStatus == 0 {
+			// 启动HTTP服务
+			server = HttpServerForGui(selectedInterfaceIP, selectedPort, selectedDir) // 启动HTTP服务
+			serviceStatus = 1                                                         // 服务已启动
+			statusAnimation.Start()                                                   // 服务状态动画
+			button.SetText("Stop")                                                    // 修改按钮文字
+			qrWindow = app.NewWindow("QR Code")
+			// 将二维码图像添加到窗口（
+			qrWindow.SetContent(qrImage) // NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距
+			// 设置窗口内边距为零以确保图像与窗口边框贴合
+			qrWindow.SetPadded(false)
+			qrWindow.Show() // 显示二维码窗口
+			fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, url)
+		} else if serviceStatus == 1 {
+			// 停止HTTP服务
+			if err := server.Shutdown(nil); err != nil {
+				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+			}
+			serviceStatus = 0       // 服务已停止
+			statusAnimation.Stop()  // 服务状态动画
+			button.SetText("Start") // 修改按钮文字
+			qrWindow.Hide()         // 隐藏二维码窗口
+			fmt.Println("Stop service")
+		} else {
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Unknown error")
 		}
-		statusAnimation.Stop()
 	})
 
 	content := container.NewVBox(
@@ -167,8 +166,7 @@ func StartGraphicalUserInterface() {
 		portEntry,       // 端口配置
 		dirRow,          // 文件夹选择
 		statusAnimation, // 状态显示
-		startButton,     // 启动按钮
-		stopButton,      // 停止按钮
+		button,          // 启动按钮
 	)
 	mainWindow.SetContent(content)
 	mainWindow.ShowAndRun()
