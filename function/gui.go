@@ -23,19 +23,36 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+// 生成错误提示框
+func makeErrorDialog(title, dismiss, text string, size fyne.Size, parent fyne.Window) *dialog.CustomDialog {
+	content := widget.NewLabel(text)     // 设置内容
+	content.Wrapping = fyne.TextWrapWord // 设置换行
+	errorDialog := dialog.NewCustom(title, dismiss, content, parent)
+	errorDialog.Resize(size)
+	return errorDialog
+}
+
+// 启动GUI
 func StartGraphicalUserInterface() {
 	// 创建一个新应用
 	app := app.New()
+
+	// 创建主窗口
 	mainWindow := app.NewWindow("Skynet")
-	mainWindow.SetMaster()                                                  // 设置为主窗口
-	mainWindow.Resize(fyne.NewSize(300, mainWindow.Canvas().Size().Height)) // 设置窗口大小
-	mainWindow.SetFixedSize(true)                                           // 固定窗口大小
+	mainWindow.SetMaster()                                                    // 设置为主窗口
+	baseWeight, baseHeight := float32(300), mainWindow.Canvas().Size().Height // 窗口基础尺寸
+	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                   // 设置窗口大小
+	mainWindow.SetFixedSize(true)                                             // 固定窗口大小
+
+	// 设置错误提示框尺寸
+	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
 	// 获取网卡信息
 	interfaceLabel := widget.NewLabel("选择接口:")
 	nics, err := GetNetInterfacesForGui()
 	if err != nil {
-		fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+		errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
+		errorDialog.Show()
 	}
 	// 创建一个单选按钮组
 	interfaceRadio := widget.NewRadioGroup(nics, func(selected string) {})
@@ -63,9 +80,12 @@ func StartGraphicalUserInterface() {
 		// 弹出文件夹选择对话框
 		fileDialog := dialog.NewFolderOpen(func(dri fyne.ListableURI, err error) {
 			if err != nil {
-				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
+				errorDialog.Show()
 			} else if dri == nil {
-				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Startup folder not set")
+				customErrText := "Startup folder not set"
+				errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
+				errorDialog.Show()
 			} else {
 				// 在标签中显示选择的文件夹路径
 				selectedFolderEntry.SetText(strings.Split(dri.String(), "//")[1])
@@ -129,7 +149,8 @@ func StartGraphicalUserInterface() {
 		// 生成二维码
 		qrCodeImage, err := QrCodeImage(url)
 		if err != nil {
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
+			errorDialog.Show()
 		}
 		// 将二维码图像转换为 Fyne 图像
 		qrImage := canvas.NewImageFromImage(qrCodeImage)
@@ -138,16 +159,18 @@ func StartGraphicalUserInterface() {
 
 		if serviceStatus == 0 {
 			// 启动HTTP服务
-			server, err = HttpServerForGui(selectedInterfaceIP, selectedPort, selectedDir) // 启动HTTP服务
+			server, err = HttpServerForGui(selectedInterfaceIP, selectedPort, selectedDir)
 			if err != nil {
-				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
+				errorDialog.Show()
 			} else {
 				serviceStatus = 1       // 服务已启动
 				statusAnimation.Start() // 服务状态动画
 				button.SetText("Stop")  // 修改按钮文字
 				qrWindow = app.NewWindow("QR Code")
 				// 将二维码图像添加到窗口（
-				qrWindow.SetContent(qrImage) // NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距
+				// NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距
+				qrWindow.SetContent(qrImage)
 				// 设置窗口内边距为零以确保图像与窗口边框贴合
 				qrWindow.SetPadded(false)
 				qrWindow.Show() // 显示二维码窗口
@@ -156,7 +179,8 @@ func StartGraphicalUserInterface() {
 		} else if serviceStatus == 1 {
 			// 停止HTTP服务
 			if err := server.Shutdown(nil); err != nil {
-				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
+				errorDialog.Show()
 			}
 			serviceStatus = 0       // 服务已停止
 			statusAnimation.Stop()  // 服务状态动画
@@ -164,7 +188,9 @@ func StartGraphicalUserInterface() {
 			qrWindow.Hide()         // 隐藏二维码窗口
 			fmt.Println("Stop service")
 		} else {
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Unknown error")
+			customErrText := "Unknown error"
+			errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
+			errorDialog.Show()
 		}
 	})
 
