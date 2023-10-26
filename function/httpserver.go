@@ -24,17 +24,14 @@ func HttpServer(address string, port string, dir string) {
 func HttpServerForGui(address string, port string, dir string) *http.Server {
 	// 创建一个HTTP服务器
 	server := &http.Server{
-		Addr: address + ":" + port,
+		Addr:    address + ":" + port,           // 指定服务器侦听的TCP地址
+		Handler: http.FileServer(http.Dir(dir)), // 调用的处理程序
 	}
 
-	// 定义一个处理函数
-	http.Handle("/", http.FileServer(http.Dir(dir)))
 	// 启动HTTP服务器
 	go func() {
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
 			fmt.Printf("HTTP server error: \x1b[31;1m%s\x1b[0m\n", err)
-		} else if err == nil {
-			fmt.Printf("HTTP server started\n")
 		}
 	}()
 
