@@ -144,10 +144,10 @@ func StartGraphicalUserInterface() {
 			}
 			return defaultDir
 		}()
-		url := fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
+		serviceUrl := fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
 
 		// 生成二维码
-		qrCodeImage, err := QrCodeImage(url)
+		qrCodeImage, err := QrCodeImage(serviceUrl)
 		if err != nil {
 			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 			errorDialog.Show()
@@ -168,13 +168,13 @@ func StartGraphicalUserInterface() {
 				statusAnimation.Start() // 服务状态动画
 				button.SetText("Stop")  // 修改按钮文字
 				qrWindow = app.NewWindow("QR Code")
-				// 将二维码图像添加到窗口（
+				// 将二维码图像添加到窗口
 				// NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距
 				qrWindow.SetContent(qrImage)
 				// 设置窗口内边距为零以确保图像与窗口边框贴合
 				qrWindow.SetPadded(false)
 				qrWindow.Show() // 显示二维码窗口
-				fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, url)
+				fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, serviceUrl)
 			}
 		} else if serviceStatus == 1 {
 			// 停止HTTP服务
