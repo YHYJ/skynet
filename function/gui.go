@@ -19,6 +19,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -117,6 +118,15 @@ func StartGraphicalUserInterface() {
 		qrWindow      fyne.Window    // 二维码窗口
 	)
 
+	// 二维码窗口
+	appDriver := appInstance.Driver()
+	if drv, ok := appDriver.(desktop.Driver); ok {
+		qrWindow = drv.CreateSplashWindow() // 无边框窗口
+	} else {
+
+		qrWindow = appInstance.NewWindow("QR Code") // 普通窗口
+	}
+
 	// 服务状态标识（NOTE: 不能在contrilButton按钮内部定义）
 	serviceStatus := 0 // 0是服务未启动，1是服务已启动
 
@@ -164,7 +174,6 @@ func StartGraphicalUserInterface() {
 				serviceStatus = 1             // 服务已启动
 				statusAnimation.Start()       // 服务状态动画
 				controlButton.SetText("Stop") // 修改按钮文字
-				qrWindow = appInstance.NewWindow("QR Code")
 				// 将二维码图像添加到窗口
 				// NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距
 				qrWindow.SetContent(qrImage)
@@ -194,6 +203,7 @@ func StartGraphicalUserInterface() {
 		interfaceLabel, interfaceRadio, // 网卡选择
 		portEntry,       // 端口配置
 		dirRow,          // 文件夹选择
+		separator,       // 分隔线
 		statusAnimation, // 状态显示
 		separator,       // 分隔线
 		controlButton,   // 启动按钮
