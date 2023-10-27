@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-// 获取网卡信息（Terminal使用）
+// 获取网卡信息（用于CLI版）
 func GetNetInterfaces() (map[int]map[string]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
 	if err != nil {
@@ -49,7 +49,7 @@ func GetNetInterfaces() (map[int]map[string]string, error) {
 	return netInterfacesData, nil
 }
 
-// 获取网卡信息（GUI使用）
+// 获取网卡信息（用于GUI版）
 func GetNetInterfacesForGui() ([]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
 	if err != nil {

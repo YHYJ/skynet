@@ -15,7 +15,7 @@ import (
 	"net/http"
 )
 
-// 启动HTTP服务（Terminal使用）
+// 启动HTTP服务（用于CLI版）
 func HttpServer(address string, port string, dir string) {
 	// 创建TCP监听器
 	listener, err := net.Listen("tcp", address+":"+port)

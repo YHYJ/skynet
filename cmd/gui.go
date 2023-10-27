@@ -31,7 +31,7 @@ var guiCmd = &cobra.Command{
 				// 启动GUI
 				function.StartGraphicalUserInterface()
 			} else {
-				fmt.Println("The DISPLAY environment variable is missing, please use the Terminal version")
+				fmt.Println("The DISPLAY environment variable is missing, please use the CLI version")
 			}
 		} else if function.Platform == "windows" {
 			// 设置字体
