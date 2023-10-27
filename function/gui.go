@@ -24,12 +24,6 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-// APP配置
-const (
-	Name = "Skynet"
-	Path = "github.com/yhyj/skynet"
-)
-
 // HTTP服务默认配置
 var (
 	defaultIP   = "0.0.0.0"
@@ -44,7 +38,7 @@ func StartGraphicalUserInterface() {
 	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceIconPng.StaticContent))
 
 	// 创建主窗口
-	mainWindow := appInstance.NewWindow(Name)
+	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", Name, Version))
 	mainWindow.SetMaster()                                                    // 设置为主窗口
 	baseWeight, baseHeight := float32(300), mainWindow.Canvas().Size().Height // 窗口基础尺寸
 	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                   // 设置窗口大小
@@ -54,7 +48,7 @@ func StartGraphicalUserInterface() {
 	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
 	// 获取网卡信息
-	interfaceLabel := widget.NewLabel("选择接口:")
+	interfaceLabel := widget.NewLabel("Select Interface:")
 	nicInfos, err := GetNetInterfacesForGui()
 	if err != nil {
 		errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
@@ -65,11 +59,11 @@ func StartGraphicalUserInterface() {
 
 	// 创建端口选择器
 	portEntry := widget.NewEntry()
-	portEntry.SetPlaceHolder("输入端口号")
+	portEntry.SetPlaceHolder("Port [1~65535]")
 
 	// 创建目录选择器
 	selectedFolderEntry := widget.NewEntry()
-	selectedFolderEntry.SetPlaceHolder("设置服务目录")
+	selectedFolderEntry.SetPlaceHolder("HTTP Directory")
 	folderButton := widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 		// 固定文件选择对话框大小不可修改
 		const folderWidth, folderHeight float32 = 770, 481
