@@ -12,6 +12,7 @@ package function
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"fyne.io/fyne/v2"
@@ -22,13 +23,6 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-)
-
-// HTTP服务默认配置
-var (
-	defaultIP   = "0.0.0.0"
-	defaultPort = "8080"
-	defaultDir  = GetVariable("HOME")
 )
 
 // 启动GUI
@@ -47,6 +41,24 @@ func StartGraphicalUserInterface() {
 	// 创建错误提示框尺寸
 	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
+	// 预定义服务接口和小部件
+	var (
+		httpServer    *http.Server   // HTTP服务
+		controlButton *widget.Button // 服务的启动/停止按钮
+		folderButton  *widget.Button // 目录选择按钮
+		urlButton     *widget.Button // 打开URL按钮
+		qrButton      *widget.Button // 二维码显示/隐藏按钮
+		qrWindow      fyne.Window    // 二维码窗口
+	)
+
+	// HTTP服务默认配置
+	var (
+		defaultIP   = "0.0.0.0"
+		defaultPort = "8080"
+		defaultDir  = GetVariable("HOME")
+		serviceUrl  string
+	)
+
 	// 获取网卡信息
 	interfaceLabel := widget.NewLabel("Select Interface:")
 	nicInfos, err := GetNetInterfacesForGui()
@@ -61,10 +73,11 @@ func StartGraphicalUserInterface() {
 	portEntry := widget.NewEntry()
 	portEntry.SetPlaceHolder("Port [1~65535]")
 
-	// 创建目录选择器
+	// 创建目录选择器标签
 	selectedFolderEntry := widget.NewEntry()
 	selectedFolderEntry.SetPlaceHolder("HTTP Directory")
-	folderButton := widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
+	// 创建目录选择器
+	folderButton = widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 		// 固定文件选择对话框大小不可修改
 		const folderWidth, folderHeight float32 = 770, 481
 		// 创建一个新窗口用于文件夹选择
@@ -95,8 +108,19 @@ func StartGraphicalUserInterface() {
 		fileDialog.Show()
 		fileDialog.Resize(fyne.NewSize(folderWidth, folderHeight))
 	})
+	// 创建URL打开按钮
+	urlButton = widget.NewButtonWithIcon("", theme.MailSendIcon(), func() {
+		serviceUrlParsed, err := url.Parse(serviceUrl)
+		if err != nil {
+			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
+			errorDialog.Show()
+		}
+		appInstance.OpenURL(serviceUrlParsed)
+	})
+	urlButton.Disable() // 禁用URL按钮
+
 	// 将selectedFolderEntry和folderButton放置在同一行
-	dirRow := container.NewBorder(nil, nil, folderButton, nil, selectedFolderEntry)
+	dirRow := container.NewBorder(nil, nil, folderButton, urlButton, selectedFolderEntry)
 
 	// 创建分隔线
 	separator := widget.NewSeparator()
@@ -104,14 +128,6 @@ func StartGraphicalUserInterface() {
 	// 创建服务状态显示动画
 	statusAnimation := widget.NewProgressBarInfinite()
 	statusAnimation.Stop()
-
-	// 预定义小部件
-	var (
-		httpServer    *http.Server   // HTTP服务
-		controlButton *widget.Button // 服务的启动/停止按钮
-		qrWindow      fyne.Window    // 二维码窗口
-		qrButton      *widget.Button // 二维码显示/隐藏按钮
-	)
 
 	// 创建二维码窗口
 	appDriver := appInstance.Driver()
@@ -148,7 +164,7 @@ func StartGraphicalUserInterface() {
 			}
 			return defaultDir
 		}()
-		serviceUrl := fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
+		serviceUrl = fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
 
 		// 生成二维码
 		qrCodeImage, err := QrCodeImage(serviceUrl)
@@ -176,9 +192,11 @@ func StartGraphicalUserInterface() {
 				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距）
 				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合
 				qrWindow.Show()                             // 显示二维码窗口
-				qrButton.Enable()                           // 使二维码显示/隐藏按钮可用
+				qrButton.Enable()                           // 启用二维码显示/隐藏按钮
 				qrButton.SetIcon(theme.VisibilityOffIcon()) // 按钮变为点击隐藏
 				qrStatus = 1                                // 二维码已显示
+				// 设置URL按钮
+				urlButton.Enable() // 启用URL按钮
 				fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, serviceUrl)
 			}
 		} else if serviceStatus == 1 {
@@ -193,9 +211,11 @@ func StartGraphicalUserInterface() {
 			controlButton.SetText("Start") // 修改按钮文字
 			// 设置二维码状态
 			qrWindow.Hide()                          // 隐藏二维码窗口（NOTE: 不能使用Close()）
-			qrButton.Disable()                       // 使二维码显示/隐藏按钮不可用
+			qrButton.Disable()                       // 禁用二维码显示/隐藏按钮
 			qrButton.SetIcon(theme.VisibilityIcon()) // 按钮变为点击显示
 			qrStatus = 0                             // 二维码未显示
+			// 设置URL按钮
+			urlButton.Disable() // 禁用URL按钮
 		} else {
 			customErrText := "Unknown error"
 			errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
@@ -217,8 +237,9 @@ func StartGraphicalUserInterface() {
 			qrStatus = 0
 		}
 	})
-	qrButton.Disable()                            // 使二维码显示/隐藏按钮不可用
+	qrButton.Disable()                            // 禁用二维码显示/隐藏按钮
 	qrButton.Importance = widget.MediumImportance // 按钮突出程度
+
 	// 把二维码显示/隐藏按钮添加到顶部，和接口选择器标签同一行
 	topRow := container.NewBorder(nil, nil, interfaceLabel, qrButton, nil)
 
