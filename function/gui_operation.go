@@ -18,12 +18,15 @@ import (
 
 // 为Fyne设置字体
 func SetFont() error {
-	fontPaths := findfont.List() // 系统可用字体
-	fontNames := []string{       // 默认使用字体
+	// 默认使用字体
+	fontNames := []string{
 		"pingfang",                // macOS
 		"sourcehansanscn-medium",  // Linux
 		"simhei", "yahei", "msyh", // Windows
 	}
+
+	// 系统可用字体
+	fontPaths := findfont.List()
 
 	for _, name := range fontNames {
 		for _, path := range fontPaths {
