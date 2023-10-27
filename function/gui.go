@@ -50,7 +50,7 @@ func StartGraphicalUserInterface() {
 	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                   // 设置窗口大小
 	mainWindow.SetFixedSize(true)                                             // 固定窗口大小
 
-	// 设置错误提示框尺寸
+	// 创建错误提示框尺寸
 	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
 	// 获取网卡信息
@@ -60,14 +60,14 @@ func StartGraphicalUserInterface() {
 		errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 		errorDialog.Show()
 	}
-	// 创建一个单选按钮组
+	// 创建接口选择器（单选按钮组）
 	interfaceRadio := widget.NewRadioGroup(nicInfos, func(selected string) {})
 
-	// 端口选择
+	// 创建端口选择器
 	portEntry := widget.NewEntry()
 	portEntry.SetPlaceHolder("输入端口号")
 
-	// 目录选择
+	// 创建目录选择器
 	selectedFolderEntry := widget.NewEntry()
 	selectedFolderEntry.SetPlaceHolder("设置服务目录")
 	folderButton := widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
@@ -104,21 +104,22 @@ func StartGraphicalUserInterface() {
 	// 将selectedFolderEntry和folderButton放置在同一行
 	dirRow := container.NewBorder(nil, nil, folderButton, nil, selectedFolderEntry)
 
-	// 分隔线
+	// 创建分隔线
 	separator := widget.NewSeparator()
 
-	// 服务状态显示
+	// 创建服务状态显示动画
 	statusAnimation := widget.NewProgressBarInfinite()
 	statusAnimation.Stop()
 
-	// 定义小部件
+	// 预定义小部件
 	var (
 		httpServer    *http.Server   // HTTP服务
 		controlButton *widget.Button // 服务的启动/停止按钮
 		qrWindow      fyne.Window    // 二维码窗口
+		qrButton      *widget.Button // 二维码显示/隐藏按钮
 	)
 
-	// 二维码窗口
+	// 创建二维码窗口
 	appDriver := appInstance.Driver()
 	if drv, ok := appDriver.(desktop.Driver); ok {
 		qrWindow = drv.CreateSplashWindow() // 无边框窗口
@@ -127,9 +128,11 @@ func StartGraphicalUserInterface() {
 		qrWindow = appInstance.NewWindow("QR Code") // 普通窗口
 	}
 
-	// 服务状态标识（NOTE: 不能在contrilButton按钮内部定义）
-	serviceStatus := 0 // 0是服务未启动，1是服务已启动
+	// 状态标识
+	serviceStatus := 0 // HTTP服务状态，0代表服务未启动，1代表服务已启动（NOTE: 不能在contrilButton按钮内部定义）
+	qrStatus := 0      // 二维码状态，0代表二维码未显示，1代表二维码已显示
 
+	// 服务启动/停止按钮逻辑
 	controlButton = widget.NewButton("Start", func() {
 		// 获取参数信息，如果参数为空则使用默认值
 		selectedInterfaceIP := func() string {
@@ -171,15 +174,17 @@ func StartGraphicalUserInterface() {
 				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 				errorDialog.Show()
 			} else {
+				// 设置服务状态
 				serviceStatus = 1             // 服务已启动
 				statusAnimation.Start()       // 服务状态动画
 				controlButton.SetText("Stop") // 修改按钮文字
-				// 将二维码图像添加到窗口
-				// NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距
-				qrWindow.SetContent(qrImage)
-				// 设置窗口内边距为零以确保图像与窗口边框贴合
-				qrWindow.SetPadded(false)
-				qrWindow.Show() // 显示二维码窗口
+				// 设置二维码状态
+				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距）
+				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合
+				qrWindow.Show()                             // 显示二维码窗口
+				qrButton.Enable()                           // 使二维码显示/隐藏按钮可用
+				qrButton.SetIcon(theme.VisibilityOffIcon()) // 按钮变为点击隐藏
+				qrStatus = 1                                // 二维码已显示
 				fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, serviceUrl)
 			}
 		} else if serviceStatus == 1 {
@@ -188,19 +193,45 @@ func StartGraphicalUserInterface() {
 				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 				errorDialog.Show()
 			}
+			// 设置服务状态
 			serviceStatus = 0              // 服务已停止
 			statusAnimation.Stop()         // 服务状态动画
 			controlButton.SetText("Start") // 修改按钮文字
-			qrWindow.Hide()                // 隐藏二维码窗口
+			// 设置二维码状态
+			qrWindow.Hide()                          // 隐藏二维码窗口（NOTE: 不能使用Close()）
+			qrButton.Disable()                       // 使二维码显示/隐藏按钮不可用
+			qrButton.SetIcon(theme.VisibilityIcon()) // 按钮变为点击显示
+			qrStatus = 0                             // 二维码未显示
 		} else {
 			customErrText := "Unknown error"
 			errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
 			errorDialog.Show()
 		}
 	})
+	// 设置按钮外观
+	controlButton.Importance = widget.HighImportance // 按钮突出程度
 
+	// 二维码显示/隐藏按钮逻辑
+	qrButton = widget.NewButtonWithIcon("", theme.VisibilityIcon(), func() {
+		if qrStatus == 0 && serviceStatus == 1 { // 二维码未显示但服务已启动，则显示二维码
+			qrWindow.Show()
+			qrButton.SetIcon(theme.VisibilityOffIcon()) // 按钮变为点击隐藏
+			qrStatus = 1
+		} else if qrStatus == 1 && serviceStatus == 1 { // 二维码已显示且服务已启动，则隐藏二维码
+			qrWindow.Hide()
+			qrButton.SetIcon(theme.VisibilityIcon()) // 按钮变为点击显示
+			qrStatus = 0
+		}
+	})
+	qrButton.Disable()                            // 使二维码显示/隐藏按钮不可用
+	qrButton.Importance = widget.MediumImportance // 按钮突出程度
+	// 把二维码显示/隐藏按钮添加到顶部，和接口选择器标签同一行
+	topRow := container.NewBorder(nil, nil, interfaceLabel, qrButton, nil)
+
+	// 填充主窗口
 	content := container.NewVBox(
-		interfaceLabel, interfaceRadio, // 网卡选择
+		topRow,          // 顶部
+		interfaceRadio,  // 网卡选择
 		portEntry,       // 端口配置
 		dirRow,          // 文件夹选择
 		separator,       // 分隔线
@@ -209,6 +240,8 @@ func StartGraphicalUserInterface() {
 		controlButton,   // 启动按钮
 	)
 	mainWindow.SetContent(content)
+
+	// 启动主窗口
 	mainWindow.ShowAndRun()
 }
 
