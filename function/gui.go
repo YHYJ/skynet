@@ -75,7 +75,7 @@ func StartGraphicalUserInterface() {
 
 	// 创建目录选择器标签
 	selectedFolderEntry := widget.NewEntry()
-	selectedFolderEntry.SetPlaceHolder("HTTP Directory")
+	selectedFolderEntry.SetPlaceHolder(fmt.Sprintf("Directory, default %s", defaultDir))
 	// 创建目录选择器
 	folderButton = widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 		// 固定文件选择对话框大小不可修改
