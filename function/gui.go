@@ -36,6 +36,7 @@ func makeErrorDialog(title, dismiss, text string, size fyne.Size, parent fyne.Wi
 func StartGraphicalUserInterface() {
 	// 创建一个新应用
 	app := app.NewWithID("Skynet")
+	app.SetIcon(fyne.NewStaticResource("icon", resourceIconPng.StaticContent))
 
 	// 创建主窗口
 	mainWindow := app.NewWindow("Skynet")
