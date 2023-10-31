@@ -13,6 +13,9 @@
 
 * [Usage](#usage)
 * [Compile](#compile)
+  * [Linux](#linux)
+  * [macOS](#macos)
+  * [Windows](#windows)
 
 <!-- vim-markdown-toc -->
 
@@ -57,19 +60,42 @@
 go build main.go
 ```
 
-- **交叉编译**指定平台可执行文件：
+**交叉编译**指定平台可执行文件
+
+> 使用命令`go tool dist list`查看支持的平台
+
+### Linux
 
 ```bash
-# 适用于Linux AArch64平台
-CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build main.go
+# 适用于Linux平台
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build main.go
 ```
 
-```bash
-# 适用于macOS amd64平台
-CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build main.go
-```
+> 使用`uname -m`确定硬件架构
+>
+> - 结果是x86_64则GOARCH=amd64
+> - 结果是aarch64则GOARCH=arm64
+
+### macOS
 
 ```bash
-# 适用于Windows amd64平台
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build main.go
+# 适用于macOS平台
+CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build main.go
 ```
+
+> 使用`uname -m`确定硬件架构
+>
+> - 结果是x86_64则GOARCH=amd64
+> - 结果是aarch64则GOARCH=arm64
+
+### Windows
+
+```powershell
+# 适用于Windows平台
+CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build main.go
+```
+
+> 使用`echo %PROCESSOR_ARCHITECTURE%`确定硬件架构
+>
+> - 结果是x86_64则GOARCH=amd64
+> - 结果是aarch64则GOARCH=arm64
