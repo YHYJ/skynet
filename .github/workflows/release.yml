@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: skynet-linux
-          path: dist/skynet*
+          path: dist/skynet*.*
 
   build-darwin-version:
     runs-on: macos-latest
@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: skynet-darwin
-          path: dist/skynet*
+          path: dist/skynet*.*
 
   build-windows-version:
     runs-on: windows-latest
@@ -81,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: skynet-windows
-          path: dist/skynet*
+          path: dist/skynet*.*
 
   release:
     needs: [build-linux-version, build-darwin-version, build-windows-version]
