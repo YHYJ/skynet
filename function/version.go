@@ -18,6 +18,7 @@ const (
 	project string = "github.com/yhyj/skynet"
 )
 
+// 编译信息
 var (
 	gitCommitHash string = "unknown"
 	buildTime     string = "unknown"
