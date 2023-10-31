@@ -13,9 +13,11 @@
 
 * [Usage](#usage)
 * [Compile](#compile)
-  * [Linux](#linux)
-  * [macOS](#macos)
-  * [Windows](#windows)
+  * [当前平台](#当前平台)
+  * [交叉编译](#交叉编译)
+    * [Linux](#linux)
+    * [macOS](#macos)
+    * [Windows](#windows)
 
 <!-- vim-markdown-toc -->
 
@@ -54,21 +56,21 @@
 
 ## Compile
 
-- 编译当前平台可执行文件：
+### 当前平台
 
 ```bash
-go build main.go
+go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$USER" -o skynet main.go
 ```
 
-**交叉编译**指定平台可执行文件
+### 交叉编译
 
-> 使用命令`go tool dist list`查看支持的平台
+使用命令`go tool dist list`查看支持的平台
 
-### Linux
+#### Linux
 
 ```bash
 # 适用于Linux平台
-CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w" main.go
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$USER" -o skynet main.go
 ```
 
 > 使用`uname -m`确定硬件架构
@@ -76,11 +78,11 @@ CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s
 > - 结果是x86_64则GOARCH=amd64
 > - 结果是aarch64则GOARCH=arm64
 
-### macOS
+#### macOS
 
 ```bash
 # 适用于macOS平台
-CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w" main.go
+CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$USER" -o skynet main.go
 ```
 
 > 使用`uname -m`确定硬件架构
@@ -88,11 +90,11 @@ CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-
 > - 结果是x86_64则GOARCH=amd64
 > - 结果是aarch64则GOARCH=arm64
 
-### Windows
+#### Windows
 
 ```powershell
 # 适用于Windows平台
-CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -H windowsgui" main.go
+CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -H windowsgui -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$USER" -o skynet main.go
 ```
 
 > 使用`echo %PROCESSOR_ARCHITECTURE%`确定硬件架构
