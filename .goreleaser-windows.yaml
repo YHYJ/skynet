@@ -5,6 +5,8 @@ before:
 builds:
   - env:
       - CGO_ENABLED=1
+    gcflags:
+      - -trimpath
     ldflags:
       - -s -w
       - -H windowsgui
