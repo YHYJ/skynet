@@ -10,7 +10,9 @@ builds:
     ldflags:
       - -s -w
       - -H windowsgui
-      - -X github.com/yhyj/skynet/function.builtBy=goreleaser
+      - -X github.com/yhyj/skynet/function.gitCommitHash={{.Commit}}
+      - -X github.com/yhyj/skynet/function.buildTime={{.Timestamp}}
+      - -X github.com/yhyj/skynet/function.buildBy=goreleaser
     goos:
       - windows
     goarch:

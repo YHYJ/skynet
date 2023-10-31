@@ -9,7 +9,9 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
-      - -X github.com/yhyj/skynet/function.builtBy=goreleaser
+      - -X github.com/yhyj/skynet/function.gitCommitHash={{.Commit}}
+      - -X github.com/yhyj/skynet/function.buildTime={{.Timestamp}}
+      - -X github.com/yhyj/skynet/function.buildBy=goreleaser
     goos:
       - darwin
     goarch:
