@@ -1,0 +1,15 @@
+builds:
+  - skip: true
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+release:
+  draft: true
+  mode: append
+  extra_files:
+    - glob: ./skynet-build/**/*
+    - glob: ./skynet-build/checksums.txt
+  name_template: "Release {{.Tag}}"
