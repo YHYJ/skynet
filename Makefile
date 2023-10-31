@@ -1,3 +1,4 @@
+PROJECT      := github.com/yhyj/skynet
 TARGET       := skynet
 INSTALL_PATH := /usr/local/bin
 ATTRIBUTION  := root
@@ -18,7 +19,7 @@ tidy:
 	@echo -e "\x1b[32m[✔]\x1b[0m Successfully tidied up dependencies"
 
 build:
-	@go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$(USER)" -o $(TARGET)
+	@go build -gcflags="-trimpath" -ldflags="-s -w -X $(PROJECT)/function.buildTime=`date +%s` -X $(PROJECT)/function.buildBy=$(USER)" -o $(TARGET)
 	@echo -en "\x1b[32m[✔]\x1b[0m Successfully generated \x1b[32;1m$(TARGET)\x1b[0m"
 
 install:
