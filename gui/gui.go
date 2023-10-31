@@ -4,10 +4,10 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-26 09:42:59
 
-Description: 子命令`gui`功能函数
+Description: 子命令`gui`功能实现
 */
 
-package function
+package gui
 
 import (
 	"fmt"
@@ -23,16 +23,17 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/yhyj/skynet/general"
 )
 
 // 启动GUI
 func StartGraphicalUserInterface() {
 	// 创建一个新应用
-	appInstance := app.NewWithID(name)
+	appInstance := app.NewWithID(general.Name)
 	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceIconPng.StaticContent))
 
 	// 创建主窗口
-	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", name, version))
+	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", general.Name, general.Version))
 	mainWindow.SetMaster()                                                    // 设置为主窗口
 	baseWeight, baseHeight := float32(300), mainWindow.Canvas().Size().Height // 窗口基础尺寸
 	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                   // 设置窗口大小
@@ -55,13 +56,13 @@ func StartGraphicalUserInterface() {
 	var (
 		defaultIP   = "0.0.0.0"
 		defaultPort = "8080"
-		defaultDir  = GetVariable("HOME")
+		defaultDir  = general.GetVariable("HOME")
 		serviceUrl  string
 	)
 
 	// 获取网卡信息
 	interfaceLabel := widget.NewLabel("Select Interface:")
-	nicInfos, err := GetNetInterfacesForGui()
+	nicInfos, err := GetNetInterfaces()
 	if err != nil {
 		errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 		errorDialog.Show()
@@ -167,7 +168,7 @@ func StartGraphicalUserInterface() {
 		serviceUrl = fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
 
 		// 生成二维码
-		qrCodeImage, err := QrCodeImage(serviceUrl)
+		qrCodeImage, err := general.QrCodeImage(serviceUrl)
 		if err != nil {
 			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 			errorDialog.Show()
@@ -179,7 +180,7 @@ func StartGraphicalUserInterface() {
 
 		if serviceStatus == 0 {
 			// 启动HTTP服务
-			httpServer, err = HttpServerForGui(selectedInterfaceIP, selectedPort, selectedDir)
+			httpServer, err = HttpServer(selectedInterfaceIP, selectedPort, selectedDir)
 			if err != nil {
 				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 				errorDialog.Show()

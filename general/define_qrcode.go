@@ -1,5 +1,5 @@
 /*
-File: qr_operation.go
+File: define_qrcode.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-26 09:25:11
@@ -7,7 +7,7 @@ Created Time: 2023-10-26 09:25:11
 Description: 二维码操作
 */
 
-package function
+package general
 
 import (
 	"image"

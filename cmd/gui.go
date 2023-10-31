@@ -13,7 +13,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/yhyj/skynet/function"
+	"github.com/yhyj/skynet/general"
+	"github.com/yhyj/skynet/gui"
 )
 
 // guiCmd represents the gui command
@@ -22,25 +23,25 @@ var guiCmd = &cobra.Command{
 	Short: "Start the GUI version of skynet",
 	Long:  `Start the skynet Graphical User Interface`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if function.Platform == "linux" {
-			if function.GetVariable("DISPLAY") != "" {
+		if general.Platform == "linux" {
+			if general.GetVariable("DISPLAY") != "" {
 				// 设置字体
-				if err := function.SetFont(); err != nil {
+				if err := gui.SetFont(); err != nil {
 					fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
 				}
 				// 启动GUI
-				function.StartGraphicalUserInterface()
+				gui.StartGraphicalUserInterface()
 			} else {
 				fmt.Println("The DISPLAY environment variable is missing, please use the CLI version")
 			}
-		} else if function.Platform == "windows" {
+		} else if general.Platform == "windows" {
 			// 设置字体
-			if err := function.SetFont(); err != nil {
+			if err := gui.SetFont(); err != nil {
 				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
 			}
 			// 启动GUI
-			function.StartGraphicalUserInterface()
-		} else if function.Platform == "darwin" {
+			gui.StartGraphicalUserInterface()
+		} else if general.Platform == "darwin" {
 			fmt.Println("macOS platform is not supported yet")
 		} else {
 			fmt.Println("Current platform is not supported")
@@ -49,6 +50,6 @@ var guiCmd = &cobra.Command{
 }
 
 func init() {
-	guiCmd.Flags().BoolP("help", "h", false, "help for httpserver command")
+	guiCmd.Flags().BoolP("help", "h", false, "help for gui command")
 	rootCmd.AddCommand(guiCmd)
 }

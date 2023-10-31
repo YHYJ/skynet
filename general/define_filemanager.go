@@ -1,13 +1,13 @@
 /*
-File: file_operation.go
+File: define_filemanager.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-05-26 11:15:42
 
-Description: 文件操作
+Description: 文件管理
 */
 
-package function
+package general
 
 import (
 	"os"
@@ -26,7 +26,7 @@ func FileExist(filePath string) bool {
 	return true
 }
 
-// 获取指定文件绝对路径
+// 获取指定文件的绝对路径
 func GetAbsPath(filePath string) string {
 	// 获取绝对路径
 	absPath, err := filepath.Abs(filePath)

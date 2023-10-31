@@ -1,10 +1,10 @@
 /*
-File: httpserver.go
+File: http.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-04-20 09:52:25
 
-Description: 程序子命令'httpserver'时执行
+Description: 程序子命令'http'时执行
 */
 
 package cmd
@@ -14,12 +14,13 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/yhyj/skynet/function"
+	"github.com/yhyj/skynet/cli"
+	"github.com/yhyj/skynet/general"
 )
 
-// httpserverCmd represents the httpserver command
-var httpserverCmd = &cobra.Command{
-	Use:   "httpserver",
+// httpCmd represents the http command
+var httpCmd = &cobra.Command{
+	Use:   "http",
 	Short: "Start an http server",
 	Long:  `Start an http server and manage its life cycle.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -41,20 +42,20 @@ var httpserverCmd = &cobra.Command{
 
 		// 处理dirFlag默认参数
 		if dirFlag == "PWD" {
-			dirFlag = function.GetVariable("PWD")
+			dirFlag = general.GetVariable("PWD")
 		}
 
 		// 使用dirFlag参数
-		if !function.FileExist(dirFlag) {
+		if !general.FileExist(dirFlag) {
 			// 如果dirFlag参数不是一个目录，则提示目录不存在并退出程序
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Directory does not exist.")
 			os.Exit(1)
 		}
 		// 获取dirFlag参数的绝对路径
-		absDir := function.GetAbsPath(dirFlag)
+		absDir := general.GetAbsPath(dirFlag)
 
 		// 输出interfaceFlag供用户选择
-		netInterfacesData, _ := function.GetNetInterfaces()
+		netInterfacesData, _ := cli.GetNetInterfaces()
 		var netInterfaceNumber int
 		if interfaceFlag {
 			// 输出网卡信息供用户选择，输出格式为：[序号] 网卡名称 网卡IP
@@ -79,15 +80,15 @@ var httpserverCmd = &cobra.Command{
 		address := netInterfacesData[netInterfaceNumber]["ip"]
 
 		// 启动http server
-		function.HttpServer(address, fmt.Sprint(portFlag), absDir)
+		cli.HttpServer(address, fmt.Sprint(portFlag), absDir)
 	},
 }
 
 func init() {
-	httpserverCmd.Flags().IntP("port", "p", 8080, "Port to listen on")
-	httpserverCmd.Flags().StringP("dir", "d", "PWD", "Directory to serve")
-	httpserverCmd.Flags().BoolP("interface", "i", false, "Select the net interface to use (default 0.0.0.0)")
+	httpCmd.Flags().IntP("port", "p", 8080, "Port to listen on")
+	httpCmd.Flags().StringP("dir", "d", "PWD", "Directory to serve")
+	httpCmd.Flags().BoolP("interface", "i", false, "Select the net interface to use (default 0.0.0.0)")
 
-	httpserverCmd.Flags().BoolP("help", "h", false, "help for httpserver command")
-	rootCmd.AddCommand(httpserverCmd)
+	httpCmd.Flags().BoolP("help", "h", false, "help for http command")
+	rootCmd.AddCommand(httpCmd)
 }

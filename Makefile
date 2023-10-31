@@ -19,7 +19,7 @@ tidy:
 	@echo -e "\x1b[32m[✔]\x1b[0m Successfully tidied up dependencies"
 
 build:
-	@go build -gcflags="-trimpath" -ldflags="-s -w -X $(PROJECT)/function.buildTime=`date +%s` -X $(PROJECT)/function.buildBy=$(USER)" -o $(TARGET)
+	@go build -gcflags="-trimpath" -ldflags="-s -w -X $(PROJECT)/general.BuildTime=`date +%s` -X $(PROJECT)/general.BuildBy=$(USER)" -o $(TARGET)
 	@echo -en "\x1b[32m[✔]\x1b[0m Successfully generated \x1b[32;1m$(TARGET)\x1b[0m"
 
 install:

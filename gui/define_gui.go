@@ -1,5 +1,5 @@
 /*
-File: gui_operation.go
+File: define_gui.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-26 09:13:30
@@ -7,7 +7,7 @@ Created Time: 2023-10-26 09:13:30
 Description: GUI操作
 */
 
-package function
+package gui
 
 import (
 	"os"

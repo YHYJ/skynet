@@ -1,5 +1,5 @@
 /*
-File: variable_operation.go
+File: define_variable.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-08 16:01:45
@@ -7,13 +7,17 @@ Created Time: 2023-06-08 16:01:45
 Description: 操作变量
 */
 
-package function
+package general
 
 import (
 	"os"
 	"os/user"
+	"runtime"
 	"strconv"
 )
+
+// 操作系统
+var Platform = runtime.GOOS
 
 // 用来处理不同系统之间的变量名差异
 var platformChart = map[string]map[string]string{
