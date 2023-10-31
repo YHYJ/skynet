@@ -27,7 +27,7 @@ var (
 func ProgramInfo(only bool) string {
 	programInfo := fmt.Sprintf("%s\n", version)
 	if !only {
-		programInfo = fmt.Sprintf("%s version %s\nGit commit hash: %s\nBuilt on: %s\nBuilt by: %s\n", name, version, gitCommitHash, buildTime, buildBy)
+		programInfo = fmt.Sprintf("%s version: %s\nGit commit hash: %s\nBuilt on: %s\nBuilt by: %s\n", name, version, gitCommitHash, buildTime, buildBy)
 	}
 	return programInfo
 }
