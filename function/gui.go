@@ -28,11 +28,11 @@ import (
 // 启动GUI
 func StartGraphicalUserInterface() {
 	// 创建一个新应用
-	appInstance := app.NewWithID(Name)
+	appInstance := app.NewWithID(name)
 	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceIconPng.StaticContent))
 
 	// 创建主窗口
-	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", Name, Version))
+	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", name, version))
 	mainWindow.SetMaster()                                                    // 设置为主窗口
 	baseWeight, baseHeight := float32(300), mainWindow.Canvas().Size().Height // 窗口基础尺寸
 	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                   // 设置窗口大小

@@ -13,15 +13,21 @@ import "fmt"
 
 // 程序信息
 const (
-	Name    = "Skynet"
-	Version = "v0.6.7"
-	Path    = "github.com/yhyj/skynet"
+	name    string = "Skynet"
+	version string = "v0.6.7"
+	project string = "github.com/yhyj/skynet"
+)
+
+var (
+	gitCommitHash string = "unknown"
+	buildTime     string = "unknown"
+	buildBy       string = "unknown"
 )
 
 func ProgramInfo(only bool) string {
-	programInfo := fmt.Sprintf("%s\n", Version)
+	programInfo := fmt.Sprintf("%s\n", version)
 	if !only {
-		programInfo = fmt.Sprintf("%s version %s\n", Name, Version)
+		programInfo = fmt.Sprintf("%s version %s\nGit commit hash: %s\nBuilt on: %s\nBuilt by: %s\n", name, version, gitCommitHash, buildTime, buildBy)
 	}
 	return programInfo
 }
