@@ -1,4 +1,4 @@
-name: "Go Build and Release by GoReleaser"
+name: "Go build and release by GoReleaser"
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 jobs:
-  release:
+  build-linux-version:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
@@ -19,15 +19,103 @@ jobs:
           go-version: "1.20"
       - name: "Install dependencies"
         run: sudo apt-get install libxcursor-dev libxinerama-dev libxrandr-dev libxi-dev libgl-dev libxxf86vm-dev
-      - name: "Install MinGW"
-        uses: egor-tensin/setup-mingw@v2.2.0
-      - name: "MinGW version"
-        run: x86_64-w64-mingw32-gcc -dumpversion
-      - name: "Run GoReleaser"
+      - name: "Build via GoReleaser"
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
           version: latest
-          args: release --clean
+          args: release --skip-publish --config .goreleaser-linux.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: skynet-linux
+          path: dist/skynet*
+
+  build-darwin-version:
+    runs-on: macos-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Set up Go"
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+      - name: "Build via GoReleaser"
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --skip-publish --config .goreleaser-darwin.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: skynet-darwin
+          path: dist/skynet*
+
+  build-windows-version:
+    runs-on: windows-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Set up Go"
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+      - name: "Build via GoReleaser"
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --skip-publish --config .goreleaser-windows.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: skynet-windows
+          path: dist/skynet*
+
+  release:
+    needs: [build-linux-version, build-darwin-version, build-windows-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Make directories"
+        run: |
+          mkdir -p skynet-build/linux
+          mkdir -p skynet-build/darwin
+          mkdir -p skynet-build/windows
+      - name: "Download linux artifact"
+        uses: actions/download-artifact@v3
+        with:
+          name: skynet-linux
+          path: skynet-build/linux
+      - name: "Download darwin artifact"
+        uses: actions/download-artifact@v3
+        with:
+          name: skynet-darwin
+          path: skynet-build/darwin
+      - name: "Download windows artifact"
+        uses: actions/download-artifact@v3
+        with:
+          name: skynet-windows
+          path: skynet-build/windows
+      - name: "Merge checksum file"
+        run: |
+          cd skynet-build
+          cat linux/skynet*checksums.txt >> checksums.txt && rm linux/skynet*checksums.txt
+          cat darwin/skynet*checksums.txt >> checksums.txt && rm darwin/skynet*checksums.txt
+          cat windows/skynet*checksums.txt >> checksums.txt && rm windows/skynet*checksums.txt
+      - name: "Release"
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          args: release --config .goreleaser-release.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
