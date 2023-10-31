@@ -69,7 +69,6 @@ go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/function
 #### Linux
 
 ```bash
-# 适用于Linux平台
 CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$USER" -o skynet main.go
 ```
 
@@ -81,7 +80,6 @@ CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s
 #### macOS
 
 ```bash
-# 适用于macOS平台
 CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$USER" -o skynet main.go
 ```
 
@@ -93,7 +91,6 @@ CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-
 #### Windows
 
 ```powershell
-# 适用于Windows平台
 CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -H windowsgui -X github.com/yhyj/skynet/function.buildTime=`date +%s` -X github.com/yhyj/skynet/function.buildBy=$USER" -o skynet main.go
 ```
 
