@@ -87,6 +87,10 @@ jobs:
     needs: [build-linux-version, build-darwin-version, build-windows-version]
     runs-on: ubuntu-latest
     steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: "Make directories"
         run: |
           mkdir -p skynet-build/linux
