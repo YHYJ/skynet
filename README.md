@@ -68,7 +68,7 @@ go build main.go
 
 ```bash
 # 适用于Linux平台
-CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build main.go
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" main.go
 ```
 
 > 使用`uname -m`确定硬件架构
@@ -80,7 +80,7 @@ CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build main.go
 
 ```bash
 # 适用于macOS平台
-CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build main.go
+CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "-s -w" main.go
 ```
 
 > 使用`uname -m`确定硬件架构
@@ -92,7 +92,7 @@ CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build main.go
 
 ```powershell
 # 适用于Windows平台
-CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build main.go
+CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" main.go
 ```
 
 > 使用`echo %PROCESSOR_ARCHITECTURE%`确定硬件架构
