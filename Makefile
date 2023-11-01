@@ -1,11 +1,19 @@
-PROJECT               := github.com/yhyj/skynet      # 项目名
-ATTRIBUTION           := root                        # 安装文件属主/属组
-GENERATE_PATH         := build                       # 编译结果路径
-TARGET                := skynet                      # 可执行文件名
-TARGET_INSTALL_PATH   := /usr/local/bin              # 可执行文件安装路径
-RESOURCE_PATH         := resources                   # 资源文件路径
-RESOURCE_INSTALL_PATH := /usr/local/share            # 资源文件安装路径
-COMMIT                := $(shell git rev-parse HEAD) # Commit哈希值
+# 项目名
+PROJECT := github.com/yhyj/skynet
+# 安装文件属主/属组
+ATTRIBUTION := root
+# 编译结果路径
+GENERATE_PATH := build
+# 可执行文件名
+TARGET := skynet
+# 可执行文件安装路径
+TARGET_INSTALL_PATH := /usr/local/bin
+# 资源文件路径
+RESOURCE_PATH := resources
+# 资源文件安装路径
+RESOURCE_INSTALL_PATH := /usr/local/share
+# Commit哈希值
+COMMIT := $(shell git rev-parse HEAD)
 
 .PHONY: all tidy build install clean
 all: build
