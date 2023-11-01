@@ -12,6 +12,9 @@
 <!-- vim-markdown-toc GFM -->
 
 * [Usage](#usage)
+* [Screenshot](#screenshot)
+  * [CLI version](#cli-version)
+  * [GUI version](#gui-version)
 * [Compile](#compile)
   * [当前平台](#当前平台)
   * [交叉编译](#交叉编译)
@@ -53,6 +56,16 @@
 - `help`
 
     查看程序帮助信息
+
+## Screenshot
+
+### CLI version
+
+![Skynet CLI version](resources/screenshots/cli-version.png)
+
+### GUI version
+
+![Skynet GUI version](resources/screenshots/gui-version.png)
 
 ## Compile
 
