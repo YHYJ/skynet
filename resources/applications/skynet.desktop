@@ -1,0 +1,18 @@
+[Desktop Entry]
+Name=skynet
+Exec=/usr/local/bin/skynet gui
+Type=Application
+Icon=skynet
+Terminal=false
+StartupNotify=true
+GenericName=Network Service Manager
+GenericName[zh_CN]=网络服务管理器
+GenericName[zh_TW]=網路服務管理器
+Comment=Start network service and manage its lifecycle
+Comment[zh_CN]=启动网络服务并管理其生命周期
+Comment[zh_TW]=啟動網路服務並管理其生命週期
+Categories=Fyne;Utility;Network;
+Keywords=fyne;network;service;manager;
+Keywords[zh_CN]=Fyne;网络;服务;管理器;
+Keywords[zh_TW]=Fyne;網路;服務;管理器;
+StartupWMClass=Skynet

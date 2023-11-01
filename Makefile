@@ -1,9 +1,11 @@
-PROJECT       := github.com/yhyj/skynet
-TARGET        := skynet
-GENERATE_PATH := build
-INSTALL_PATH  := /usr/local/bin
-ATTRIBUTION   := root
-COMMIT        := $(shell git rev-parse HEAD)
+PROJECT               := github.com/yhyj/skynet      # 项目名
+ATTRIBUTION           := root                        # 安装文件属主/属组
+GENERATE_PATH         := build                       # 编译结果路径
+TARGET                := skynet                      # 可执行文件名
+TARGET_INSTALL_PATH   := /usr/local/bin              # 可执行文件安装路径
+RESOURCE_PATH         := resources                   # 资源文件路径
+RESOURCE_INSTALL_PATH := /usr/local/share            # 资源文件安装路径
+COMMIT                := $(shell git rev-parse HEAD) # Commit哈希值
 
 .PHONY: all tidy build install clean
 all: build
@@ -25,7 +27,9 @@ build:
 	@echo -en "\x1b[32m[✔]\x1b[0m Successfully generated \x1b[32;1m$(TARGET)\x1b[0m"
 
 install:
-	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(GENERATE_PATH)/$(TARGET) $(INSTALL_PATH)/$(TARGET)
+	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(GENERATE_PATH)/$(TARGET) $(TARGET_INSTALL_PATH)/$(TARGET)
+	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
+	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
 	@echo -e "\r\x1b[K\x1b[0m\x1b[32m[✔]\x1b[0m Successfully installed \x1b[32m$(TARGET)\x1b[0m"
 
 clean:
