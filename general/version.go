@@ -14,7 +14,7 @@ import "fmt"
 // 程序信息
 const (
 	Name    string = "Skynet"
-	Version string = "v0.7.1"
+	Version string = "v0.7.2"
 	Project string = "github.com/yhyj/skynet"
 )
 
