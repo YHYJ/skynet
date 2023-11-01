@@ -93,27 +93,27 @@ jobs:
           fetch-depth: 0
       - name: "Make directories"
         run: |
-          mkdir -p skynet-build/linux
-          mkdir -p skynet-build/darwin
-          mkdir -p skynet-build/windows
+          mkdir -p build/linux
+          mkdir -p build/darwin
+          mkdir -p build/windows
       - name: "Download linux artifact"
         uses: actions/download-artifact@v3
         with:
           name: skynet-linux
-          path: skynet-build/linux
+          path: build/linux
       - name: "Download darwin artifact"
         uses: actions/download-artifact@v3
         with:
           name: skynet-darwin
-          path: skynet-build/darwin
+          path: build/darwin
       - name: "Download windows artifact"
         uses: actions/download-artifact@v3
         with:
           name: skynet-windows
-          path: skynet-build/windows
+          path: build/windows
       - name: "Merge checksum file"
         run: |
-          cd skynet-build
+          cd build
           cat linux/skynet*checksums.txt >> checksums.txt && rm linux/skynet*checksums.txt
           cat darwin/skynet*checksums.txt >> checksums.txt && rm darwin/skynet*checksums.txt
           cat windows/skynet*checksums.txt >> checksums.txt && rm windows/skynet*checksums.txt
