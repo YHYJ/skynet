@@ -2,6 +2,7 @@ PROJECT      := github.com/yhyj/skynet
 TARGET       := skynet
 INSTALL_PATH := /usr/local/bin
 ATTRIBUTION  := root
+COMMIT       := $(shell git rev-parse HEAD)
 
 .PHONY: all tidy build install clean
 all: build
@@ -19,7 +20,7 @@ tidy:
 	@echo -e "\x1b[32m[✔]\x1b[0m Successfully tidied up dependencies"
 
 build:
-	@go build -gcflags="-trimpath" -ldflags="-s -w -X $(PROJECT)/general.BuildTime=`date +%s` -X $(PROJECT)/general.BuildBy=$(USER)" -o $(TARGET)
+	@go build -gcflags="-trimpath" -ldflags="-s -w -X $(PROJECT)/general.GitCommitHash=$(COMMIT) -X $(PROJECT)/general.BuildTime=`date +%s` -X $(PROJECT)/general.BuildBy=Makefile" -o $(TARGET)
 	@echo -en "\x1b[32m[✔]\x1b[0m Successfully generated \x1b[32;1m$(TARGET)\x1b[0m"
 
 install:
