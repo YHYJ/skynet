@@ -10,6 +10,6 @@ release:
   draft: false
   mode: append
   extra_files:
-    - glob: ./skynet-build/**/*
-    - glob: ./skynet-build/checksums.txt
+    - glob: ./build/**/*
+    - glob: ./build/checksums.txt
   name_template: "Release {{.Tag}}"
