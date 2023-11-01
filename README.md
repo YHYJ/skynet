@@ -5,6 +5,8 @@
 <!-- Email: yj1516268@outlook.com -->
 <!-- Created Time: 2023-10-27 14:44:26 -->
 
+---
+
 <p align="center">
   <a href="https://github.com/YHYJ/skynet/actions/workflows/release.yml"><img src="https://github.com/YHYJ/skynet/actions/workflows/release.yml/badge.svg" alt="Go build and release by GoReleaser"></a>
 </p>
