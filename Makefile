@@ -37,8 +37,8 @@ build:
 install:
 	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(GENERATE_PATH)/$(TARGET) $(TARGET_INSTALL_PATH)/$(TARGET)
 	@mkdir -p $(RESOURCE_INSTALL_PATH)/applications $(RESOURCE_INSTALL_PATH)/pixmaps
-	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
-	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
+	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
+	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
 	@echo -e "\r\x1b[K\x1b[0m\x1b[32m[✔]\x1b[0m Successfully installed \x1b[32m$(TARGET)\x1b[0m"
 
 clean:
