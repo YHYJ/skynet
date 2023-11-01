@@ -1,9 +1,16 @@
-# README
+<h1 align="center">Skynet</h1>
 
 <!-- File: README.md -->
 <!-- Author: YJ -->
 <!-- Email: yj1516268@outlook.com -->
 <!-- Created Time: 2023-10-27 14:44:26 -->
+
+---
+
+
+<p align="center">
+  <a href="https://github.com/YHYJ/skynet/actions/workflows/release.yml"><img src="https://github.com/YHYJ/skynet/actions/workflows/release.yml/badge.svg" alt="Go build and release by GoReleaser"></a>
+</p>
 
 ---
 
@@ -43,19 +50,19 @@
 
 - `gui`子命令
 
-    启动GUI版Skynet
+  启动 GUI 版 Skynet
 
 - `http`子命令
 
-    在CLI启动HTTP服务
+  在 CLI 启动 HTTP 服务
 
 - `version`子命令
 
-    查看程序版本信息
+  查看程序版本信息
 
 - `help`
 
-    查看程序帮助信息
+  查看程序帮助信息
 
 ## Screenshot
 
@@ -87,8 +94,8 @@ CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s
 
 > 使用`uname -m`确定硬件架构
 >
-> - 结果是x86_64则GOARCH=amd64
-> - 结果是aarch64则GOARCH=arm64
+> - 结果是 x86_64 则 GOARCH=amd64
+> - 结果是 aarch64 则 GOARCH=arm64
 
 #### macOS
 
@@ -98,8 +105,8 @@ CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-
 
 > 使用`uname -m`确定硬件架构
 >
-> - 结果是x86_64则GOARCH=amd64
-> - 结果是aarch64则GOARCH=arm64
+> - 结果是 x86_64 则 GOARCH=amd64
+> - 结果是 aarch64 则 GOARCH=arm64
 
 #### Windows
 
@@ -109,5 +116,5 @@ CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="
 
 > 使用`echo %PROCESSOR_ARCHITECTURE%`确定硬件架构
 >
-> - 结果是x86_64则GOARCH=amd64
-> - 结果是aarch64则GOARCH=arm64
+> - 结果是 x86_64 则 GOARCH=amd64
+> - 结果是 aarch64 则 GOARCH=arm64
