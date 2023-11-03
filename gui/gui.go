@@ -21,6 +21,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/driver/desktop"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/yhyj/skynet/general"
@@ -42,14 +43,22 @@ func StartGraphicalUserInterface() {
 		selectedFolderText = fmt.Sprintf("Directory, default %s", defaultDir) // 服务启动路径框默认文本
 	)
 
-	// 预定义服务接口和小部件
+	// 定义服务接口和小部件
 	var (
-		httpServer    *http.Server   // HTTP服务
-		controlButton *widget.Button // 服务的启动/停止按钮
-		folderButton  *widget.Button // 目录选择按钮
-		urlButton     *widget.Button // 打开URL按钮
-		qrButton      *widget.Button // 二维码显示/隐藏按钮
-		qrWindow      fyne.Window    // 二维码窗口
+		httpServer    *http.Server    // HTTP服务
+		qrWindow      fyne.Window     // 二维码窗口
+		windowContent *fyne.Container // 窗口内容容器
+		refreshButton *widget.Button  // 接口刷新按钮
+		folderButton  *widget.Button  // 目录选择按钮
+		qrButton      *widget.Button  // 二维码显示/隐藏按钮
+		urlButton     *widget.Button  // 打开URL按钮
+		controlButton *widget.Button  // 服务的启动/停止按钮
+	)
+
+	// 定义通用资源
+	var (
+		separator = widget.NewSeparator() // 创建分隔线
+		spacer    = layout.NewSpacer()    // 创建填充空白
 	)
 
 	// 创建一个新应用
@@ -75,6 +84,18 @@ func StartGraphicalUserInterface() {
 	}
 	// 创建接口选择器（单选按钮组）
 	interfaceRadio := widget.NewRadioGroup(nicInfos, func(selected string) {})
+	// 创建接口刷新按钮
+	refreshButton = widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
+		nicInfos, err := GetNetInterfaces()
+		if err != nil {
+			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
+			errorDialog.Show()
+		}
+
+		interfaceRadio.Options = nicInfos
+		windowContent.Refresh()
+
+	})
 
 	// 创建端口选择器
 	portEntry := widget.NewEntry()
@@ -125,9 +146,6 @@ func StartGraphicalUserInterface() {
 		appInstance.OpenURL(serviceUrlParsed)
 	})
 	urlButton.Disable() // 禁用URL按钮
-
-	// 创建分隔线
-	separator := widget.NewSeparator()
 
 	// 创建服务状态显示动画
 	statusAnimation := widget.NewProgressBarInfinite()
@@ -244,23 +262,26 @@ func StartGraphicalUserInterface() {
 	qrButton.Disable()                            // 禁用二维码显示/隐藏按钮
 	qrButton.Importance = widget.MediumImportance // 按钮突出程度
 
+	// 多态行 —— 接口选择标签 + 接口刷新按钮
+	crossInterfaceRow := container.NewBorder(nil, nil, interfaceLabel, refreshButton, nil)
 	// 多态行 —— 服务路径选择按钮 + 已选路径显示框
 	crossDirRow := container.NewBorder(nil, nil, folderButton, nil, selectedFolderEntry)
 	// 多态行 —— 二维码显示/隐藏按钮 + 服务链接打开按钮 + 状态动画
 	crossStatusRow := container.NewBorder(nil, nil, qrButton, urlButton, statusAnimation)
 
 	// 填充主窗口
-	content := container.NewVBox(
-		interfaceLabel, // 网卡标签
-		interfaceRadio, // 网卡选择
-		portEntry,      // 端口配置
-		crossDirRow,    // 多态行
-		separator,      // 分隔线
-		crossStatusRow, // 多态行
-		separator,      // 分隔线
-		controlButton,  // 启动按钮
+	windowContent = container.NewVBox(
+		crossInterfaceRow, // 接口标签
+		interfaceRadio,    // 接口选择
+		spacer,            // 填充空白
+		portEntry,         // 端口配置
+		crossDirRow,       // 多态行
+		separator,         // 分隔线
+		crossStatusRow,    // 多态行
+		separator,         // 分隔线
+		controlButton,     // 启动按钮
 	)
-	mainWindow.SetContent(content)
+	mainWindow.SetContent(windowContent)
 
 	// 启动主窗口
 	mainWindow.ShowAndRun()
@@ -268,9 +289,9 @@ func StartGraphicalUserInterface() {
 
 // 生成自定义错误提示框
 func makeErrorDialog(title, dismiss, text string, size fyne.Size, parent fyne.Window) *dialog.CustomDialog {
-	content := widget.NewLabel(text)     // 设置内容
-	content.Wrapping = fyne.TextWrapWord // 设置换行
-	errorDialog := dialog.NewCustom(title, dismiss, content, parent)
+	dialogContent := widget.NewLabel(text)     // 设置提示框内容
+	dialogContent.Wrapping = fyne.TextWrapWord // 设置换行方式
+	errorDialog := dialog.NewCustom(title, dismiss, dialogContent, parent)
 	errorDialog.Resize(size)
 	return errorDialog
 }
