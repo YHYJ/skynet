@@ -28,19 +28,19 @@ import (
 
 // 启动GUI
 func StartGraphicalUserInterface() {
-	// 创建一个新应用
-	appInstance := app.NewWithID(general.Name)
-	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceIconPng.StaticContent))
+	// HTTP服务默认配置
+	var (
+		defaultIP   = "0.0.0.0"                                           // HTTP服务默认绑定的IP
+		defaultPort = "8080"                                              // HTTP服务默认监听的端口
+		defaultDir  = general.GetVariable("HOME")                         // HTTP服务默认启动路径
+		serviceUrl  = fmt.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP服务默认URL
+	)
 
-	// 创建主窗口
-	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", general.Name, general.Version))
-	mainWindow.SetMaster()                                                    // 设置为主窗口
-	baseWeight, baseHeight := float32(300), mainWindow.Canvas().Size().Height // 窗口基础尺寸
-	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                   // 设置窗口大小
-	mainWindow.SetFixedSize(true)                                             // 固定窗口大小
-
-	// 创建错误提示框尺寸
-	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
+	// 界面默认配置
+	var (
+		portText           = "Port [1~65535]"                                 // 端口框默认文本
+		selectedFolderText = fmt.Sprintf("Directory, default %s", defaultDir) // 服务启动路径框默认文本
+	)
 
 	// 预定义服务接口和小部件
 	var (
@@ -52,13 +52,19 @@ func StartGraphicalUserInterface() {
 		qrWindow      fyne.Window    // 二维码窗口
 	)
 
-	// HTTP服务默认配置
-	var (
-		defaultIP   = "0.0.0.0"
-		defaultPort = "8080"
-		defaultDir  = general.GetVariable("HOME")
-		serviceUrl  string
-	)
+	// 创建一个新应用
+	appInstance := app.NewWithID(general.Name)
+	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceIconPng.StaticContent))
+
+	// 创建主窗口
+	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", general.Name, general.Version))
+	mainWindow.SetMaster()                                                                           // 该窗口设为主窗口
+	mainWindow.SetFixedSize(false)                                                                   // 是否固定窗口大小
+	baseWeight, baseHeight := float32(len(selectedFolderText)*10), mainWindow.Canvas().Size().Height // 窗口基础尺寸
+	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                                          // 设置窗口大小
+
+	// 创建错误提示框尺寸
+	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
 	// 获取网卡信息
 	interfaceLabel := widget.NewLabel("Select Interface:")
@@ -72,11 +78,11 @@ func StartGraphicalUserInterface() {
 
 	// 创建端口选择器
 	portEntry := widget.NewEntry()
-	portEntry.SetPlaceHolder("Port [1~65535]")
+	portEntry.SetPlaceHolder(portText)
 
 	// 创建目录选择器标签
 	selectedFolderEntry := widget.NewEntry()
-	selectedFolderEntry.SetPlaceHolder(fmt.Sprintf("Directory, default %s", defaultDir))
+	selectedFolderEntry.SetPlaceHolder(selectedFolderText)
 	// 创建目录选择器
 	folderButton = widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 		// 固定文件选择对话框大小不可修改
@@ -120,9 +126,6 @@ func StartGraphicalUserInterface() {
 	})
 	urlButton.Disable() // 禁用URL按钮
 
-	// 将selectedFolderEntry和folderButton放置在同一行
-	dirRow := container.NewBorder(nil, nil, folderButton, urlButton, selectedFolderEntry)
-
 	// 创建分隔线
 	separator := widget.NewSeparator()
 
@@ -165,7 +168,7 @@ func StartGraphicalUserInterface() {
 			}
 			return defaultDir
 		}()
-		serviceUrl = fmt.Sprintf("http://%s:%v", selectedInterfaceIP, selectedPort)
+		serviceUrl = fmt.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
 
 		// 生成二维码
 		qrCodeImage, err := general.QrCodeImage(serviceUrl)
@@ -198,7 +201,7 @@ func StartGraphicalUserInterface() {
 				qrStatus = 1                                // 二维码已显示
 				// 设置URL按钮
 				urlButton.Enable() // 启用URL按钮
-				fmt.Printf("\x1b[32;1mServing HTTP on %s port %v (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, serviceUrl)
+				fmt.Printf("\x1b[32;1mServing HTTP on %s port %s (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, serviceUrl)
 			}
 		} else if serviceStatus == 1 {
 			// 停止HTTP服务
@@ -241,19 +244,21 @@ func StartGraphicalUserInterface() {
 	qrButton.Disable()                            // 禁用二维码显示/隐藏按钮
 	qrButton.Importance = widget.MediumImportance // 按钮突出程度
 
-	// 把二维码显示/隐藏按钮添加到顶部，和接口选择器标签同一行
-	topRow := container.NewBorder(nil, nil, interfaceLabel, qrButton, nil)
+	// 多态行 —— 服务路径选择按钮 + 已选路径显示框
+	crossDirRow := container.NewBorder(nil, nil, folderButton, nil, selectedFolderEntry)
+	// 多态行 —— 二维码显示/隐藏按钮 + 服务链接打开按钮 + 状态动画
+	crossStatusRow := container.NewBorder(nil, nil, qrButton, urlButton, statusAnimation)
 
 	// 填充主窗口
 	content := container.NewVBox(
-		topRow,          // 顶部
-		interfaceRadio,  // 网卡选择
-		portEntry,       // 端口配置
-		dirRow,          // 文件夹选择
-		separator,       // 分隔线
-		statusAnimation, // 状态显示
-		separator,       // 分隔线
-		controlButton,   // 启动按钮
+		interfaceLabel, // 网卡标签
+		interfaceRadio, // 网卡选择
+		portEntry,      // 端口配置
+		crossDirRow,    // 多态行
+		separator,      // 分隔线
+		crossStatusRow, // 多态行
+		separator,      // 分隔线
+		controlButton,  // 启动按钮
 	)
 	mainWindow.SetContent(content)
 
