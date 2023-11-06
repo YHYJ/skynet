@@ -130,9 +130,8 @@ func StartGraphicalUserInterface() {
 				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 				errorDialog.Show()
 			} else if dir == nil {
-				customErrText := "Startup folder not set"
-				errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
-				errorDialog.Show()
+				// 未选择文件夹，使用默认值
+				selectedDirEntry.SetText(defaultDir)
 			} else {
 				// 在标签中显示选择的文件夹路径
 				selectedDirEntry.SetText(strings.Split(dir.String(), "//")[1])
