@@ -39,8 +39,8 @@ func StartGraphicalUserInterface() {
 
 	// 界面默认配置
 	var (
-		portText           = "Port [1~65535]"                                 // 端口框默认文本
-		selectedFolderText = fmt.Sprintf("Directory, default %s", defaultDir) // 服务启动路径框默认文本
+		portText           = fmt.Sprintf("Port [1~65535], default %s", defaultPort) // 端口框默认文本
+		selectedFolderText = fmt.Sprintf("Directory, default %s", defaultDir)       // 服务启动路径框默认文本
 	)
 
 	// 定义服务接口和小部件
@@ -94,7 +94,6 @@ func StartGraphicalUserInterface() {
 
 		interfaceRadio.Options = nicInfos
 		windowContent.Refresh()
-
 	})
 
 	// 创建端口选择器
