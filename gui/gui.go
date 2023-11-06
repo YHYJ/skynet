@@ -125,16 +125,16 @@ func StartGraphicalUserInterface() {
 		folderWindow.Show()
 
 		// 弹出文件夹选择对话框
-		fileDialog := dialog.NewFolderOpen(func(dri fyne.ListableURI, err error) {
+		fileDialog := dialog.NewFolderOpen(func(dir fyne.ListableURI, err error) {
 			if err != nil {
 				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 				errorDialog.Show()
-			} else if dri == nil {
+			} else if dir == nil {
 				customErrText := "Startup folder not set"
 				errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
 				errorDialog.Show()
 			} else {
-				selectedDir := strings.Split(dri.String(), "//")[1]
+				selectedDir := strings.Split(dir.String(), "//")[1]
 				// 在标签中显示选择的文件夹路径
 				selectedDirEntry.SetText(selectedDir)
 				log.Printf("Service directory: '%s'", selectedDir)
