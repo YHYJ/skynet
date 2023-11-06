@@ -11,6 +11,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/yhyj/skynet/general"
@@ -27,7 +28,7 @@ var guiCmd = &cobra.Command{
 			if general.GetVariable("DISPLAY") != "" {
 				// 设置字体
 				if err := gui.SetFont(); err != nil {
-					fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+					log.Printf("\x1b[31;1m%s\x1b[0m\n", err)
 				}
 				// 启动GUI
 				gui.StartGraphicalUserInterface()
@@ -37,7 +38,7 @@ var guiCmd = &cobra.Command{
 		} else if general.Platform == "windows" {
 			// 设置字体
 			if err := gui.SetFont(); err != nil {
-				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", err)
+				log.Printf("\x1b[31;1m%s\x1b[0m\n", err)
 			}
 			// 启动GUI
 			gui.StartGraphicalUserInterface()

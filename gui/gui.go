@@ -134,12 +134,9 @@ func StartGraphicalUserInterface() {
 				errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
 				errorDialog.Show()
 			} else {
-				selectedDir := strings.Split(dir.String(), "//")[1]
 				// 在标签中显示选择的文件夹路径
-				selectedDirEntry.SetText(selectedDir)
-				log.Printf("Service directory: '%s'", selectedDir)
+				selectedDirEntry.SetText(strings.Split(dir.String(), "//")[1])
 			}
-			log.Printf("Service directory: '%s'", defaultDir)
 			// 关闭新窗口
 			folderWindow.Close()
 		}, folderWindow)
@@ -194,6 +191,7 @@ func StartGraphicalUserInterface() {
 			}
 			return defaultDir
 		}()
+
 		serviceUrl = fmt.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
 
 		// 生成二维码
@@ -218,7 +216,7 @@ func StartGraphicalUserInterface() {
 				serviceStatus = 1             // 服务已启动
 				statusAnimation.Start()       // 服务状态动画
 				controlButton.SetText("Stop") // 修改按钮文字
-				log.Printf("\x1b[32;1mServing HTTP on %s port %s\x1b[0m (\x1b[34;1;4m%s\x1b[0m)\n", selectedInterfaceIP, selectedPort, serviceUrl)
+				log.Printf("\x1b[32;1mServing HTTP at '%s'\x1b[0m (\x1b[34;1;4m%s\x1b[0m)\n", selectedDir, serviceUrl)
 				// 设置二维码状态
 				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距）
 				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合

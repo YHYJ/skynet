@@ -26,7 +26,7 @@ func HttpServer(address string, port string, dir string) {
 	} else {
 		// 成功后输出服务信息
 		url := fmt.Sprintf("http://%s:%v", address, port)
-		fmt.Printf("\n\x1b[32;1mStarting http server at %s\x1b[0m\n", dir) // 服务地址
+		fmt.Printf("\n\x1b[32;1mStarting http server at '%s'\x1b[0m\n", dir) // 服务地址
 		fmt.Printf("\x1b[32;1mHTTP url is %s\x1b[0m\n", url)               // URL
 		codeString, err := general.QrCodeString(url)                       // 二维码
 		if err != nil {
