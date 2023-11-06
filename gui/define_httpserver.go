@@ -10,7 +10,7 @@ Description: 用于GUI的HTTP服务
 package gui
 
 import (
-	"fmt"
+	"log"
 	"net"
 	"net/http"
 )
@@ -31,9 +31,9 @@ func HttpServer(address string, port string, dir string) (*http.Server, error) {
 		// 启动HTTP服务器
 		go func() {
 			if err := server.Serve(listener); err == http.ErrServerClosed {
-				fmt.Printf("HTTP Server closed\n")
+				log.Printf("\x1b[33;1mHTTP Server closed\x1b[0m\n")
 			} else if err != nil {
-				fmt.Printf("HTTP server error: \x1b[31;1m%s\x1b[0m\n", err)
+				log.Printf("\x1b[31;1mHTTP server error\x1b[0m: \x1b[31m%s\x1b[0m\n", "123")
 			}
 		}()
 	}

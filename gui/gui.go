@@ -11,6 +11,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -92,6 +93,7 @@ func StartGraphicalUserInterface() {
 			errorDialog.Show()
 		}
 
+		log.Printf("Network interface refresh")
 		interfaceRadio.Options = nicInfos
 		windowContent.Refresh()
 	})
@@ -126,15 +128,19 @@ func StartGraphicalUserInterface() {
 				errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
 				errorDialog.Show()
 			} else {
+				selectedDir := strings.Split(dri.String(), "//")[1]
 				// 在标签中显示选择的文件夹路径
-				selectedFolderEntry.SetText(strings.Split(dri.String(), "//")[1])
+				selectedFolderEntry.SetText(selectedDir)
+				log.Printf("Service directory: '%s'", selectedDir)
 			}
+			log.Printf("Service directory: '%s'", defaultDir)
 			// 关闭新窗口
 			folderWindow.Close()
 		}, folderWindow)
 		fileDialog.Show()
 		fileDialog.Resize(fyne.NewSize(folderWidth, folderHeight))
 	})
+
 	// 创建URL打开按钮
 	urlButton = widget.NewButtonWithIcon("", theme.MailSendIcon(), func() {
 		serviceUrlParsed, err := url.Parse(serviceUrl)
@@ -143,6 +149,7 @@ func StartGraphicalUserInterface() {
 			errorDialog.Show()
 		}
 		appInstance.OpenURL(serviceUrlParsed)
+		log.Printf("Open URL: \x1b[34;1;4m%s\x1b[0m", serviceUrlParsed)
 	})
 	urlButton.Disable() // 禁用URL按钮
 
@@ -209,6 +216,7 @@ func StartGraphicalUserInterface() {
 				serviceStatus = 1             // 服务已启动
 				statusAnimation.Start()       // 服务状态动画
 				controlButton.SetText("Stop") // 修改按钮文字
+				log.Printf("\x1b[32;1mServing HTTP on %s port %s\x1b[0m (\x1b[34;1;4m%s\x1b[0m)\n", selectedInterfaceIP, selectedPort, serviceUrl)
 				// 设置二维码状态
 				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距）
 				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合
@@ -218,7 +226,6 @@ func StartGraphicalUserInterface() {
 				qrStatus = 1                                // 二维码已显示
 				// 设置URL按钮
 				urlButton.Enable() // 启用URL按钮
-				fmt.Printf("\x1b[32;1mServing HTTP on %s port %s (%s)\x1b[0m\n", selectedInterfaceIP, selectedPort, serviceUrl)
 			}
 		} else if serviceStatus == 1 {
 			// 停止HTTP服务
@@ -252,10 +259,12 @@ func StartGraphicalUserInterface() {
 			qrWindow.Show()
 			qrButton.SetIcon(theme.VisibilityOffIcon()) // 按钮变为点击隐藏
 			qrStatus = 1
+			log.Printf("QR Code displayed")
 		} else if qrStatus == 1 && serviceStatus == 1 { // 二维码已显示且服务已启动，则隐藏二维码
 			qrWindow.Hide()
 			qrButton.SetIcon(theme.VisibilityIcon()) // 按钮变为点击显示
 			qrStatus = 0
+			log.Printf("QR Code hidden")
 		}
 	})
 	qrButton.Disable()                            // 禁用二维码显示/隐藏按钮
