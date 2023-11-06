@@ -40,8 +40,8 @@ func StartGraphicalUserInterface() {
 
 	// 界面默认配置
 	var (
-		portText           = fmt.Sprintf("Port [1~65535], default %s", defaultPort) // 端口框默认文本
-		selectedFolderText = fmt.Sprintf("Directory, default %s", defaultDir)       // 服务启动路径框默认文本
+		portText        = fmt.Sprintf("Port [1~65535], default %s", defaultPort) // 端口框默认文本
+		selectedDirText = fmt.Sprintf("Directory, default %s", defaultDir)       // 服务启动路径框默认文本
 	)
 
 	// 定义服务接口和小部件
@@ -56,6 +56,12 @@ func StartGraphicalUserInterface() {
 		controlButton *widget.Button  // 服务的启动/停止按钮
 	)
 
+	// 定义标志位
+	var (
+		serviceStatus = 0 // HTTP服务状态，0代表服务未启动，1代表服务已启动（NOTE: 不能在contrilButton按钮内部定义）
+		qrStatus      = 0 // 二维码状态，0代表二维码未显示，1代表二维码已显示
+	)
+
 	// 定义通用资源
 	var (
 		separator = widget.NewSeparator() // 创建分隔线
@@ -68,10 +74,10 @@ func StartGraphicalUserInterface() {
 
 	// 创建主窗口
 	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", general.Name, general.Version))
-	mainWindow.SetMaster()                                                                           // 该窗口设为主窗口
-	mainWindow.SetFixedSize(false)                                                                   // 是否固定窗口大小
-	baseWeight, baseHeight := float32(len(selectedFolderText)*10), mainWindow.Canvas().Size().Height // 窗口基础尺寸
-	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                                          // 设置窗口大小
+	mainWindow.SetMaster()                                                                        // 该窗口设为主窗口
+	mainWindow.SetFixedSize(false)                                                                // 是否固定窗口大小
+	baseWeight, baseHeight := float32(len(selectedDirText)*10), mainWindow.Canvas().Size().Height // 窗口基础尺寸
+	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                                       // 设置窗口大小
 
 	// 创建错误提示框尺寸
 	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
@@ -103,8 +109,8 @@ func StartGraphicalUserInterface() {
 	portEntry.SetPlaceHolder(portText)
 
 	// 创建目录选择器标签
-	selectedFolderEntry := widget.NewEntry()
-	selectedFolderEntry.SetPlaceHolder(selectedFolderText)
+	selectedDirEntry := widget.NewEntry()
+	selectedDirEntry.SetPlaceHolder(selectedDirText)
 	// 创建目录选择器
 	folderButton = widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 		// 固定文件选择对话框大小不可修改
@@ -130,7 +136,7 @@ func StartGraphicalUserInterface() {
 			} else {
 				selectedDir := strings.Split(dri.String(), "//")[1]
 				// 在标签中显示选择的文件夹路径
-				selectedFolderEntry.SetText(selectedDir)
+				selectedDirEntry.SetText(selectedDir)
 				log.Printf("Service directory: '%s'", selectedDir)
 			}
 			log.Printf("Service directory: '%s'", defaultDir)
@@ -166,10 +172,6 @@ func StartGraphicalUserInterface() {
 		qrWindow = appInstance.NewWindow("QR Code") // 普通窗口
 	}
 
-	// 状态标识
-	serviceStatus := 0 // HTTP服务状态，0代表服务未启动，1代表服务已启动（NOTE: 不能在contrilButton按钮内部定义）
-	qrStatus := 0      // 二维码状态，0代表二维码未显示，1代表二维码已显示
-
 	// 服务启动/停止按钮逻辑
 	controlButton = widget.NewButton("Start", func() {
 		// 获取参数信息，如果参数为空则使用默认值
@@ -187,8 +189,8 @@ func StartGraphicalUserInterface() {
 			return defaultPort
 		}()
 		selectedDir := func() string {
-			if selectedFolderEntry.Text != "" {
-				return selectedFolderEntry.Text
+			if selectedDirEntry.Text != "" {
+				return selectedDirEntry.Text
 			}
 			return defaultDir
 		}()
@@ -273,7 +275,7 @@ func StartGraphicalUserInterface() {
 	// 多态行 —— 接口选择标签 + 接口刷新按钮
 	crossInterfaceRow := container.NewBorder(nil, nil, interfaceLabel, refreshButton, nil)
 	// 多态行 —— 服务路径选择按钮 + 已选路径显示框
-	crossDirRow := container.NewBorder(nil, nil, folderButton, nil, selectedFolderEntry)
+	crossDirRow := container.NewBorder(nil, nil, folderButton, nil, selectedDirEntry)
 	// 多态行 —— 二维码显示/隐藏按钮 + 服务链接打开按钮 + 状态动画
 	crossStatusRow := container.NewBorder(nil, nil, qrButton, urlButton, statusAnimation)
 
