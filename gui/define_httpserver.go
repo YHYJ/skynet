@@ -19,7 +19,6 @@ import (
 func HttpServer(address string, port string, dir string) (*http.Server, error) {
 	// 创建一个HTTP服务器
 	server := &http.Server{
-		Addr:    address + ":" + port,           // 指定服务器侦听的TCP地址
 		Handler: http.FileServer(http.Dir(dir)), // 调用的处理程序
 	}
 
