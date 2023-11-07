@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strings"
 
 	"fyne.io/fyne/v2"
@@ -30,18 +31,24 @@ import (
 
 // 启动GUI
 func StartGraphicalUserInterface() {
+	// 获取当前用户信息
+	currentUserInfo, err := general.GetCurrentUserInfo()
+	if err != nil {
+		log.Printf("\x1b[31m%s\x1b[0m\n", err)
+	}
+
 	// HTTP服务默认配置
 	var (
 		defaultIP   = "0.0.0.0"                                           // HTTP服务默认绑定的IP
 		defaultPort = "8080"                                              // HTTP服务默认监听的端口
-		defaultDir  = general.GetVariable("HOME")                         // HTTP服务默认启动路径
+		defaultDir  = filepath.Join(currentUserInfo.HomeDir, "Downloads") // HTTP服务默认启动路径
 		serviceUrl  = fmt.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP服务默认URL
 	)
 
 	// 界面默认配置
 	var (
-		portText        = fmt.Sprintf("Port [1~65535], default %s", defaultPort) // 端口框默认文本
-		selectedDirText = fmt.Sprintf("Directory, default %s", defaultDir)       // 服务启动路径框默认文本
+		portText        = fmt.Sprintf("Port [1~65535], default %s", defaultPort)                                             // 端口框默认文本
+		selectedDirText = fmt.Sprintf("Directory, default %s", strings.Replace(defaultDir, currentUserInfo.HomeDir, "~", 1)) // 服务启动路径框默认文本
 	)
 
 	// 定义服务接口和小部件
@@ -74,10 +81,10 @@ func StartGraphicalUserInterface() {
 
 	// 创建主窗口
 	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", general.Name, general.Version))
-	mainWindow.SetMaster()                                                                        // 该窗口设为主窗口
-	mainWindow.SetFixedSize(false)                                                                // 是否固定窗口大小
-	baseWeight, baseHeight := float32(len(selectedDirText)*10), mainWindow.Canvas().Size().Height // 窗口基础尺寸
-	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                                       // 设置窗口大小
+	mainWindow.SetMaster()                                                                         // 该窗口设为主窗口
+	mainWindow.SetFixedSize(false)                                                                 // 是否固定窗口大小
+	baseWeight, baseHeight := float32(len(selectedDirText))*9.1, mainWindow.Canvas().Size().Height // 窗口基础尺寸
+	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                                        // 设置窗口大小
 
 	// 创建错误提示框尺寸
 	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
