@@ -58,7 +58,7 @@ func StartGraphicalUserInterface() {
 
 	// 定义标志位
 	var (
-		serviceStatus = 0 // HTTP服务状态，0代表服务未启动，1代表服务已启动（NOTE: 不能在contrilButton按钮内部定义）
+		serviceStatus = 0 // HTTP服务状态，0代表服务未启动，1代表服务已启动
 		qrStatus      = 0 // 二维码状态，0代表二维码未显示，1代表二维码已显示
 	)
 
