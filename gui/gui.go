@@ -57,14 +57,15 @@ func StartGraphicalUserInterface() {
 
 	// 定义服务接口和小部件
 	var (
-		httpServer    *http.Server    // HTTP服务
-		qrWindow      fyne.Window     // 二维码窗口
-		windowContent *fyne.Container // 窗口内容容器
-		refreshButton *widget.Button  // 接口刷新按钮
-		folderButton  *widget.Button  // 目录选择按钮
-		qrButton      *widget.Button  // 二维码显示/隐藏按钮
-		urlButton     *widget.Button  // 打开URL按钮
-		controlButton *widget.Button  // 服务的启动/停止按钮
+		httpServer    *http.Server         // HTTP服务
+		qrWindow      fyne.Window          // 二维码窗口
+		windowContent *fyne.Container      // 窗口内容容器
+		refreshButton *widget.Button       // 接口刷新按钮
+		folderButton  *widget.Button       // 目录选择按钮
+		qrButton      *widget.Button       // 二维码显示/隐藏按钮
+		urlButton     *widget.Button       // 打开URL按钮
+		controlButton *widget.Button       // 服务的启动/停止按钮
+		customDialog  *dialog.CustomDialog // 自定义提示框
 	)
 
 	// 定义标志位
@@ -90,15 +91,15 @@ func StartGraphicalUserInterface() {
 	baseWeight, baseHeight := float32(len(selectedDirText))*9.1, mainWindow.Canvas().Size().Height // 窗口基础尺寸
 	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                                        // 设置窗口大小
 
-	// 创建错误提示框尺寸
-	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
+	// 创建自定义提示框尺寸
+	customDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
 	// 获取网卡信息
 	interfaceLabel := widget.NewLabel(interfaceLabelText)
 	nicInfos, err := GetNetInterfaces()
 	if err != nil {
-		errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
-		errorDialog.Show()
+		customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
+		customDialog.Show()
 	}
 	// 创建接口选择器（单选按钮组）
 	interfaceRadio := widget.NewRadioGroup(nicInfos, func(selected string) {})
@@ -106,8 +107,8 @@ func StartGraphicalUserInterface() {
 	refreshButton = widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
 		nicInfos, err := GetNetInterfaces()
 		if err != nil {
-			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
-			errorDialog.Show()
+			customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
+			customDialog.Show()
 		}
 
 		log.Printf("Network interface refresh")
@@ -145,8 +146,8 @@ func StartGraphicalUserInterface() {
 		// 弹出文件夹选择对话框
 		fileDialog := dialog.NewFolderOpen(func(dir fyne.ListableURI, err error) {
 			if err != nil {
-				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
-				errorDialog.Show()
+				customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
+				customDialog.Show()
 			} else if dir == nil {
 				// 未选择文件夹，使用默认值
 				selectedDirEntry.SetText(defaultDir)
@@ -171,8 +172,8 @@ func StartGraphicalUserInterface() {
 	urlButton = widget.NewButtonWithIcon("", theme.MailSendIcon(), func() {
 		serviceUrlParsed, err := url.Parse(serviceUrl)
 		if err != nil {
-			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
-			errorDialog.Show()
+			customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
+			customDialog.Show()
 		}
 		appInstance.OpenURL(serviceUrlParsed)
 		log.Printf("Open URL: \x1b[34;1;4m%s\x1b[0m", serviceUrlParsed)
@@ -231,8 +232,8 @@ func StartGraphicalUserInterface() {
 		// 生成二维码
 		qrCodeImage, err := general.QrCodeImage(serviceUrl)
 		if err != nil {
-			errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
-			errorDialog.Show()
+			customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
+			customDialog.Show()
 		}
 		// 将二维码图像转换为 Fyne 图像
 		qrImage := canvas.NewImageFromImage(qrCodeImage)
@@ -249,12 +250,12 @@ func StartGraphicalUserInterface() {
 			case "All":
 				httpServer, err = HttpDownloadUploadServer(selectedInterfaceIP, selectedPort, selectedDir)
 			default:
-				errorDialog := makeErrorDialog("Warning", "Close", "Please select service", errorDialogSize, mainWindow)
-				errorDialog.Show()
+				customDialog = makeCustomDialog("Warning", "Close", "Please select service", customDialogSize, mainWindow)
+				customDialog.Show()
 			}
 			if err != nil {
-				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
-				errorDialog.Show()
+				customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
+				customDialog.Show()
 			} else {
 				// 设置服务状态
 				serviceStatus = 1             // 服务已启动
@@ -282,8 +283,8 @@ func StartGraphicalUserInterface() {
 			DeregisterAll(serviceSlice)
 			// 停止HTTP服务
 			if err := httpServer.Shutdown(nil); err != nil {
-				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
-				errorDialog.Show()
+				customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
+				customDialog.Show()
 			}
 			// 设置服务状态
 			serviceStatus = 0              // 服务已停止
@@ -304,8 +305,8 @@ func StartGraphicalUserInterface() {
 			folderButton.Enable()     // 目录选择按钮
 		} else {
 			customErrText := "Unknown error"
-			errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
-			errorDialog.Show()
+			customDialog = makeCustomDialog("Error", "Close", customErrText, customDialogSize, mainWindow)
+			customDialog.Show()
 		}
 	})
 	// 设置按钮外观
@@ -356,11 +357,11 @@ func StartGraphicalUserInterface() {
 	mainWindow.ShowAndRun()
 }
 
-// 生成自定义错误提示框
-func makeErrorDialog(title, dismiss, text string, size fyne.Size, parent fyne.Window) *dialog.CustomDialog {
+// 生成自定义提示框
+func makeCustomDialog(title, dismiss, text string, size fyne.Size, parent fyne.Window) *dialog.CustomDialog {
 	dialogContent := widget.NewLabel(text)     // 设置提示框内容
 	dialogContent.Wrapping = fyne.TextWrapWord // 设置换行方式
-	errorDialog := dialog.NewCustom(title, dismiss, dialogContent, parent)
-	errorDialog.Resize(size)
-	return errorDialog
+	customDialog := dialog.NewCustom(title, dismiss, dialogContent, parent)
+	customDialog.Resize(size)
+	return customDialog
 }
