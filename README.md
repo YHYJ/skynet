@@ -73,6 +73,13 @@
 
 ![Skynet GUI version](resources/screenshots/gui-version.png)
 
+- 'Select Service': 选择服务模式，可选值为下载服务'Download'、上传服务'Upload'和上传/下载服务都开启的'All'
+- 'Select Interface': 选择网络接口，服务在选择的接口上启动。右侧是刷新接口列表的按钮
+- 'Port': 端口设置框，服务绑定到指定的端口
+- 'Directory': 服务路径设置，选定的服务在此路径上启动。左侧是打开路径选择器'Direcctory Selection'的按钮
+- '状态栏': 蓝色无文字的是状态栏，代表了服务的运行状态。其左侧是二维码的显示/隐藏按钮，右侧是在默认浏览器打开服务地址的按钮
+- 'Start/Stop按钮': 服务的启动/停止按钮，服务未启动显示'Start'，服务启动后显示'Stop'
+
 ## Compile
 
 ### 当前平台
