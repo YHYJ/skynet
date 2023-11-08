@@ -18,7 +18,57 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 )
+
+// CustomMux 是自定义的多路复用器
+type CustomMux struct {
+	mu       sync.RWMutex
+	handlers map[string]http.Handler
+}
+
+// NewCustomMux 创建一个新的自定义多路复用器
+func NewCustomMux() *CustomMux {
+	return &CustomMux{
+		handlers: make(map[string]http.Handler),
+	}
+}
+
+// Handle 注册一个处理器
+func (mux *CustomMux) Handle(pattern string, handler http.Handler) {
+	mux.mu.Lock()
+	defer mux.mu.Unlock()
+	mux.handlers[pattern] = handler
+}
+
+// HandleFunc 注册一个处理 HTTP 请求的函数
+func (mux *CustomMux) HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) {
+	mux.Handle(pattern, http.HandlerFunc(handler))
+}
+
+// Deregister 注销处理器
+func (mux *CustomMux) Deregister(patterns ...string) {
+	mux.mu.Lock()
+	defer mux.mu.Unlock()
+	for _, pattern := range patterns {
+		delete(mux.handlers, pattern)
+	}
+}
+
+// ServeHTTP 实现 http.Handler 接口
+func (mux *CustomMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	mux.mu.RLock()
+	defer mux.mu.RUnlock()
+
+	handler, ok := mux.handlers[r.URL.Path]
+	if ok {
+		handler.ServeHTTP(w, r)
+	} else {
+		http.NotFound(w, r)
+	}
+}
+
+var customMux = NewCustomMux()
 
 // 启动HTTP下载服务
 func HttpDownloadServer(address string, port string, dir string) (*http.Server, error) {
@@ -32,11 +82,11 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 
 	// 创建一个HTTP服务器
 	server := &http.Server{
-		Handler: http.DefaultServeMux, // 调用的处理程序
+		Handler: customMux, // 调用的处理程序
 	}
 
 	// 在DefaultServeMux中注册给定模式的处理函数
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	customMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
@@ -63,7 +113,7 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 	})
 
 	// 在DefaultServeMux中注册给定模式的处理程序
-	http.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
+	customMux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
 
 	// 创建TCP监听器
 	listener, err := net.Listen("tcp", address+":"+port)
@@ -95,11 +145,11 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 
 	// 创建一个HTTP服务器
 	server := &http.Server{
-		Handler: http.DefaultServeMux, // 调用的处理程序
+		Handler: customMux, // 调用的处理程序
 	}
 
 	// 在DefaultServeMux中注册给定模式的处理函数
-	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+	customMux.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
 			err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
@@ -188,11 +238,11 @@ func HttpDownloadUploadServer(address string, port string, dir string) (*http.Se
 
 	// 创建一个HTTP服务器
 	server := &http.Server{
-		Handler: http.DefaultServeMux, // 调用的处理程序
+		Handler: customMux, // 调用的处理程序
 	}
 
 	// 在DefaultServeMux中注册给定模式的处理函数
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	customMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// 根路径上显示一个链接到/upload页面
 		templateString := `
 		<!doctype html>
@@ -208,7 +258,7 @@ func HttpDownloadUploadServer(address string, port string, dir string) (*http.Se
 		newTemplate, _ := template.New("root").Parse(templateString)
 		newTemplate.Execute(w, nil)
 	})
-	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+	customMux.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
 			err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
@@ -268,7 +318,7 @@ func HttpDownloadUploadServer(address string, port string, dir string) (*http.Se
 			newTemplate.Execute(w, nil)
 		}
 	})
-	http.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
+	customMux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
@@ -298,7 +348,7 @@ func HttpDownloadUploadServer(address string, port string, dir string) (*http.Se
 	})
 
 	// 在DefaultServeMux中注册给定模式的处理程序
-	http.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
+	customMux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
 
 	// 创建TCP监听器
 	listener, err := net.Listen("tcp", address+":"+port)
@@ -316,4 +366,9 @@ func HttpDownloadUploadServer(address string, port string, dir string) (*http.Se
 	}
 
 	return server, nil
+}
+
+// DeregisterAll 注销所有处理器
+func DeregisterAll() {
+	customMux.Deregister("/", "/upload", "/download")
 }
