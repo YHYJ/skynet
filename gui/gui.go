@@ -30,7 +30,7 @@ import (
 	"github.com/yhyj/skynet/general"
 )
 
-// 启动GUI
+// StartGraphicalUserInterface 启动 GUI
 func StartGraphicalUserInterface() {
 	// 获取当前用户信息
 	currentUserInfo, err := general.GetCurrentUserInfo()
@@ -243,7 +243,7 @@ func StartGraphicalUserInterface() {
 			case "Upload":
 				httpServer, err = HttpUploadServer(selectedInterfaceIP, selectedPort, selectedDir)
 			case "All":
-				httpServer, err = HttpDownloadUploadServer(selectedInterfaceIP, selectedPort, selectedDir)
+				httpServer, err = HttpAllServer(selectedInterfaceIP, selectedPort, selectedDir)
 			default:
 				customDialog = makeCustomDialog("Warning", "Close", "Please select service", customDialogSize, mainWindow)
 				customDialog.Show()
@@ -352,7 +352,7 @@ func StartGraphicalUserInterface() {
 	mainWindow.ShowAndRun()
 }
 
-// 生成自定义提示框
+// makeCustomDialog 生成自定义提示框
 func makeCustomDialog(title, dismiss, text string, size fyne.Size, parent fyne.Window) *dialog.CustomDialog {
 	dialogContent := widget.NewLabel(text)     // 设置提示框内容
 	dialogContent.Wrapping = fyne.TextWrapWord // 设置换行方式

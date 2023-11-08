@@ -70,7 +70,7 @@ func (mux *CustomMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 var customMux = NewCustomMux()
 
-// 启动HTTP下载服务
+// HttpDownloadServer 启动 HTTP 下载服务
 func HttpDownloadServer(address string, port string, dir string) (*http.Server, error) {
 	// 服务启动目录不存在则创建
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
@@ -90,7 +90,7 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
-			log.Println("Error reading download directory: ", err)
+			fmt.Fprintf(w, "Error reading download directory: %s", err)
 		}
 
 		templateString := `
@@ -133,7 +133,7 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 	return server, nil
 }
 
-// 启动HTTP上传服务
+// HttpUploadServer 启动 HTTP 上传服务
 func HttpUploadServer(address string, port string, dir string) (*http.Server, error) {
 	// 服务启动目录不存在则创建
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
@@ -226,8 +226,8 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 	return server, nil
 }
 
-// 启动HTTP下载/上传服务
-func HttpDownloadUploadServer(address string, port string, dir string) (*http.Server, error) {
+// HttpAllServer 启动 HTTP 所有服务
+func HttpAllServer(address string, port string, dir string) (*http.Server, error) {
 	// 服务启动目录不存在则创建
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err := os.MkdirAll(dir, os.ModePerm)
@@ -322,8 +322,7 @@ func HttpDownloadUploadServer(address string, port string, dir string) (*http.Se
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
-			log.Println("Error reading uploads directory: ", err)
-			return
+			fmt.Fprintf(w, "Error reading download directory: %s", err)
 		}
 
 		templateString := `

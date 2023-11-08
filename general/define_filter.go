@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-// 通过接口名称前缀判断是否是虚拟接口
+// IsDockerInterface 通过接口名称前缀判断是否是 Docker 虚拟接口
 func IsDockerInterface(iface net.Interface) bool {
 	ifaceName := strings.ToLower(iface.Name)
 	if strings.HasPrefix(ifaceName, "br-") || strings.HasPrefix(ifaceName, "veth") || strings.HasPrefix(ifaceName, "docker") {

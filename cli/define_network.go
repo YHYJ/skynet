@@ -15,7 +15,7 @@ import (
 	"github.com/yhyj/skynet/general"
 )
 
-// 获取网卡信息
+// GetNetInterfaces 获取网卡信息
 func GetNetInterfaces() (map[int]map[string]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
 	if err != nil {

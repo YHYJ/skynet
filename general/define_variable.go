@@ -30,7 +30,7 @@ var platformChart = map[string]map[string]string{
 	},
 }
 
-// 获取环境变量
+// GetVariable 获取环境变量
 func GetVariable(key string) string {
 	if innerMap, exists := platformChart[Platform]; exists {
 		if _, variableExists := innerMap[key]; variableExists {
@@ -42,7 +42,7 @@ func GetVariable(key string) string {
 	return variable
 }
 
-// 获取不在环境变量中的HOSTNAME
+// GetHostname 获取系统 HOSTNAME
 func GetHostname() string {
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -51,12 +51,12 @@ func GetHostname() string {
 	return hostname
 }
 
-// 设置环境变量
+// SetVariable 设置环境变量
 func SetVariable(key, value string) error {
 	return os.Setenv(key, value)
 }
 
-// 根据用户名获取用户信息
+// GetUserInfoByName 根据用户名获取用户信息
 func GetUserInfoByName(userName string) (*user.User, error) {
 	userInfo, err := user.Lookup(userName)
 	if err != nil {
@@ -65,7 +65,7 @@ func GetUserInfoByName(userName string) (*user.User, error) {
 	return userInfo, nil
 }
 
-// 根据ID获取用户信息
+// GetUserInfoById 根据ID获取用户信息
 func GetUserInfoById(userId int) (*user.User, error) {
 	userInfo, err := user.LookupId(strconv.Itoa(userId))
 	if err != nil {
@@ -74,7 +74,7 @@ func GetUserInfoById(userId int) (*user.User, error) {
 	return userInfo, nil
 }
 
-// 获取当前用户信息
+// GetCurrentUserInfo 获取当前用户信息
 func GetCurrentUserInfo() (*user.User, error) {
 	currentUser, err := user.Current()
 	if err != nil {

@@ -14,7 +14,7 @@ import (
 	"path/filepath"
 )
 
-// 判断文件是否存在
+// FileExist 判断文件是否存在
 func FileExist(filePath string) bool {
 	_, err := os.Stat(filePath)
 	if err != nil {
@@ -26,7 +26,7 @@ func FileExist(filePath string) bool {
 	return true
 }
 
-// 获取指定文件的绝对路径
+// GetAbsPath 获取指定文件的绝对路径
 func GetAbsPath(filePath string) string {
 	// 获取绝对路径
 	absPath, err := filepath.Abs(filePath)

@@ -15,7 +15,7 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-// 生成二维码图片
+// QrCodeImage 生成二维码图片
 func QrCodeImage(content string) (image.Image, error) {
 	qr, err := qrcode.New(content, qrcode.Medium)
 	if err != nil {
@@ -26,7 +26,7 @@ func QrCodeImage(content string) (image.Image, error) {
 	return qr.Image(256), nil
 }
 
-// 生成二维码字符串
+// QrCodeString 生成二维码字符串
 func QrCodeString(content string) (string, error) {
 	qt, err := qrcode.New(content, qrcode.Medium)
 	if err != nil {

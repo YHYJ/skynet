@@ -21,7 +21,7 @@ import (
 	"github.com/yhyj/skynet/general"
 )
 
-// 启动HTTP下载服务
+// HttpDownloadServer 启动 HTTP 下载服务
 func HttpDownloadServer(address string, port string, dir string) {
 	// 创建TCP监听器
 	listener, err := net.Listen("tcp", address+":"+port)
@@ -45,7 +45,7 @@ func HttpDownloadServer(address string, port string, dir string) {
 			// 列出文件夹中的所有文件，并提供下载链接
 			files, err := os.ReadDir(dir)
 			if err != nil {
-				fmt.Fprintln(w, err)
+				fmt.Fprintf(w, "Error reading download directory: %s", err)
 			}
 
 			templateString := `
@@ -77,7 +77,7 @@ func HttpDownloadServer(address string, port string, dir string) {
 	}
 }
 
-// 启动HTTP上传服务
+// HttpUploadServer 启动 HTTP 上传服务
 func HttpUploadServer(address string, port string, dir string) {
 	// 创建TCP监听器
 	listener, err := net.Listen("tcp", address+":"+port)
@@ -165,7 +165,7 @@ func HttpUploadServer(address string, port string, dir string) {
 	}
 }
 
-// 启动所有HTTP服务
+// HttpAllServer 启动所有 HTTP 服务
 func HttpAllServer(address string, port string, dir string) {
 	// 创建TCP监听器
 	listener, err := net.Listen("tcp", address+":"+port)
@@ -265,7 +265,7 @@ func HttpAllServer(address string, port string, dir string) {
 			// 列出文件夹中的所有文件，并提供下载链接
 			files, err := os.ReadDir(dir)
 			if err != nil {
-				fmt.Fprintln(w, err)
+				fmt.Fprintf(w, "Error reading download directory: %s", err)
 			}
 
 			templateString := `
