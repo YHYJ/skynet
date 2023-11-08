@@ -149,7 +149,7 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 	}
 
 	// 在DefaultServeMux中注册给定模式的处理函数
-	customMux.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+	customMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
 			err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
