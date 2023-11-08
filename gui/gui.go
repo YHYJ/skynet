@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"fyne.io/fyne/v2"
@@ -117,6 +118,13 @@ func StartGraphicalUserInterface() {
 	// 创建端口选择器
 	portEntry := widget.NewEntry()
 	portEntry.SetPlaceHolder(portText)
+	portEntry.Validator = func(text string) error {
+		value, err := strconv.Atoi(text)
+		if err != nil || value < 1 || value > 65535 {
+			return fmt.Errorf("Invalid port\n")
+		}
+		return nil
+	}
 
 	// 创建目录选择器标签
 	selectedDirEntry := widget.NewEntry()
