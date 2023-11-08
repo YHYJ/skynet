@@ -231,7 +231,7 @@ func StartGraphicalUserInterface() {
 		// 设置图像填充模式为 ImageFillOriginal，以确保不拉伸
 		qrImage.FillMode = canvas.ImageFillOriginal
 
-		if serviceStatus == 0 {
+		if serviceStatus == 0 { // Start
 			// 启动HTTP服务
 			switch selectedService {
 			case "Download":
@@ -258,12 +258,18 @@ func StartGraphicalUserInterface() {
 				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合
 				qrWindow.Show()                             // 显示二维码窗口
 				qrButton.Enable()                           // 启用二维码显示/隐藏按钮
-				qrButton.SetIcon(theme.VisibilityOffIcon()) // 按钮变为点击隐藏
+				qrButton.SetIcon(theme.VisibilityOffIcon()) // 变更按钮图标
 				qrStatus = 1                                // 二维码已显示
 				// 设置URL按钮
 				urlButton.Enable() // 启用URL按钮
+				// 以下部件禁用
+				serviceSelect.Disable()    // 服务选择器
+				interfaceRadio.Disable()   // 网卡选择器
+				portEntry.Disable()        // 端口输入框
+				selectedDirEntry.Disable() // 目录输入框
+				folderButton.Disable()     // 目录选择按钮
 			}
-		} else if serviceStatus == 1 {
+		} else if serviceStatus == 1 { // Stop
 			// 注销处理器
 			DeregisterAll(serviceSlice)
 			// 停止HTTP服务
@@ -278,10 +284,16 @@ func StartGraphicalUserInterface() {
 			// 设置二维码状态
 			qrWindow.Hide()                          // 隐藏二维码窗口（NOTE: 不能使用Close()）
 			qrButton.Disable()                       // 禁用二维码显示/隐藏按钮
-			qrButton.SetIcon(theme.VisibilityIcon()) // 按钮变为点击显示
+			qrButton.SetIcon(theme.VisibilityIcon()) // 变更按钮图标
 			qrStatus = 0                             // 二维码未显示
 			// 设置URL按钮
 			urlButton.Disable() // 禁用URL按钮
+			// 以下部件启用
+			serviceSelect.Enable()    // 服务选择器
+			interfaceRadio.Enable()   // 网卡选择器
+			portEntry.Enable()        // 端口输入框
+			selectedDirEntry.Enable() // 目录输入框
+			folderButton.Enable()     // 目录选择按钮
 		} else {
 			customErrText := "Unknown error"
 			errorDialog := makeErrorDialog("Error", "Close", customErrText, errorDialogSize, mainWindow)
