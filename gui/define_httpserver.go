@@ -47,7 +47,7 @@ func (mux *CustomMux) HandleFunc(pattern string, handler func(http.ResponseWrite
 }
 
 // Deregister 注销处理器
-func (mux *CustomMux) Deregister(patterns ...string) {
+func (mux *CustomMux) Deregister(patterns []string) {
 	mux.mu.Lock()
 	defer mux.mu.Unlock()
 	for _, pattern := range patterns {
@@ -369,6 +369,6 @@ func HttpDownloadUploadServer(address string, port string, dir string) (*http.Se
 }
 
 // DeregisterAll 注销所有处理器
-func DeregisterAll() {
-	customMux.Deregister("/", "/upload", "/download")
+func DeregisterAll(pattern []string) {
+	customMux.Deregister(pattern)
 }

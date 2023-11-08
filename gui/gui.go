@@ -39,16 +39,19 @@ func StartGraphicalUserInterface() {
 
 	// HTTP服务默认配置
 	var (
-		defaultIP   = "0.0.0.0"                                           // HTTP服务默认绑定的IP
-		defaultPort = "8080"                                              // HTTP服务默认监听的端口
-		defaultDir  = filepath.Join(currentUserInfo.HomeDir, "Downloads") // HTTP服务默认启动路径
-		serviceUrl  = fmt.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP服务默认URL
+		defaultIP    = "0.0.0.0"                                           // HTTP服务默认绑定的IP
+		defaultPort  = "8080"                                              // HTTP服务默认监听的端口
+		defaultDir   = filepath.Join(currentUserInfo.HomeDir, "Downloads") // HTTP服务默认启动路径
+		serviceUrl   = fmt.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP服务默认URL
+		serviceSlice = []string{"Download", "Upload", "All"}               // HTTP服务默认支持启用的方法
 	)
 
-	// 界面默认配置
+	// 界面显示配置
 	var (
-		portText        = fmt.Sprintf("Port [1~65535], default %s", defaultPort)                                             // 端口框默认文本
-		selectedDirText = fmt.Sprintf("Directory, default %s", strings.Replace(defaultDir, currentUserInfo.HomeDir, "~", 1)) // 服务启动路径框默认文本
+		serviceLabelText   = "Select Service:"                                                                                  // 服务选择标签默认文本
+		interfaceLabelText = "Select Interface:"                                                                                // 网卡选择标签默认文本
+		portText           = fmt.Sprintf("Port [1~65535], default %s", defaultPort)                                             // 端口框默认文本
+		selectedDirText    = fmt.Sprintf("Directory, default %s", strings.Replace(defaultDir, currentUserInfo.HomeDir, "~", 1)) // 服务启动路径框默认文本
 	)
 
 	// 定义服务接口和小部件
@@ -90,7 +93,7 @@ func StartGraphicalUserInterface() {
 	errorDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
 	// 获取网卡信息
-	interfaceLabel := widget.NewLabel("Select Interface:")
+	interfaceLabel := widget.NewLabel(interfaceLabelText)
 	nicInfos, err := GetNetInterfaces()
 	if err != nil {
 		errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
@@ -150,6 +153,12 @@ func StartGraphicalUserInterface() {
 		fileDialog.Resize(fyne.NewSize(folderWidth, folderHeight))
 	})
 
+	// 创建服务选择标签
+	serviceSelectLabel := widget.NewLabel(serviceLabelText)
+	// 创建服务选择器
+	serviceSelect := widget.NewSelect(serviceSlice, func(selected string) {})
+	serviceSelect.Selected = serviceSlice[0]
+
 	// 创建URL打开按钮
 	urlButton = widget.NewButtonWithIcon("", theme.MailSendIcon(), func() {
 		serviceUrlParsed, err := url.Parse(serviceUrl)
@@ -178,6 +187,12 @@ func StartGraphicalUserInterface() {
 	// 服务启动/停止按钮逻辑
 	controlButton = widget.NewButton("Start", func() {
 		// 获取参数信息，如果参数为空则使用默认值
+		selectedService := func() string {
+			if serviceSelect.Selected != "" {
+				return serviceSelect.Selected
+			}
+			return serviceSlice[0]
+		}()
 		selectedInterfaceIP := func() string {
 			parts := strings.Split(interfaceRadio.Selected, " ")
 			if len(parts) > 1 {
@@ -198,7 +213,12 @@ func StartGraphicalUserInterface() {
 			return defaultDir
 		}()
 
-		serviceUrl = fmt.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
+		serviceUrl = func() string {
+			if selectedService == "Upload" {
+				return fmt.Sprintf("http://%s:%s/upload", selectedInterfaceIP, selectedPort)
+			}
+			return fmt.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
+		}()
 
 		// 生成二维码
 		qrCodeImage, err := general.QrCodeImage(serviceUrl)
@@ -213,7 +233,17 @@ func StartGraphicalUserInterface() {
 
 		if serviceStatus == 0 {
 			// 启动HTTP服务
-			httpServer, err = HttpServer(selectedInterfaceIP, selectedPort, selectedDir)
+			switch selectedService {
+			case "Download":
+				httpServer, err = HttpDownloadServer(selectedInterfaceIP, selectedPort, selectedDir)
+			case "Upload":
+				httpServer, err = HttpUploadServer(selectedInterfaceIP, selectedPort, selectedDir)
+			case "All":
+				httpServer, err = HttpDownloadUploadServer(selectedInterfaceIP, selectedPort, selectedDir)
+			default:
+				errorDialog := makeErrorDialog("Warning", "Close", "Please select service", errorDialogSize, mainWindow)
+				errorDialog.Show()
+			}
 			if err != nil {
 				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
 				errorDialog.Show()
@@ -234,6 +264,8 @@ func StartGraphicalUserInterface() {
 				urlButton.Enable() // 启用URL按钮
 			}
 		} else if serviceStatus == 1 {
+			// 注销处理器
+			DeregisterAll(serviceSlice)
 			// 停止HTTP服务
 			if err := httpServer.Shutdown(nil); err != nil {
 				errorDialog := makeErrorDialog("Error", "Close", err.Error(), errorDialogSize, mainWindow)
@@ -276,6 +308,8 @@ func StartGraphicalUserInterface() {
 	qrButton.Disable()                            // 禁用二维码显示/隐藏按钮
 	qrButton.Importance = widget.MediumImportance // 按钮突出程度
 
+	// 多态行 —— 服务选择标签 + 服务选择器
+	crossServiceRow := container.NewBorder(nil, nil, serviceSelectLabel, nil, serviceSelect)
 	// 多态行 —— 接口选择标签 + 接口刷新按钮
 	crossInterfaceRow := container.NewBorder(nil, nil, interfaceLabel, refreshButton, nil)
 	// 多态行 —— 服务路径选择按钮 + 已选路径显示框
@@ -285,13 +319,14 @@ func StartGraphicalUserInterface() {
 
 	// 填充主窗口
 	windowContent = container.NewVBox(
-		crossInterfaceRow, // 接口标签
+		crossServiceRow,   // 多态行 —— 服务选择标签 + 服务选择器
+		crossInterfaceRow, // 多态行 —— 接口选择标签 + 接口刷新按钮
 		interfaceRadio,    // 接口选择
 		spacer,            // 填充空白
 		portEntry,         // 端口配置
-		crossDirRow,       // 多态行
+		crossDirRow,       // 多态行 —— 服务路径选择按钮 + 已选路径显示框
 		separator,         // 分隔线
-		crossStatusRow,    // 多态行
+		crossStatusRow,    // 多态行 —— 二维码显示/隐藏按钮 + 服务链接打开按钮 + 状态动画
 		separator,         // 分隔线
 		controlButton,     // 启动按钮
 	)
