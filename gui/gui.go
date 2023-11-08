@@ -222,12 +222,7 @@ func StartGraphicalUserInterface() {
 			return defaultDir
 		}()
 
-		serviceUrl = func() string {
-			if selectedService == "Upload" {
-				return fmt.Sprintf("http://%s:%s/upload", selectedInterfaceIP, selectedPort)
-			}
-			return fmt.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
-		}()
+		serviceUrl = fmt.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
 
 		// 生成二维码
 		qrCodeImage, err := general.QrCodeImage(serviceUrl)
@@ -261,7 +256,7 @@ func StartGraphicalUserInterface() {
 				serviceStatus = 1             // 服务已启动
 				statusAnimation.Start()       // 服务状态动画
 				controlButton.SetText("Stop") // 修改按钮文字
-				log.Printf("\x1b[32;1mServing HTTP at '%s'\x1b[0m (\x1b[34;1;4m%s\x1b[0m)\n", selectedDir, serviceUrl)
+				log.Printf("\x1b[32;1mServing HTTP [%s] at '%s'\x1b[0m (\x1b[34;1;4m%s\x1b[0m)\n", selectedService, selectedDir, serviceUrl)
 				// 设置二维码状态
 				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距）
 				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合
