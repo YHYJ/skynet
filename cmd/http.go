@@ -64,23 +64,56 @@ var httpCmd = &cobra.Command{
 				fmt.Printf("\x1b[36;1m[%d]\x1b[0m %s: %s\n", i, netInterfacesData[i]["name"], netInterfacesData[i]["ip"])
 			}
 			// 选择网卡编号
-			fmt.Printf("\n\x1b[34;1m%s\x1b[0m", "Please select the net interface to use: ")
+			fmt.Printf("\x1b[34;1m%s\x1b[0m", "Please select the net interface: ")
 			// 接收用户输入并赋值给interfaceNumber
 			fmt.Scanln(&netInterfaceNumber)
-			// 如果interfaceNumber不在[0, len(netinterfacesData))范围内，则使用默认值0
+			// 如果interfaceNumber不在[0, len(netinterfacesData))范围内，则使用默认值
 			if netInterfaceNumber < 1 || netInterfaceNumber > len(netInterfacesData) {
 				netInterfaceNumber = 1
-				fmt.Printf("\x1b[31;1m%s\x1b[0m\n", "Interface number is invalid, using default interface. ")
+				fmt.Printf("\x1b[31;1mInvalid interface number, using default interface <%s>\x1b[0m\n", netInterfacesData[netInterfaceNumber]["name"])
 			}
+			fmt.Println()
 		} else {
 			netInterfaceNumber = 1
 		}
-
 		// 获取address参数
 		address := netInterfacesData[netInterfaceNumber]["ip"]
 
+		// 输出服务类型供用户选择
+		serviceSlice := map[int]string{1: "Download", 2: "Upload", 3: "All"}
+		var serviceNumber int
+		if interfaceFlag {
+			// 输出支持的服务类型供用户选择，输出格式为：[序号] 服务类型
+			for i := 1; i <= len(serviceSlice); i++ {
+				// 输出服务类型
+				fmt.Printf("\x1b[36;1m[%d]\x1b[0m %s\n", i, serviceSlice[i])
+			}
+			// 选择服务编号
+			fmt.Printf("\x1b[34;1m%s\x1b[0m", "Please select the service type: ")
+			// 接收用户输入并赋值给serviceNumber
+			fmt.Scanln(&serviceNumber)
+			// 如果serviceNumber不在[0, len(serviceSlice))范围内，则使用默认值
+			if serviceNumber < 1 || serviceNumber > len(serviceSlice) {
+				serviceNumber = 1
+				fmt.Printf("\x1b[31;1mInvalid service number, using default service <%s>\x1b[0m\n", serviceSlice[serviceNumber])
+			}
+			fmt.Println()
+		} else {
+			serviceNumber = 1
+		}
+
 		// 启动http server
-		cli.HttpServer(address, fmt.Sprint(portFlag), absDir)
+		switch serviceSlice[serviceNumber] {
+		case "Download":
+			cli.HttpDownloadServer(address, fmt.Sprint(portFlag), absDir)
+		case "Upload":
+			cli.HttpUploadServer(address, fmt.Sprint(portFlag), absDir)
+		case "All":
+			cli.HttpAllServer(address, fmt.Sprint(portFlag), absDir)
+		default:
+			fmt.Printf("\x1b[31;1mPlease select service\x1b[0m\n")
+			return
+		}
 	},
 }
 
