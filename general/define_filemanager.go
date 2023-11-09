@@ -16,11 +16,7 @@ import (
 
 // FileExist 判断文件是否存在
 func FileExist(filePath string) bool {
-	_, err := os.Stat(filePath)
-	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return false
 	}
 	return true
