@@ -354,6 +354,16 @@ func StartGraphicalUserInterface() {
 	)
 	mainWindow.SetContent(windowContent)
 
+	// 关闭程序前应确保服务已关闭
+	mainWindow.SetCloseIntercept(func() {
+		if serviceStatus == 1 {
+			customDialog = makeCustomDialog("Warning", "Close", "Please stop service first", customDialogSize, mainWindow)
+			customDialog.Show()
+		} else {
+			mainWindow.Close()
+		}
+	})
+
 	// 启动主窗口
 	mainWindow.ShowAndRun()
 }
