@@ -211,6 +211,11 @@ func StartGraphicalUserInterface() {
 		}()
 		selectedPort := func() string {
 			if portEntry.Text != "" {
+				value, err := strconv.Atoi(portEntry.Text)
+				if err != nil || value < 1 || value > 65535 {
+					portEntry.SetText(defaultPort)
+					return defaultPort
+				}
 				return portEntry.Text
 			}
 			return defaultPort
