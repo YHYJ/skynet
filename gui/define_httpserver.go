@@ -109,20 +109,20 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
-			err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
+			err := r.ParseMultipartForm(100 << 20) // 限制内存最多存储100MB，超出的部分保存到磁盘
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 
-			file, handler, err := r.FormFile("file")
+			file, handler, err := r.FormFile("file") // 获取上传文件
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 			defer file.Close()
 
-			// 创建文件保存到uploads文件夹
+			// 创建文件保存到服务目录
 			targetFile, err := os.Create(filepath.Join(dir, handler.Filename))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -136,7 +136,7 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			// 返回包含JavaScript的响应以显示弹窗通知
+			// JS 显示弹窗通知
 			js := fmt.Sprintf(`
 			<script>
 				alert("File uploaded successfully\n%s");
@@ -213,31 +213,31 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 			<body>
 				<h1>Welcome to the File Service</h1>
 				<hr>
-				<a href="/upload">File Upload</a><br>
-				<a href="/download">File Download</a>
+				<a href="/upload-service">File Upload</a><br>
+				<a href="/download-service">File Download</a>
 			</body>
 		</html>
 		`
 		newTemplate, _ := template.New("root").Parse(templateString)
 		newTemplate.Execute(w, nil)
 	})
-	serveMux.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+	serveMux.HandleFunc("/upload-service", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
-			err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
+			err := r.ParseMultipartForm(100 << 20) // 限制内存最多存储100MB，超出的部分保存到磁盘
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 
-			file, handler, err := r.FormFile("file")
+			file, handler, err := r.FormFile("file") // 获取上传文件
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 			defer file.Close()
 
-			// 创建文件保存到uploads文件夹
+			// 创建文件保存到服务目录
 			targetFile, err := os.Create(filepath.Join(dir, handler.Filename))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -251,11 +251,11 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			// 返回包含JavaScript的响应以显示弹窗通知
+			// JS 显示弹窗通知
 			js := fmt.Sprintf(`
 			<script>
 				alert("File uploaded successfully\n%s");
-				window.location.href = '/upload';
+				window.location.href = '/upload-service';
 			</script>
 			`, handler.Filename)
 			fmt.Fprintln(w, js)
@@ -269,9 +269,9 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 					<h1>File Upload</h1>
 					<hr>
 					<a href="/">Back to Home Page</a>
-					<a href="/download">Go to Download Page</a>
+					<a href="/download-service">Go to Download Page</a>
 					<br><br>
-					<form action="/upload" method="post" enctype="multipart/form-data">
+					<form action="/upload-service" method="post" enctype="multipart/form-data">
 						<input type="file" name="file">
 						<input type="submit" value="Upload">
 					</form>
@@ -282,7 +282,7 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 			newTemplate.Execute(w, nil)
 		}
 	})
-	serveMux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
+	serveMux.HandleFunc("/download-service", func(w http.ResponseWriter, r *http.Request) {
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
@@ -297,7 +297,7 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 				<h1>File Download</h1>
 				<hr>
 				<a href="/">Back to Home Page</a>
-				<a href="/upload">Go to Upload Page</a>
+				<a href="/upload-service">Go to Upload Page</a>
 				<ul>
 					{{range .}}
 						<li><a href="/download/{{.Name}}">{{.Name}}</a></li>
