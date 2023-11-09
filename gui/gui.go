@@ -192,6 +192,11 @@ func StartGraphicalUserInterface() {
 
 		qrWindow = appInstance.NewWindow("QR Code") // 普通窗口
 	}
+	// 确保二维码窗口只能随主窗口关闭
+	qrWindow.SetCloseIntercept(func() {
+		if !mainWindow.Content().Visible() {
+		}
+	})
 
 	// 服务启动/停止按钮逻辑
 	controlButton = widget.NewButton("Start", func() {
