@@ -94,16 +94,17 @@ func StartGraphicalUserInterface() {
 	// 创建自定义提示框尺寸
 	customDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
-	// 获取网卡信息
+	// 创建网络接口选择标签
 	interfaceLabel := widget.NewLabel(interfaceLabelText)
+	// 获取网卡信息
 	nicInfos, err := GetNetInterfaces()
 	if err != nil {
 		customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
 		customDialog.Show()
 	}
-	// 创建接口选择器（单选按钮组）
+	// 创建网络接口选择器（单选按钮组）
 	interfaceRadio := widget.NewRadioGroup(nicInfos, func(selected string) {})
-	// 创建接口刷新按钮
+	// 创建网络接口刷新按钮
 	refreshButton = widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
 		nicInfos, err := GetNetInterfaces()
 		if err != nil {
