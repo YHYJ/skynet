@@ -24,8 +24,7 @@ func GetNetInterfaces() ([]string, error) {
 	}
 
 	// 手动添加无法自动获取的0.0.0.0
-	nic := fmt.Sprintf("%s - %s", "any", "0.0.0.0")
-	netInterfacesData := []string{nic}
+	netInterfacesData := []string{defaultNic}
 
 	for _, netInterfaceInfo := range netInterfacesInfo {
 		addrs, _ := netInterfaceInfo.Addrs()
@@ -34,8 +33,8 @@ func GetNetInterfaces() ([]string, error) {
 			for _, addr := range addrs {
 				ipnet, ok := addr.(*net.IPNet)
 				if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() && !general.IsDockerInterface(netInterfaceInfo) {
-					nic = fmt.Sprintf("%s - %s", netInterfaceInfo.Name, ipnet.IP.String())
-					netInterfacesData = append(netInterfacesData, nic)
+					otherNic = fmt.Sprintf("%s - %s", netInterfaceInfo.Name, ipnet.IP.String())
+					netInterfacesData = append(netInterfacesData, otherNic)
 				}
 			}
 		}

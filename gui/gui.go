@@ -213,6 +213,7 @@ func StartGraphicalUserInterface() {
 			if len(parts) > 1 {
 				return parts[len(parts)-1]
 			}
+			interfaceRadio.SetSelected(defaultNic)
 			return defaultIP
 		}()
 		selectedPort := func() string {
