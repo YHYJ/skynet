@@ -250,6 +250,7 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 			<head><title>File Service</title></head>
 			<body>
 				<h1>Welcome to the File Service</h1>
+				<hr>
 				<a href="/upload">File Upload</a><br>
 				<a href="/download">File Download</a>
 			</body>
@@ -304,7 +305,8 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 				<head><title>Upload</title></head>
 				<body>
 					<h1>File Upload</h1>
-					<a href="/">Back to Main Page</a>
+					<hr>
+					<a href="/">Back to Home Page</a>
 					<a href="/download">Go to Download Page</a>
 					<br><br>
 					<form action="/upload" method="post" enctype="multipart/form-data">
@@ -331,9 +333,9 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 			<head><title>Download</title></head>
 			<body>
 				<h1>File Download</h1>
-				<a href="/">Back to Main Page</a>
-				<a href="/upload">Go to Upload Page</a>
 				<hr>
+				<a href="/">Back to Home Page</a>
+				<a href="/upload">Go to Upload Page</a>
 				<ul>
 					{{range .}}
 						<li><a href="/download/{{.Name}}">{{.Name}}</a></li>
