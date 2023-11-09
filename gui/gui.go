@@ -274,8 +274,9 @@ func StartGraphicalUserInterface() {
 				folderButton.Disable()     // 目录选择按钮
 			}
 		} else if serviceStatus == 1 { // Stop
-			// 注销处理器
-			DeregisterAll(serviceSlice)
+			// 加锁，确保只有一个 goroutine 能够关闭 HTTP 服务器和注销路由
+			serverMutex.Lock()
+			defer serverMutex.Unlock()
 			// 停止HTTP服务
 			if err := httpServer.Shutdown(nil); err != nil {
 				customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
