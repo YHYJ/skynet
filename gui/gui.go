@@ -82,7 +82,7 @@ func StartGraphicalUserInterface() {
 
 	// 创建一个新应用
 	appInstance := app.NewWithID(general.Name)
-	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceIconPng.StaticContent))
+	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceFlowerPng.StaticContent))
 
 	// 创建主窗口
 	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", general.Name, general.Version))
