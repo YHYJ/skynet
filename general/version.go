@@ -18,7 +18,7 @@ import (
 // 程序信息
 const (
 	Name    string = "Skynet"
-	Version string = "v0.9.1"
+	Version string = "v0.9.2"
 	Project string = "github.com/yhyj/skynet"
 )
 
