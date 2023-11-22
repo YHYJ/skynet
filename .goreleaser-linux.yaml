@@ -27,6 +27,15 @@ archives:
       {{- if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
+    files:
+      - "CHANGELOG*"
+      - "changelog*"
+      - "LICENSE*"
+      - "license*"
+      - "README*"
+      - "readme*"
+      - "resources/applications/*"
+      - "resources/pixmaps/*"
     format_overrides:
       - goos: windows
         format: zip
