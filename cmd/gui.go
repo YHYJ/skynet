@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-26 08:52:06
 
-Description: 程序子命令'gui'时执行
+Description: 由程序子命令 gui 执行
 */
 
 package cmd
@@ -30,7 +30,7 @@ var guiCmd = &cobra.Command{
 				if err := gui.SetFont(); err != nil {
 					log.Printf(general.ErrorBaseFormat, err)
 				}
-				// 启动GUI
+				// 启动 GUI
 				gui.StartGraphicalUserInterface()
 			} else {
 				fmt.Println("The DISPLAY environment variable is missing, please use the CLI version")
@@ -40,7 +40,7 @@ var guiCmd = &cobra.Command{
 			if err := gui.SetFont(); err != nil {
 				log.Printf(general.ErrorBaseFormat, err)
 			}
-			// 启动GUI
+			// 启动 GUI
 			gui.StartGraphicalUserInterface()
 		} else if general.Platform == "darwin" {
 			fmt.Println("macOS platform is not supported yet")

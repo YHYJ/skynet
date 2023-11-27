@@ -16,7 +16,10 @@ import (
 	"github.com/flopp/go-findfont"
 )
 
-// SetFont 为 Fyne 设置字体
+// SetFont 设置 Fyne 使用的字体
+//
+// 返回：
+//   - 错误信息
 func SetFont() error {
 	// 默认使用字体
 	fontNames := []string{

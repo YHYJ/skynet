@@ -38,13 +38,13 @@ func StartGraphicalUserInterface() {
 		log.Printf("\x1b[31m%s\x1b[0m\n", err)
 	}
 
-	// HTTP服务默认配置
+	// HTTP 服务默认配置
 	var (
-		defaultIP    = "0.0.0.0"                                           // HTTP服务默认绑定的IP
-		defaultPort  = "8080"                                              // HTTP服务默认监听的端口
-		defaultDir   = filepath.Join(currentUserInfo.HomeDir, "Downloads") // HTTP服务默认启动路径
-		serviceUrl   = fmt.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP服务默认URL
-		serviceSlice = []string{"Download", "Upload", "All"}               // HTTP服务默认支持启用的方法
+		defaultIP    = "0.0.0.0"                                           // HTTP 服务默认绑定的 IP
+		defaultPort  = "8080"                                              // HTTP 服务默认监听的端口
+		defaultDir   = filepath.Join(currentUserInfo.HomeDir, "Downloads") // HTTP 服务默认启动路径
+		serviceUrl   = fmt.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP 服务默认 URL
+		serviceSlice = []string{"Download", "Upload", "All"}               // HTTP 服务默认支持启用的方法
 	)
 
 	// 界面显示配置
@@ -57,20 +57,20 @@ func StartGraphicalUserInterface() {
 
 	// 定义服务接口和小部件
 	var (
-		httpServer    *http.Server         // HTTP服务
+		httpServer    *http.Server         // HTTP 服务
 		qrWindow      fyne.Window          // 二维码窗口
 		windowContent *fyne.Container      // 窗口内容容器
 		refreshButton *widget.Button       // 接口刷新按钮
 		folderButton  *widget.Button       // 目录选择按钮
 		qrButton      *widget.Button       // 二维码显示/隐藏按钮
-		urlButton     *widget.Button       // 打开URL按钮
+		urlButton     *widget.Button       // 打开 URL 按钮
 		controlButton *widget.Button       // 服务的启动/停止按钮
 		customDialog  *dialog.CustomDialog // 自定义提示框
 	)
 
 	// 定义标志位
 	var (
-		serviceStatus = 0 // HTTP服务状态，0代表服务未启动，1代表服务已启动
+		serviceStatus = 0 // HTTP 服务状态，0代表服务未启动，1代表服务已启动
 		qrStatus      = 0 // 二维码状态，0代表二维码未显示，1代表二维码已显示
 	)
 
@@ -179,7 +179,7 @@ func StartGraphicalUserInterface() {
 		appInstance.OpenURL(serviceUrlParsed)
 		log.Printf("Open URL: \x1b[34;1;4m%s\x1b[0m", serviceUrlParsed)
 	})
-	urlButton.Disable() // 禁用URL按钮
+	urlButton.Disable() // 禁用 URL 按钮
 
 	// 创建服务状态显示动画
 	statusAnimation := widget.NewProgressBarInfinite()
@@ -244,11 +244,11 @@ func StartGraphicalUserInterface() {
 		}
 		// 将二维码图像转换为 Fyne 图像
 		qrImage := canvas.NewImageFromImage(qrCodeImage)
-		// 设置图像填充模式为 ImageFillOriginal，以确保不拉伸
+		// 设置图像填充模式为 ImageFillOriginal ，以确保不拉伸
 		qrImage.FillMode = canvas.ImageFillOriginal
 
 		if serviceStatus == 0 { // Start
-			// 启动HTTP服务
+			// 启动 HTTP 服务
 			switch selectedService {
 			case "Download":
 				httpServer, err = HttpDownloadServer(selectedInterfaceIP, selectedPort, selectedDir)
@@ -270,7 +270,7 @@ func StartGraphicalUserInterface() {
 				controlButton.SetText("Stop") // 修改按钮文字
 				log.Printf("\x1b[32;1mServing HTTP [%s] at '%s'\x1b[0m (\x1b[34;1;4m%s\x1b[0m)\n", selectedService, selectedDir, serviceUrl)
 				// 设置二维码状态
-				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用container.NewCenter()函数将其添加到窗口中心，否则会产生内边距）
+				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用 container.NewCenter() 函数将其添加到窗口中心，否则会产生内边距）
 				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合
 				qrWindow.Show()                             // 显示二维码窗口
 				qrButton.Enable()                           // 启用二维码显示/隐藏按钮
@@ -289,7 +289,7 @@ func StartGraphicalUserInterface() {
 			// 加锁，确保只有一个 goroutine 能够关闭 HTTP 服务器和注销路由
 			serverMutex.Lock()
 			defer serverMutex.Unlock()
-			// 停止HTTP服务
+			// 停止 HTTP 服务
 			if err := httpServer.Shutdown(nil); err != nil {
 				customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
 				customDialog.Show()
@@ -299,12 +299,12 @@ func StartGraphicalUserInterface() {
 			statusAnimation.Stop()         // 服务状态动画
 			controlButton.SetText("Start") // 修改按钮文字
 			// 设置二维码状态
-			qrWindow.Hide()                          // 隐藏二维码窗口（NOTE: 不能使用Close()）
+			qrWindow.Hide()                          // 隐藏二维码窗口（NOTE: 不能使用 Close() ）
 			qrButton.Disable()                       // 禁用二维码显示/隐藏按钮
 			qrButton.SetIcon(theme.VisibilityIcon()) // 变更按钮图标
 			qrStatus = 0                             // 二维码未显示
-			// 设置URL按钮
-			urlButton.Disable() // 禁用URL按钮
+			// 设置 URL 按钮
+			urlButton.Disable() // 禁用 URL 按钮
 			// 以下部件启用
 			serviceSelect.Enable()    // 服务选择器
 			interfaceRadio.Enable()   // 网卡选择器

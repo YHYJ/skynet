@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-04-20 09:52:25
 
-Description: 程序子命令'http'时执行
+Description: 由程序子命令 http 执行
 */
 
 package cmd
@@ -29,32 +29,32 @@ var httpCmd = &cobra.Command{
 		dirFlag, _ := cmd.Flags().GetString("dir")
 		interfaceFlag, _ := cmd.Flags().GetBool("interface")
 
-		// 使用portFlag参数
-		// 如果portFlag参数不在[1, 65535]范围内，则使用默认值8080
+		// 使用 portFlag 参数
+		// 如果 portFlag 参数不在[1, 65535]范围内，则使用默认值8080
 		if portFlag < 1 || portFlag > 65535 {
 			portFlag = 8080
 			fmt.Printf(general.ErrorBaseFormat, "Port number is invalid, using default port 8080.")
 		}
-		// 如果portFlag参数小于1024，则提示需要root权限
+		// 如果 portFlag 参数小于1024，则提示需要 root 权限
 		if portFlag < 1024 {
 			fmt.Printf(general.ErrorBaseFormat, "You need root privileges to listen on ports below 1024.")
 		}
 
-		// 处理dirFlag默认参数
+		// 处理 dirFlag 默认参数
 		if dirFlag == "PWD" {
 			dirFlag = general.GetVariable("PWD")
 		}
 
-		// 使用dirFlag参数
+		// 使用 dirFlag 参数
 		if !general.FileExist(dirFlag) {
-			// 如果dirFlag参数不是一个目录，则提示目录不存在并退出程序
+			// 如果 dirFlag 参数不是一个目录，则提示目录不存在并退出程序
 			fmt.Printf(general.ErrorBaseFormat, "Directory does not exist.")
 			os.Exit(1)
 		}
-		// 获取dirFlag参数的绝对路径
+		// 获取 dirFlag 参数的绝对路径
 		absDir := general.GetAbsPath(dirFlag)
 
-		// 输出interfaceFlag供用户选择
+		// 输出 interfaceFlag 供用户选择
 		netInterfacesData, _ := cli.GetNetInterfaces()
 		var netInterfaceNumber int
 		if interfaceFlag {
@@ -65,9 +65,9 @@ var httpCmd = &cobra.Command{
 			}
 			// 选择网卡编号
 			fmt.Printf(general.AskFormat, "Please select the net interface: ")
-			// 接收用户输入并赋值给interfaceNumber
+			// 接收用户输入并赋值给 interfaceNumber
 			fmt.Scanln(&netInterfaceNumber)
-			// 如果interfaceNumber不在[0, len(netinterfacesData))范围内，则使用默认值
+			// 如果 interfaceNumber 不在[0, len(netinterfacesData))范围内，则使用默认值
 			if netInterfaceNumber < 1 || netInterfaceNumber > len(netInterfacesData) {
 				netInterfaceNumber = 1
 				fmt.Printf(general.ErrorBaseFormat, fmt.Sprintf("Invalid interface number, using default interface <%s>", netInterfacesData[netInterfaceNumber]["name"]))
@@ -76,7 +76,7 @@ var httpCmd = &cobra.Command{
 		} else {
 			netInterfaceNumber = 1
 		}
-		// 获取address参数
+		// 获取 address 参数
 		address := netInterfacesData[netInterfaceNumber]["ip"]
 
 		// 输出服务类型供用户选择
@@ -90,9 +90,9 @@ var httpCmd = &cobra.Command{
 			}
 			// 选择服务编号
 			fmt.Printf(general.AskFormat, "Please select the service type: ")
-			// 接收用户输入并赋值给serviceNumber
+			// 接收用户输入并赋值给 serviceNumber
 			fmt.Scanln(&serviceNumber)
-			// 如果serviceNumber不在[0, len(serviceSlice))范围内，则使用默认值
+			// 如果 serviceNumber 不在[0, len(serviceSlice))范围内，则使用默认值
 			if serviceNumber < 1 || serviceNumber > len(serviceSlice) {
 				serviceNumber = 1
 				fmt.Printf(general.ErrorBaseFormat, fmt.Sprintf("Invalid service number, using default service <%s>", serviceSlice[serviceNumber]))
@@ -102,7 +102,7 @@ var httpCmd = &cobra.Command{
 			serviceNumber = 1
 		}
 
-		// 启动http server
+		// 启动 http server
 		switch serviceSlice[serviceNumber] {
 		case "Download":
 			cli.HttpDownloadServer(address, fmt.Sprint(portFlag), absDir)

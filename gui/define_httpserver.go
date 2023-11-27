@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-31 16:54:05
 
-Description: 用于GUI的HTTP服务
+Description: 用于 GUI 的 HTTP 服务
 */
 
 package gui
@@ -23,6 +23,15 @@ import (
 )
 
 // HttpDownloadServer 启动 HTTP 下载服务
+//
+// 参数：
+//   - address: 服务地址
+//   - port: 服务端口
+//   - dir: 服务目录
+//
+// 返回：
+//   - HTTP 服务器对象
+//   - 错误信息
 func HttpDownloadServer(address string, port string, dir string) (*http.Server, error) {
 	// 服务启动目录不存在则创建
 	if !general.FileExist(dir) {
@@ -95,6 +104,15 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 }
 
 // HttpUploadServer 启动 HTTP 上传服务
+//
+// 参数：
+//   - address: 服务地址
+//   - port: 服务端口
+//   - dir: 服务目录
+//
+// 返回：
+//   - HTTP 服务器对象
+//   - 错误信息
 func HttpUploadServer(address string, port string, dir string) (*http.Server, error) {
 	// 服务启动目录不存在则创建
 	if !general.FileExist(dir) {
@@ -193,6 +211,15 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 }
 
 // HttpAllServer 启动 HTTP 所有服务
+//
+// 参数：
+//   - address: 服务地址
+//   - port: 服务端口
+//   - dir: 服务目录
+//
+// 返回：
+//   - HTTP 服务器对象
+//   - 错误信息
 func HttpAllServer(address string, port string, dir string) (*http.Server, error) {
 	// 服务启动目录不存在则创建
 	if !general.FileExist(dir) {
@@ -205,7 +232,7 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 	serveMux = http.NewServeMux()
 	// 注册给定模式的处理函数
 	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// 根路径上显示一个链接到/upload页面
+		// 根路径上显示一个链接到 /upload 页面
 		templateString := `
 		<!doctype html>
 		<html>

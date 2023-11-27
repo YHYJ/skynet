@@ -16,6 +16,10 @@ import (
 )
 
 // GetNetInterfaces 获取网卡信息
+//
+// 返回：
+//   - 网卡信息
+//   - 错误信息
 func GetNetInterfaces() (map[int]map[string]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
 	if err != nil {

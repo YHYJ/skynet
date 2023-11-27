@@ -22,8 +22,13 @@ import (
 )
 
 // HttpDownloadServer 启动 HTTP 下载服务
+//
+// 参数：
+//   - address: 服务地址
+//   - port: 服务端口
+//   - dir: 服务目录
 func HttpDownloadServer(address string, port string, dir string) {
-	// 创建TCP监听器
+	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
 		fmt.Printf(general.ErrorBaseFormat, err)
@@ -32,7 +37,7 @@ func HttpDownloadServer(address string, port string, dir string) {
 		url := fmt.Sprintf("http://%s:%v", address, port)
 		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("Starting http server [Download] at '%s'", dir)) // 服务地址
 		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("HTTP server url is %s", url))                   // URL
-		codeString, err := general.QrCodeString(url)                                                   // 二维码
+		codeString, err := general.QrCodeString(url)                                                       // 二维码
 		if err != nil {
 			fmt.Printf(general.ErrorBaseFormat, err)
 		} else {
@@ -78,8 +83,13 @@ func HttpDownloadServer(address string, port string, dir string) {
 }
 
 // HttpUploadServer 启动 HTTP 上传服务
+//
+// 参数：
+//   - address: 服务地址
+//   - port: 服务端口
+//   - dir: 服务目录
 func HttpUploadServer(address string, port string, dir string) {
-	// 创建TCP监听器
+	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
 		fmt.Printf(general.ErrorBaseFormat, err)
@@ -88,7 +98,7 @@ func HttpUploadServer(address string, port string, dir string) {
 		url := fmt.Sprintf("http://%s:%v", address, port)
 		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("Starting http server [Upload] at '%s'", dir)) // 服务地址
 		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("HTTP server url is %s", url))                 // URL
-		codeString, err := general.QrCodeString(url)                                                 // 二维码
+		codeString, err := general.QrCodeString(url)                                                     // 二维码
 		if err != nil {
 			fmt.Printf(general.ErrorBaseFormat, err)
 		} else {
@@ -96,7 +106,7 @@ func HttpUploadServer(address string, port string, dir string) {
 		}
 		fmt.Printf(general.InfoFormat, "Press Ctrl+C to stop.") // 服务停止快捷键
 
-		// 在DefaultServeMux中注册给定模式的处理函数
+		// 在 DefaultServeMux 中注册给定模式的处理函数
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodPost {
 				// 解析表单
@@ -113,7 +123,7 @@ func HttpUploadServer(address string, port string, dir string) {
 				}
 				defer file.Close()
 
-				// 创建文件保存到uploads文件夹
+				// 创建文件保存到 uploads 文件夹
 				targetFile, err := os.Create(filepath.Join(dir, handler.Filename))
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -127,7 +137,7 @@ func HttpUploadServer(address string, port string, dir string) {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
-				// 返回包含JavaScript的响应以显示弹窗通知
+				// 返回包含 JavaScript 的响应以显示弹窗通知
 				js := fmt.Sprintf(`
 				<script>
 					alert("File uploaded successfully\n%s");
@@ -166,8 +176,13 @@ func HttpUploadServer(address string, port string, dir string) {
 }
 
 // HttpAllServer 启动所有 HTTP 服务
+//
+// 参数：
+//   - address: 服务地址
+//   - port: 服务端口
+//   - dir: 服务目录
 func HttpAllServer(address string, port string, dir string) {
-	// 创建TCP监听器
+	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
 		fmt.Printf(general.ErrorBaseFormat, err)
@@ -176,7 +191,7 @@ func HttpAllServer(address string, port string, dir string) {
 		url := fmt.Sprintf("http://%s:%v", address, port)
 		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("Starting http server [All] at '%s'", dir)) // 服务地址
 		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("HTTP server url is %s", url))              // URL
-		codeString, err := general.QrCodeString(url)                                              // 二维码
+		codeString, err := general.QrCodeString(url)                                                  // 二维码
 		if err != nil {
 			fmt.Printf(general.ErrorBaseFormat, err)
 		} else {
@@ -184,9 +199,9 @@ func HttpAllServer(address string, port string, dir string) {
 		}
 		fmt.Printf(general.InfoFormat, "Press Ctrl+C to stop.") // 服务停止快捷键
 
-		// 在DefaultServeMux中注册给定模式的处理函数
+		// 在 DefaultServeMux 中注册给定模式的处理函数
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			// 根路径上显示一个链接到/upload页面
+			// 根路径上显示一个链接到 /upload 页面
 			templateString := `
 			<!doctype html>
 			<html>
@@ -217,7 +232,7 @@ func HttpAllServer(address string, port string, dir string) {
 				}
 				defer file.Close()
 
-				// 创建文件保存到uploads文件夹
+				// 创建文件保存到 uploads 文件夹
 				targetFile, err := os.Create(filepath.Join(dir, handler.Filename))
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -231,7 +246,7 @@ func HttpAllServer(address string, port string, dir string) {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
-				// 返回包含JavaScript的响应以显示弹窗通知
+				// 返回包含 JavaScript 的响应以显示弹窗通知
 				js := fmt.Sprintf(`
 				<script>
 					alert("File uploaded successfully\n%s");
