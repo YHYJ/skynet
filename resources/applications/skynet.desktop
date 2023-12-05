@@ -2,7 +2,7 @@
 Name=skynet
 Exec=/usr/local/bin/skynet gui
 Type=Application
-Icon=skynet
+Icon=skynet-white
 Terminal=false
 StartupNotify=true
 GenericName=Network Service Manager
