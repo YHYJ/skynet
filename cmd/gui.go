@@ -33,7 +33,7 @@ var guiCmd = &cobra.Command{
 				// 启动 GUI
 				gui.StartGraphicalUserInterface()
 			} else {
-				fmt.Println("The DISPLAY environment variable is missing, please use the CLI version")
+				fmt.Println("Could not connect to display")
 			}
 		} else if general.Platform == "windows" {
 			// 设置字体
