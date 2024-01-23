@@ -43,7 +43,12 @@ var guiCmd = &cobra.Command{
 			// 启动 GUI
 			gui.StartGraphicalUserInterface()
 		} else if general.Platform == "darwin" {
-			fmt.Println("macOS platform is not supported yet")
+			// 设置字体
+			if err := gui.SetFont(); err != nil {
+				log.Printf(general.ErrorBaseFormat, err)
+			}
+			// 启动 GUI
+			gui.StartGraphicalUserInterface()
 		} else {
 			fmt.Println("Current platform is not supported")
 		}
