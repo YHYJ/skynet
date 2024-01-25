@@ -14,6 +14,8 @@ RESOURCE_PATH := resources
 RESOURCE_INSTALL_PATH := /usr/local/share
 # Commit哈希值
 COMMIT := $(shell git rev-parse HEAD)
+# 获取系统类型
+PLATFORM := $(shell uname -s)
 
 .PHONY: all tidy build install uninstall clean
 all: build
@@ -37,14 +39,19 @@ build:
 
 install:
 	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(GENERATE_PATH)/$(TARGET) $(INSTALL_PATH)/$(TARGET)
-	@mkdir -p $(RESOURCE_INSTALL_PATH)/applications $(RESOURCE_INSTALL_PATH)/pixmaps $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
-	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
-	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
-	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) LICENSE $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)/LICENSE
+	ifeq ($(PLATFORM), Linux)
+		@mkdir -p $(RESOURCE_INSTALL_PATH)/applications $(RESOURCE_INSTALL_PATH)/pixmaps $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
+		@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
+		@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
+		@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) LICENSE $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)/LICENSE
+	endif
 	@echo -e "\r\x1b[K\x1b[0m\x1b[32;1m[✔]\x1b[0m Successfully installed \x1b[32m$(TARGET)\x1b[0m"
 
 uninstall:
-	@rm -rf $(INSTALL_PATH)/$(TARGET) $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
+	@rm -rf $(INSTALL_PATH)/$(TARGET)
+	ifeq ($(PLATFORM), Linux)
+		@rm -rf $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
+	endif
 	@echo -e "\x1b[K\x1b[0m\x1b[32;1m[✔]\x1b[0m \x1b[32m$(TARGET)\x1b[0m has been \x1b[31;1muninstalled\x1b[0m"
 
 clean:
