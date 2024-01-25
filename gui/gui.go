@@ -229,7 +229,8 @@ func StartGraphicalUserInterface() {
 		}()
 		selectedDir := func() string {
 			if selectedDirEntry.Text != "" {
-				return selectedDirEntry.Text
+				// "~" 替换为当前用户目录，防止无法解析 "~" 导致创建名为 "~" 的文件夹
+				return strings.Replace(selectedDirEntry.Text, "~", currentUserInfo.HomeDir, 1)
 			}
 			return defaultDir
 		}()
