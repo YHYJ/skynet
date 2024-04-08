@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-31 16:54:05
 
-Description: 用于 GUI 的 HTTP 服务
+Description: 子命令 'gui' 的 httpserver 功能实现
 */
 
 package gui

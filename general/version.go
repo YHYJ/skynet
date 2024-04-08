@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-05-25 10:05:05
 
-Description: 由程序子命令 version 执行
+Description: 版本信息
 */
 
 package general

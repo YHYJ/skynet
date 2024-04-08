@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-04-20 09:52:25
 
-Description: 由程序子命令 http 执行
+Description: 执行子命令 'http'
 */
 
 package cmd

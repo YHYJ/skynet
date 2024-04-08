@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-31 16:45:30
 
-Description: 定义过滤器
+Description: 过滤器
 */
 
 package general

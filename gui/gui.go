@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-26 09:42:59
 
-Description: 子命令`gui`功能实现
+Description: 子命令 'gui' 的实现
 */
 
 package gui
