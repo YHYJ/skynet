@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gookit/color"
 	"github.com/spf13/cobra"
 	"github.com/yhyj/skynet/cli"
 	"github.com/yhyj/skynet/general"
@@ -33,11 +34,12 @@ var httpCmd = &cobra.Command{
 		// 如果 portFlag 参数不在[1, 65535]范围内，则使用默认值8080
 		if portFlag < 1 || portFlag > 65535 {
 			portFlag = 8080
-			fmt.Printf(general.ErrorBaseFormat, "Port number is invalid, using default port 8080.")
+			color.Printf("%s\n", general.DangerText("Port number is invalid, using default port 8080."))
 		}
 		// 如果 portFlag 参数小于1024，则提示需要 root 权限
 		if portFlag < 1024 {
-			fmt.Printf(general.ErrorBaseFormat, "You need root privileges to listen on ports below 1024.")
+			color.Printf("%s\n", general.DangerText("You need root privileges to listen on ports below 1024."))
+			os.Exit(1)
 		}
 
 		// 处理 dirFlag 默认参数
@@ -48,7 +50,7 @@ var httpCmd = &cobra.Command{
 		// 使用 dirFlag 参数
 		if !general.FileExist(dirFlag) {
 			// 如果 dirFlag 参数不是一个目录，则提示目录不存在并退出程序
-			fmt.Printf(general.ErrorBaseFormat, "Directory does not exist.")
+			color.Error.Printf("Directory '%s' does not exist.\n", dirFlag)
 			os.Exit(1)
 		}
 		// 获取 dirFlag 参数的绝对路径
@@ -61,18 +63,18 @@ var httpCmd = &cobra.Command{
 			// 输出网卡信息供用户选择，输出格式为：[序号] 网卡名称 网卡IP
 			for i := 1; i <= len(netInterfacesData); i++ {
 				// 输出网卡信息
-				fmt.Printf(general.SliceTraverseSuffixFormat, fmt.Sprintf("[%d]", i), fmt.Sprintf(" %s: ", netInterfacesData[i]["name"]), netInterfacesData[i]["ip"])
+				color.Printf("%s %s: %s\n", general.FgGreen("[", i, "]"), general.LightText(netInterfacesData[i]["name"]), general.LightText(netInterfacesData[i]["ip"]))
 			}
 			// 选择网卡编号
-			fmt.Printf(general.AskFormat, "Please select the net interface: ")
+			color.Printf("%s", general.QuestionText("Please select the interface number: "))
 			// 接收用户输入并赋值给 interfaceNumber
 			fmt.Scanln(&netInterfaceNumber)
 			// 如果 interfaceNumber 不在[0, len(netinterfacesData))范围内，则使用默认值
 			if netInterfaceNumber < 1 || netInterfaceNumber > len(netInterfacesData) {
 				netInterfaceNumber = 1
-				fmt.Printf(general.ErrorBaseFormat, fmt.Sprintf("Invalid interface number, using default interface <%s>", netInterfacesData[netInterfaceNumber]["name"]))
+				color.Danger.Printf("Invalid interface number, using default interface <%s>\n", netInterfacesData[netInterfaceNumber]["name"])
 			}
-			fmt.Println()
+			color.Println()
 		} else {
 			netInterfaceNumber = 1
 		}
@@ -86,20 +88,20 @@ var httpCmd = &cobra.Command{
 			// 输出支持的服务类型供用户选择，输出格式为：[序号] 服务类型
 			for i := 1; i <= len(serviceSlice); i++ {
 				// 输出服务类型
-				fmt.Printf(general.SliceTraverseSuffixFormat, fmt.Sprintf("[%d]", i), " ", serviceSlice[i])
+				color.Printf("%s %s\n", general.FgGreen("[", i, "]"), general.LightText(serviceSlice[i]))
 			}
 			// 选择服务编号
-			fmt.Printf(general.AskFormat, "Please select the service type: ")
+			color.Printf("%s", general.QuestionText("Please select the service number: "))
 			// 接收用户输入并赋值给 serviceNumber
 			fmt.Scanln(&serviceNumber)
 			// 如果 serviceNumber 不在[0, len(serviceSlice))范围内，则使用默认值
 			if serviceNumber < 1 || serviceNumber > len(serviceSlice) {
-				serviceNumber = 1
-				fmt.Printf(general.ErrorBaseFormat, fmt.Sprintf("Invalid service number, using default service <%s>", serviceSlice[serviceNumber]))
+				serviceNumber = 3
+				color.Danger.Printf("Invalid service number, using default service <%s>\n", serviceSlice[serviceNumber])
 			}
-			fmt.Println()
+			color.Println()
 		} else {
-			serviceNumber = 1
+			serviceNumber = 3
 		}
 
 		// 启动 http server
@@ -111,7 +113,7 @@ var httpCmd = &cobra.Command{
 		case "All":
 			cli.HttpAllServer(address, fmt.Sprint(portFlag), absDir)
 		default:
-			fmt.Printf(general.ErrorBaseFormat, "Please select service")
+			color.Error.Println("Please select service")
 			return
 		}
 	},

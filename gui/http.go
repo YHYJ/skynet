@@ -89,11 +89,11 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 		// 启动 HTTP 服务器
 		go func() {
 			if err := general.HttpServer.Serve(listener); err == http.ErrServerClosed {
-				log.Printf("\x1b[33;1mHTTP Server closed\x1b[0m\n")
+				log.Println(general.FgYellow("HTTP Server closed"))
 				general.ServeMux = nil
 				general.HttpServer = nil
 			} else if err != nil {
-				log.Printf("\x1b[31;1mHTTP server error\x1b[0m: \x1b[31m%s\x1b[0m\n", err)
+				log.Printf("%s %s\n", general.FgRed("HTTP server error:"), general.ErrorText(err))
 				general.ServeMux = nil
 				general.HttpServer = nil
 			}
@@ -196,11 +196,11 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 		// 启动 HTTP 服务器
 		go func() {
 			if err := general.HttpServer.Serve(listener); err == http.ErrServerClosed {
-				log.Printf("\x1b[33;1mHTTP Server closed\x1b[0m\n")
+				log.Println(general.FgYellow("HTTP Server closed"))
 				general.ServeMux = nil
 				general.HttpServer = nil
 			} else if err != nil {
-				log.Printf("\x1b[31;1mHTTP server error\x1b[0m: \x1b[31m%s\x1b[0m\n", err)
+				log.Printf("%s %s\n", general.FgRed("HTTP server error:"), general.ErrorText(err))
 				general.ServeMux = nil
 				general.HttpServer = nil
 			}
@@ -352,11 +352,11 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 		// 启动 HTTP 服务器
 		go func() {
 			if err := general.HttpServer.Serve(listener); err == http.ErrServerClosed {
-				log.Printf("\x1b[33;1mHTTP Server closed\x1b[0m\n")
+				log.Println(general.FgYellow("HTTP Server closed"))
 				general.ServeMux = nil
 				general.HttpServer = nil
 			} else if err != nil {
-				log.Printf("\x1b[31;1mHTTP server error\x1b[0m: \x1b[31m%s\x1b[0m\n", err)
+				log.Printf("%s %s\n", general.FgRed("HTTP server error:"), general.ErrorText(err))
 				general.ServeMux = nil
 				general.HttpServer = nil
 			}

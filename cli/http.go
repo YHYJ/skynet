@@ -16,8 +16,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
+	"github.com/gookit/color"
 	"github.com/yhyj/skynet/general"
 )
 
@@ -28,22 +30,23 @@ import (
 //   - port: 服务端口
 //   - dir: 服务目录
 func HttpDownloadServer(address string, port string, dir string) {
+	method := "Download"
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		fmt.Printf(general.ErrorBaseFormat, err)
+		color.Error.Println(err)
 	} else {
 		// 成功后输出服务信息
 		url := fmt.Sprintf("http://%s:%v", address, port)
-		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("Starting http server [Download] at '%s'", dir)) // 服务地址
-		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("HTTP server url is %s", url))                   // URL
-		codeString, err := general.QrCodeString(url)                                                       // 二维码
+		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyan(dir)) // 服务地址
+		color.Info.Tips("HTTP server url is %s", general.FgBlue(url))                                          // URL
+		codeString, err := general.QrCodeString(url)                                                           // 二维码
 		if err != nil {
-			fmt.Printf(general.ErrorBaseFormat, err)
+			color.Error.Println(err)
 		} else {
-			fmt.Printf("\n%s\n", codeString)
+			color.Printf("\n%s\n", codeString)
 		}
-		fmt.Printf(general.InfoFormat, "Press Ctrl+C to stop.") // 服务停止快捷键
+		color.Printf("%s\n", general.CommentText("Press Ctrl+C to stop.")) // 服务停止快捷键
 
 		// 创建请求处理器
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -68,16 +71,16 @@ func HttpDownloadServer(address string, port string, dir string) {
 				</body>
 			</html>
 			`
-			newTemplate, _ := template.New("download").Parse(templateString)
+			newTemplate, _ := template.New(strings.ToLower(method)).Parse(templateString)
 			newTemplate.Execute(w, files)
 		})
 		http.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
 
 		// 启动服务器
 		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
-			fmt.Printf("HTTP Server closed\n")
+			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
-			fmt.Printf(general.ErrorPrefixFormat, "HTTP server error", ": ", err)
+			color.Error.Printf("%s: %s\n", "HTTP server error", err)
 		}
 	}
 }
@@ -89,22 +92,23 @@ func HttpDownloadServer(address string, port string, dir string) {
 //   - port: 服务端口
 //   - dir: 服务目录
 func HttpUploadServer(address string, port string, dir string) {
+	method := "Upload"
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		fmt.Printf(general.ErrorBaseFormat, err)
+		color.Error.Println(err)
 	} else {
 		// 成功后输出服务信息
 		url := fmt.Sprintf("http://%s:%v", address, port)
-		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("Starting http server [Upload] at '%s'", dir)) // 服务地址
-		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("HTTP server url is %s", url))                 // URL
-		codeString, err := general.QrCodeString(url)                                                     // 二维码
+		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyan(dir)) // 服务地址
+		color.Info.Tips("HTTP server url is %s", general.FgBlue(url))                                          // URL
+		codeString, err := general.QrCodeString(url)                                                           // 二维码
 		if err != nil {
-			fmt.Printf(general.ErrorBaseFormat, err)
+			color.Error.Println(err)
 		} else {
-			fmt.Printf("\n%s\n", codeString)
+			color.Printf("\n%s\n", codeString)
 		}
-		fmt.Printf(general.InfoFormat, "Press Ctrl+C to stop.") // 服务停止快捷键
+		color.Printf("%s\n", general.CommentText("Press Ctrl+C to stop.")) // 服务停止快捷键
 
 		// 在 DefaultServeMux 中注册给定模式的处理函数
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -161,16 +165,16 @@ func HttpUploadServer(address string, port string, dir string) {
 					</body>
 				</html>
 				`
-				newTemplate, _ := template.New("upload").Parse(templateString)
+				newTemplate, _ := template.New(strings.ToLower(method)).Parse(templateString)
 				newTemplate.Execute(w, nil)
 			}
 		})
 
 		// 启动服务器
 		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
-			fmt.Printf("HTTP Server closed\n")
+			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
-			fmt.Printf(general.ErrorPrefixFormat, "HTTP server error", ": ", err)
+			color.Error.Printf("%s: %s\n", "HTTP server error", err)
 		}
 	}
 }
@@ -182,22 +186,23 @@ func HttpUploadServer(address string, port string, dir string) {
 //   - port: 服务端口
 //   - dir: 服务目录
 func HttpAllServer(address string, port string, dir string) {
+	method := "All"
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		fmt.Printf(general.ErrorBaseFormat, err)
+		color.Error.Println(err)
 	} else {
 		// 成功后输出服务信息
 		url := fmt.Sprintf("http://%s:%v", address, port)
-		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("Starting http server [All] at '%s'", dir)) // 服务地址
-		fmt.Printf(general.SuccessDarkFormat, fmt.Sprintf("HTTP server url is %s", url))              // URL
-		codeString, err := general.QrCodeString(url)                                                  // 二维码
+		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyan(dir)) // 服务地址
+		color.Info.Tips("HTTP server url is %s", general.FgBlue(url))                                          // URL
+		codeString, err := general.QrCodeString(url)                                                           // 二维码
 		if err != nil {
-			fmt.Printf(general.ErrorBaseFormat, err)
+			color.Error.Println(err)
 		} else {
-			fmt.Printf("\n%s\n", codeString)
+			color.Printf("\n%s\n", codeString)
 		}
-		fmt.Printf(general.InfoFormat, "Press Ctrl+C to stop.") // 服务停止快捷键
+		color.Printf("%s\n", general.CommentText("Press Ctrl+C to stop.")) // 服务停止快捷键
 
 		// 在 DefaultServeMux 中注册给定模式的处理函数
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -216,6 +221,7 @@ func HttpAllServer(address string, port string, dir string) {
 			newTemplate, _ := template.New("root").Parse(templateString)
 			newTemplate.Execute(w, nil)
 		})
+		// 启动 Upload 服务器
 		http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodPost {
 				// 解析表单
@@ -276,6 +282,7 @@ func HttpAllServer(address string, port string, dir string) {
 				newTemplate.Execute(w, nil)
 			}
 		})
+		// 启动 Download 服务器
 		http.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 			// 列出文件夹中的所有文件，并提供下载链接
 			files, err := os.ReadDir(dir)
@@ -306,9 +313,9 @@ func HttpAllServer(address string, port string, dir string) {
 
 		// 启动服务器
 		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
-			fmt.Printf("HTTP Server closed\n")
+			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
-			fmt.Printf(general.ErrorPrefixFormat, "HTTP server error", ": ", err)
+			color.Error.Printf("%s: %s\n", "HTTP server error", err)
 		}
 	}
 }

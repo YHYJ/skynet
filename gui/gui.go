@@ -37,7 +37,7 @@ func StartGraphicalUserInterface() {
 	// 获取当前用户信息
 	currentUserInfo, err := general.GetCurrentUserInfo()
 	if err != nil {
-		log.Printf("\x1b[31m%s\x1b[0m\n", err)
+		log.Println(general.FgRed(err))
 	}
 
 	// HTTP 服务默认配置
@@ -114,7 +114,7 @@ func StartGraphicalUserInterface() {
 			customDialog.Show()
 		}
 
-		log.Printf("Network interface refresh")
+		log.Printf(general.NoticeText("Network interface refresh"))
 		interfaceRadio.Options = nicInfos
 		windowContent.Refresh()
 	})
@@ -179,7 +179,7 @@ func StartGraphicalUserInterface() {
 			customDialog.Show()
 		}
 		appInstance.OpenURL(serviceUrlParsed)
-		log.Printf("Open URL: \x1b[34;1;4m%s\x1b[0m", serviceUrlParsed)
+		log.Printf("Open URL: %s", general.FgBlue(serviceUrlParsed))
 	})
 	urlButton.Disable() // 禁用 URL 按钮
 
@@ -271,7 +271,8 @@ func StartGraphicalUserInterface() {
 				serviceStatus = 1             // 服务已启动
 				statusAnimation.Start()       // 服务状态动画
 				controlButton.SetText("Stop") // 修改按钮文字
-				log.Printf("\x1b[32;1mServing HTTP [%s] at '%s'\x1b[0m (\x1b[34;1;4m%s\x1b[0m)\n", selectedService, selectedDir, serviceUrl)
+				log.Printf("Starting HTTP [%s] server at '%s'\n", general.SuccessText(selectedService), general.FgCyan(selectedDir))
+				log.Printf("HTTP server url is %s\n", general.FgBlue(serviceUrl))
 				// 设置二维码状态
 				qrWindow.SetContent(qrImage)                // 将二维码图像添加到窗口（NOTE: 不能使用 container.NewCenter() 函数将其添加到窗口中心，否则会产生内边距）
 				qrWindow.SetPadded(false)                   // 设置窗口内边距为零以确保图像与窗口边框贴合
@@ -329,12 +330,12 @@ func StartGraphicalUserInterface() {
 			qrWindow.Show()
 			qrButton.SetIcon(theme.VisibilityOffIcon()) // 按钮变为点击隐藏
 			qrStatus = 1
-			log.Printf("QR Code displayed")
+			log.Printf(general.NoticeText("QR Code displayed"))
 		} else if qrStatus == 1 && serviceStatus == 1 { // 二维码已显示且服务已启动，则隐藏二维码
 			qrWindow.Hide()
 			qrButton.SetIcon(theme.VisibilityIcon()) // 按钮变为点击显示
 			qrStatus = 0
-			log.Printf("QR Code hidden")
+			log.Printf(general.NoticeText("QR Code hidden"))
 		}
 	})
 	qrButton.Disable()                            // 禁用二维码显示/隐藏按钮

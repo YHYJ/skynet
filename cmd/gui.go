@@ -10,9 +10,9 @@ Description: 执行子命令 'gui'
 package cmd
 
 import (
-	"fmt"
 	"log"
 
+	"github.com/gookit/color"
 	"github.com/spf13/cobra"
 	"github.com/yhyj/skynet/general"
 	"github.com/yhyj/skynet/gui"
@@ -28,29 +28,29 @@ var guiCmd = &cobra.Command{
 			if general.GetVariable("DISPLAY") != "" {
 				// 设置字体
 				if err := gui.SetFont(); err != nil {
-					log.Printf(general.ErrorBaseFormat, err)
+					log.Println(general.FgRed(err))
 				}
 				// 启动 GUI
 				gui.StartGraphicalUserInterface()
 			} else {
-				fmt.Println("Could not connect to display")
+				color.Printf("%s\n", general.ErrorText("Could not connect to display"))
 			}
 		} else if general.Platform == "windows" {
 			// 设置字体
 			if err := gui.SetFont(); err != nil {
-				log.Printf(general.ErrorBaseFormat, err)
+				log.Println(general.FgRed(err))
 			}
 			// 启动 GUI
 			gui.StartGraphicalUserInterface()
 		} else if general.Platform == "darwin" {
 			// 设置字体
 			if err := gui.SetFont(); err != nil {
-				log.Printf(general.ErrorBaseFormat, err)
+				log.Println(general.FgRed(err))
 			}
 			// 启动 GUI
 			gui.StartGraphicalUserInterface()
 		} else {
-			fmt.Println("Current platform is not supported")
+			color.Printf("%s\n", general.ErrorText("Current platform is not supported"))
 		}
 	},
 }
