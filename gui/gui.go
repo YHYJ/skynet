@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -27,6 +28,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/flopp/go-findfont"
 	"github.com/yhyj/skynet/general"
 )
 
@@ -97,7 +99,7 @@ func StartGraphicalUserInterface() {
 	// 创建网络接口选择标签
 	interfaceLabel := widget.NewLabel(interfaceLabelText)
 	// 获取网卡信息
-	nicInfos, err := GetNetInterfaces()
+	nicInfos, err := general.GetNetInterfacesForGui()
 	if err != nil {
 		customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
 		customDialog.Show()
@@ -106,7 +108,7 @@ func StartGraphicalUserInterface() {
 	interfaceRadio := widget.NewRadioGroup(nicInfos, func(selected string) {})
 	// 创建网络接口刷新按钮
 	refreshButton = widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
-		nicInfos, err := GetNetInterfaces()
+		nicInfos, err := general.GetNetInterfacesForGui()
 		if err != nil {
 			customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
 			customDialog.Show()
@@ -213,7 +215,7 @@ func StartGraphicalUserInterface() {
 			if len(parts) > 1 {
 				return parts[len(parts)-1]
 			}
-			interfaceRadio.SetSelected(defaultNic)
+			interfaceRadio.SetSelected(general.DefaultNic)
 			return defaultIP
 		}()
 		selectedPort := func() string {
@@ -288,8 +290,8 @@ func StartGraphicalUserInterface() {
 			}
 		} else if serviceStatus == 1 { // Stop
 			// 加锁，确保只有一个 goroutine 能够关闭 HTTP 服务器和注销路由
-			serverMutex.Lock()
-			defer serverMutex.Unlock()
+			general.ServerMutex.Lock()
+			defer general.ServerMutex.Unlock()
 			// 停止 HTTP 服务
 			if err := httpServer.Shutdown(nil); err != nil {
 				customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
@@ -383,4 +385,34 @@ func makeCustomDialog(title, dismiss, text string, size fyne.Size, parent fyne.W
 	customDialog := dialog.NewCustom(title, dismiss, dialogContent, parent)
 	customDialog.Resize(size)
 	return customDialog
+}
+
+// SetFont 设置 Fyne 使用的字体
+//
+// 返回：
+//   - 错误信息
+func SetFont() error {
+	// 默认使用字体
+	fontNames := []string{
+		"pingfang",                // macOS
+		"sourcehansanscn-medium",  // Linux
+		"simhei", "yahei", "msyh", // Windows
+	}
+
+	// 系统可用字体
+	fontPaths := findfont.List()
+
+	for _, name := range fontNames {
+		for _, path := range fontPaths {
+			pathLower := strings.ToLower(path)
+			// 暂时无法解析ttc文件
+			if strings.Contains(pathLower, name) && !strings.HasSuffix(pathLower, ".ttc") {
+				if err := os.Setenv("FYNE_FONT", path); err != nil {
+					return err
+				}
+				return nil // 设置成功即退出
+			}
+		}
+	}
+	return nil
 }

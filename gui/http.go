@@ -1,5 +1,5 @@
 /*
-File: define_httpserver.go
+File: http.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-10-31 16:54:05
@@ -42,13 +42,13 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 
 	// 加锁，控制对 HTTP 服务器和路由注册的并发访问
 	// 确保只有一个 goroutine 能够启动 HTTP 服务器和注册路由，防止多次重复注册相同的路由
-	serverMutex.Lock()
-	defer serverMutex.Unlock()
+	general.ServerMutex.Lock()
+	defer general.ServerMutex.Unlock()
 
 	// 创建路由
-	serveMux = http.NewServeMux()
+	general.ServeMux = http.NewServeMux()
 	// 注册给定模式的处理函数
-	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	general.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
@@ -74,11 +74,11 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 		newTemplate.Execute(w, files)
 	})
 	// 注册给定模式的处理程序
-	serveMux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
+	general.ServeMux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
 
 	// 创建 HTTP 服务器
-	httpServer = &http.Server{
-		Handler: serveMux, // 调用的处理程序
+	general.HttpServer = &http.Server{
+		Handler: general.ServeMux, // 调用的处理程序
 	}
 
 	// 创建 TCP 监听器
@@ -88,19 +88,19 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 	} else {
 		// 启动 HTTP 服务器
 		go func() {
-			if err := httpServer.Serve(listener); err == http.ErrServerClosed {
+			if err := general.HttpServer.Serve(listener); err == http.ErrServerClosed {
 				log.Printf("\x1b[33;1mHTTP Server closed\x1b[0m\n")
-				serveMux = nil
-				httpServer = nil
+				general.ServeMux = nil
+				general.HttpServer = nil
 			} else if err != nil {
 				log.Printf("\x1b[31;1mHTTP server error\x1b[0m: \x1b[31m%s\x1b[0m\n", err)
-				serveMux = nil
-				httpServer = nil
+				general.ServeMux = nil
+				general.HttpServer = nil
 			}
 		}()
 	}
 
-	return httpServer, nil
+	return general.HttpServer, nil
 }
 
 // HttpUploadServer 启动 HTTP 上传服务
@@ -122,9 +122,9 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 	}
 
 	// 创建路由
-	serveMux = http.NewServeMux()
+	general.ServeMux = http.NewServeMux()
 	// 注册给定模式的处理函数
-	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	general.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
 			err := r.ParseMultipartForm(100 << 20) // 限制内存最多存储100MB，超出的部分保存到磁盘
@@ -184,8 +184,8 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 	})
 
 	// 创建 HTTP 服务器
-	httpServer = &http.Server{
-		Handler: serveMux, // 调用的处理程序
+	general.HttpServer = &http.Server{
+		Handler: general.ServeMux, // 调用的处理程序
 	}
 
 	// 创建 TCP 监听器
@@ -195,19 +195,19 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 	} else {
 		// 启动 HTTP 服务器
 		go func() {
-			if err := httpServer.Serve(listener); err == http.ErrServerClosed {
+			if err := general.HttpServer.Serve(listener); err == http.ErrServerClosed {
 				log.Printf("\x1b[33;1mHTTP Server closed\x1b[0m\n")
-				serveMux = nil
-				httpServer = nil
+				general.ServeMux = nil
+				general.HttpServer = nil
 			} else if err != nil {
 				log.Printf("\x1b[31;1mHTTP server error\x1b[0m: \x1b[31m%s\x1b[0m\n", err)
-				serveMux = nil
-				httpServer = nil
+				general.ServeMux = nil
+				general.HttpServer = nil
 			}
 		}()
 	}
 
-	return httpServer, nil
+	return general.HttpServer, nil
 }
 
 // HttpAllServer 启动 HTTP 所有服务
@@ -229,9 +229,9 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 	}
 
 	// 创建路由
-	serveMux = http.NewServeMux()
+	general.ServeMux = http.NewServeMux()
 	// 注册给定模式的处理函数
-	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	general.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// 根路径上显示一个链接到 /upload 页面
 		templateString := `
 		<!doctype html>
@@ -248,7 +248,7 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 		newTemplate, _ := template.New("root").Parse(templateString)
 		newTemplate.Execute(w, nil)
 	})
-	serveMux.HandleFunc("/upload-service", func(w http.ResponseWriter, r *http.Request) {
+	general.ServeMux.HandleFunc("/upload-service", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
 			err := r.ParseMultipartForm(100 << 20) // 限制内存最多存储100MB，超出的部分保存到磁盘
@@ -309,7 +309,7 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 			newTemplate.Execute(w, nil)
 		}
 	})
-	serveMux.HandleFunc("/download-service", func(w http.ResponseWriter, r *http.Request) {
+	general.ServeMux.HandleFunc("/download-service", func(w http.ResponseWriter, r *http.Request) {
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
@@ -337,11 +337,11 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 		newTemplate.Execute(w, files)
 	})
 	// 注册给定模式的处理程序
-	serveMux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
+	general.ServeMux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
 
 	// 创建 HTTP 服务器
-	httpServer = &http.Server{
-		Handler: serveMux, // 调用的处理程序
+	general.HttpServer = &http.Server{
+		Handler: general.ServeMux, // 调用的处理程序
 	}
 
 	// 创建 TCP 监听器
@@ -351,17 +351,17 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 	} else {
 		// 启动 HTTP 服务器
 		go func() {
-			if err := httpServer.Serve(listener); err == http.ErrServerClosed {
+			if err := general.HttpServer.Serve(listener); err == http.ErrServerClosed {
 				log.Printf("\x1b[33;1mHTTP Server closed\x1b[0m\n")
-				serveMux = nil
-				httpServer = nil
+				general.ServeMux = nil
+				general.HttpServer = nil
 			} else if err != nil {
 				log.Printf("\x1b[31;1mHTTP server error\x1b[0m: \x1b[31m%s\x1b[0m\n", err)
-				serveMux = nil
-				httpServer = nil
+				general.ServeMux = nil
+				general.HttpServer = nil
 			}
 		}()
 	}
 
-	return httpServer, nil
+	return general.HttpServer, nil
 }

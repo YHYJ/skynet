@@ -10,10 +10,13 @@ Description: 操作变量（包括代码变量和环境变量）
 package general
 
 import (
+	"fmt"
+	"net/http"
 	"os"
 	"os/user"
 	"runtime"
 	"strconv"
+	"sync"
 )
 
 // ---------- 代码变量
@@ -58,6 +61,14 @@ var (
 	ErrorBaseFormat   = "\x1b[31m%s\x1b[0m\n"     // 错误信息输出格式 基础错误: <错误信息>
 	ErrorPrefixFormat = "%s%s\x1b[31m%s\x1b[0m\n" // 错误信息输出格式 带前缀的错误: <前缀><分隔符><错误信息>
 	ErrorSuffixFormat = "\x1b[31m%s\x1b[0m%s%s\n" // 错误信息输出格式 带后缀的错误: <错误信息><分隔符><后缀>
+)
+
+var (
+	ServerMutex sync.Mutex                                 // 互斥锁
+	ServeMux    *http.ServeMux                             // 路由
+	HttpServer  *http.Server                               // HTTP 服务
+	OtherNic    string                                     // 其他网络接口
+	DefaultNic  = fmt.Sprintf("%s - %s", "any", "0.0.0.0") // 默认网络接口
 )
 
 // ---------- 环境变量

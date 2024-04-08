@@ -55,7 +55,7 @@ var httpCmd = &cobra.Command{
 		absDir := general.GetAbsPath(dirFlag)
 
 		// 输出 interfaceFlag 供用户选择
-		netInterfacesData, _ := cli.GetNetInterfaces()
+		netInterfacesData, _ := general.GetNetInterfacesForCli()
 		var netInterfaceNumber int
 		if interfaceFlag {
 			// 输出网卡信息供用户选择，输出格式为：[序号] 网卡名称 网卡IP
