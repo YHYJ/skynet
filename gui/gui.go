@@ -100,7 +100,7 @@ func StartGraphicalUserInterface() {
 	// 创建网络接口选择标签
 	interfaceLabel := widget.NewLabel(interfaceLabelText)
 	// 获取网卡信息
-	nicInfos, err := general.GetNetInterfacesForGui()
+	nicInfos, err := general.GetNetInterfacesForGUI()
 	if err != nil {
 		customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
 		customDialog.Show()
@@ -109,7 +109,7 @@ func StartGraphicalUserInterface() {
 	interfaceRadio := widget.NewRadioGroup(nicInfos, func(selected string) {})
 	// 创建网络接口刷新按钮
 	refreshButton = widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
-		nicInfos, err := general.GetNetInterfacesForGui()
+		nicInfos, err := general.GetNetInterfacesForGUI()
 		if err != nil {
 			customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
 			customDialog.Show()
@@ -255,11 +255,11 @@ func StartGraphicalUserInterface() {
 			// 启动 HTTP 服务
 			switch selectedService {
 			case "Download":
-				httpServer, err = HttpDownloadServer(selectedInterfaceIP, selectedPort, selectedDir)
+				httpServer, err = general.HttpDownloadServerForGUI(selectedInterfaceIP, selectedPort, selectedDir)
 			case "Upload":
-				httpServer, err = HttpUploadServer(selectedInterfaceIP, selectedPort, selectedDir)
+				httpServer, err = general.HttpUploadServerForGUI(selectedInterfaceIP, selectedPort, selectedDir)
 			case "All":
-				httpServer, err = HttpAllServer(selectedInterfaceIP, selectedPort, selectedDir)
+				httpServer, err = general.HttpAllServerForGUI(selectedInterfaceIP, selectedPort, selectedDir)
 			default:
 				customDialog = makeCustomDialog("Warning", "Close", "Please select service", customDialogSize, mainWindow)
 				customDialog.Show()

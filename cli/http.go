@@ -10,311 +10,101 @@ Description: 子命令 'http' 的实现
 package cli
 
 import (
-	"io"
-	"net"
-	"net/http"
+	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
-	"text/template"
 
 	"github.com/gookit/color"
 	"github.com/yhyj/skynet/general"
 )
 
-// HttpDownloadServer 启动 HTTP 下载服务
+// StartHttp 启动 HTTP 服务
 //
 // 参数：
-//   - address: 服务地址
 //   - port: 服务端口
 //   - dir: 服务目录
-func HttpDownloadServer(address string, port string, dir string) {
-	method := "Download"
-	// 创建 TCP 监听器
-	listener, err := net.Listen("tcp", address+":"+port)
-	if err != nil {
-		color.Error.Println(err)
-	} else {
-		// 成功后输出服务信息
-		url := color.Sprintf("http://%s:%v", address, port)
-		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
-		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
-		codeString, err := general.QrCodeString(url)                                                               // 二维码
-		if err != nil {
-			color.Error.Println(err)
-		} else {
-			color.Printf("\n%s\n", codeString)
-		}
-		color.Printf("%s\n", general.CommentText("Press Ctrl+C to stop.")) // 服务停止快捷键
-
-		// 创建请求处理器
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			// 列出文件夹中的所有文件，并提供下载链接
-			files, err := os.ReadDir(dir)
-			if err != nil {
-				color.Fprintf(w, "Error reading download directory: %s", err)
-			}
-
-			templateString := `
-			<!doctype html>
-			<html>
-				<head><title>Download</title></head>
-				<body>
-					<h1>File Download</h1>
-					<hr>
-					<ul>
-						{{range .}}
-							<li><a href="/download/{{.Name}}">{{.Name}}</a></li>
-						{{end}}
-					</ul>
-				</body>
-			</html>
-			`
-			newTemplate, _ := template.New(strings.ToLower(method)).Parse(templateString)
-			newTemplate.Execute(w, files)
-		})
-		http.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
-
-		// 启动服务器
-		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
-			color.Printf("HTTP Server closed\n")
-		} else if err != nil {
-			color.Error.Printf("%s: %s\n", "HTTP server error", err)
-		}
+//   - interactive: 交互模式
+func StartHttp(port int, dir string, interactive bool) {
+	// 如果 port 范围不在 [1, 65535] 内，则使用默认值 8080
+	if port < 1 || port > 65535 {
+		port = 8080
+		color.Printf("%s\n", general.DangerText("Port number is invalid, using default port 8080."))
 	}
-}
-
-// HttpUploadServer 启动 HTTP 上传服务
-//
-// 参数：
-//   - address: 服务地址
-//   - port: 服务端口
-//   - dir: 服务目录
-func HttpUploadServer(address string, port string, dir string) {
-	method := "Upload"
-	// 创建 TCP 监听器
-	listener, err := net.Listen("tcp", address+":"+port)
-	if err != nil {
-		color.Error.Println(err)
-	} else {
-		// 成功后输出服务信息
-		url := color.Sprintf("http://%s:%v", address, port)
-		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
-		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
-		codeString, err := general.QrCodeString(url)                                                               // 二维码
-		if err != nil {
-			color.Error.Println(err)
-		} else {
-			color.Printf("\n%s\n", codeString)
-		}
-		color.Printf("%s\n", general.CommentText("Press Ctrl+C to stop.")) // 服务停止快捷键
-
-		// 在 DefaultServeMux 中注册给定模式的处理函数
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodPost {
-				// 解析表单
-				err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
-
-				file, handler, err := r.FormFile("file")
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
-				defer file.Close()
-
-				// 创建文件保存到 uploads 文件夹
-				targetFile, err := os.Create(filepath.Join(dir, handler.Filename))
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				defer targetFile.Close()
-
-				// 将上传文件内容复制到新文件
-				_, err = io.Copy(targetFile, file)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				// 返回包含 JavaScript 的响应以显示弹窗通知
-				js := color.Sprintf(`
-				<script>
-					alert("File uploaded successfully\n%s");
-					window.location.href = '/upload';
-				</script>
-				`, handler.Filename)
-				color.Fprintln(w, js)
-			} else {
-				// 显示文件上传表单
-				templateString := `
-				<!doctype html>
-				<html>
-					<head><title>Upload</title></head>
-					<body>
-						<h1>File Upload</h1>
-						<hr><br>
-						<form action="/upload" method="post" enctype="multipart/form-data">
-							<input type="file" name="file">
-							<input type="submit" value="Upload">
-						</form>
-					</body>
-				</html>
-				`
-				newTemplate, _ := template.New(strings.ToLower(method)).Parse(templateString)
-				newTemplate.Execute(w, nil)
-			}
-		})
-
-		// 启动服务器
-		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
-			color.Printf("HTTP Server closed\n")
-		} else if err != nil {
-			color.Error.Printf("%s: %s\n", "HTTP server error", err)
-		}
+	// 如果 port 小于 1024，则提示需要 root 权限
+	if port < 1024 {
+		color.Printf("%s\n", general.DangerText("You need root privileges to listen on ports below 1024."))
+		os.Exit(1)
 	}
-}
 
-// HttpAllServer 启动所有 HTTP 服务
-//
-// 参数：
-//   - address: 服务地址
-//   - port: 服务端口
-//   - dir: 服务目录
-func HttpAllServer(address string, port string, dir string) {
-	method := "All"
-	// 创建 TCP 监听器
-	listener, err := net.Listen("tcp", address+":"+port)
-	if err != nil {
-		color.Error.Println(err)
-	} else {
-		// 成功后输出服务信息
-		url := color.Sprintf("http://%s:%v", address, port)
-		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
-		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
-		codeString, err := general.QrCodeString(url)                                                               // 二维码
-		if err != nil {
-			color.Error.Println(err)
-		} else {
-			color.Printf("\n%s\n", codeString)
+	if dir == "PWD" {
+		dir = general.GetVariable("PWD")
+	}
+	// 使用 dir 参数
+	if !general.FileExist(dir) {
+		// 如果 dir 参数不是一个目录，则提示目录不存在并退出程序
+		color.Error.Printf("Directory '%s' does not exist.\n", dir)
+		os.Exit(1)
+	}
+	// 获取 dir 参数的绝对路径
+	absDir := general.GetAbsPath(dir)
+
+	// 获取 CLI 适用格式的网卡信息
+	netInterfacesData, _ := general.GetNetInterfacesForCLI()
+	// 网卡编号
+	var netInterfaceNumber int
+	// 可用服务类型
+	serviceSlice := map[int]string{1: "Download", 2: "Upload", 3: "All"}
+	// 服务类型编号
+	var serviceNumber int
+
+	if interactive { // 交互模式
+		// 输出网卡信息供用户选择，输出格式为：[序号] 网卡名称 网卡IP
+		for i := 1; i <= len(netInterfacesData); i++ {
+			// 输出网卡信息
+			color.Printf("%s %s: %s\n", general.FgGreenText("[", i, "]"), general.LightText(netInterfacesData[i]["name"]), general.LightText(netInterfacesData[i]["ip"]))
 		}
-		color.Printf("%s\n", general.CommentText("Press Ctrl+C to stop.")) // 服务停止快捷键
-
-		// 在 DefaultServeMux 中注册给定模式的处理函数
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			// 根路径上显示一个链接到 /upload 页面
-			templateString := `
-			<!doctype html>
-			<html>
-				<head><title>File Service</title></head>
-				<body>
-					<h1>Welcome to the File Service</h1>
-					<a href="/upload">File Upload</a><br>
-					<a href="/download">File Download</a>
-				</body>
-			</html>
-			`
-			newTemplate, _ := template.New("root").Parse(templateString)
-			newTemplate.Execute(w, nil)
-		})
-		// 启动 Upload 服务器
-		http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodPost {
-				// 解析表单
-				err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
-
-				file, handler, err := r.FormFile("file")
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
-				defer file.Close()
-
-				// 创建文件保存到 uploads 文件夹
-				targetFile, err := os.Create(filepath.Join(dir, handler.Filename))
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				defer targetFile.Close()
-
-				// 将上传文件内容复制到新文件
-				_, err = io.Copy(targetFile, file)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				// 返回包含 JavaScript 的响应以显示弹窗通知
-				js := color.Sprintf(`
-				<script>
-					alert("File uploaded successfully\n%s");
-					window.location.href = '/upload';
-				</script>
-				`, handler.Filename)
-				color.Fprintln(w, js)
-			} else {
-				// 显示文件上传表单
-				templateString := `
-				<!doctype html>
-				<html>
-					<head><title>Upload</title></head>
-					<body>
-						<h1>File Upload</h1>
-						<a href="/">Back to Main Page</a>
-						<a href="/download">Go to Download Page</a>
-						<br><br>
-						<form action="/upload" method="post" enctype="multipart/form-data">
-							<input type="file" name="file">
-							<input type="submit" value="Upload">
-						</form>
-					</body>
-				</html>
-			`
-				newTemplate, _ := template.New("upload").Parse(templateString)
-				newTemplate.Execute(w, nil)
-			}
-		})
-		// 启动 Download 服务器
-		http.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
-			// 列出文件夹中的所有文件，并提供下载链接
-			files, err := os.ReadDir(dir)
-			if err != nil {
-				color.Fprintf(w, "Error reading download directory: %s", err)
-			}
-
-			templateString := `
-			<!doctype html>
-			<html>
-				<head><title>Download</title></head>
-				<body>
-					<h1>File Download</h1>
-					<a href="/">Back to Main Page</a>
-					<a href="/upload">Go to Upload Page</a>
-					<hr>
-					<ul>
-						{{range .}}
-							<li><a href="/download/{{.Name}}">{{.Name}}</a></li>
-						{{end}}
-					</ul>
-				</body>
-			</html>
-			`
-			newTemplate, _ := template.New("download").Parse(templateString)
-			newTemplate.Execute(w, files)
-		})
-
-		// 启动服务器
-		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
-			color.Printf("HTTP Server closed\n")
-		} else if err != nil {
-			color.Error.Printf("%s: %s\n", "HTTP server error", err)
+		// 选择网卡编号
+		color.Printf("%s", general.QuestionText("Please select the interface number: "))
+		// 接收用户输入并赋值给 interfaceNumber
+		fmt.Scanln(&netInterfaceNumber)
+		// 如果 interfaceNumber 不在[0, len(netinterfacesData))范围内，则使用默认值
+		if netInterfaceNumber < 1 || netInterfaceNumber > len(netInterfacesData) {
+			netInterfaceNumber = 1
+			color.Danger.Printf("Invalid interface number, using default interface <%s>\n", netInterfacesData[netInterfaceNumber]["name"])
 		}
+		color.Println()
+
+		// 输出支持的服务类型供用户选择，输出格式为：[序号] 服务类型
+		for i := 1; i <= len(serviceSlice); i++ {
+			// 输出服务类型
+			color.Printf("%s %s\n", general.FgGreenText("[", i, "]"), general.LightText(serviceSlice[i]))
+		}
+		// 选择服务编号
+		color.Printf("%s", general.QuestionText("Please select the service number: "))
+		// 接收用户输入并赋值给 serviceNumber
+		fmt.Scanln(&serviceNumber)
+		// 如果 serviceNumber 不在[0, len(serviceSlice))范围内，则使用默认值
+		if serviceNumber < 1 || serviceNumber > len(serviceSlice) {
+			serviceNumber = 3
+			color.Danger.Printf("Invalid service number, using default service <%s>\n", serviceSlice[serviceNumber])
+		}
+		color.Println()
+	} else { // 默认模式
+		netInterfaceNumber = 1
+		serviceNumber = 3
+	}
+	// 获取 address 参数
+	address := netInterfacesData[netInterfaceNumber]["ip"]
+
+	// 启动 http server
+	switch serviceSlice[serviceNumber] {
+	case "Download":
+		general.HttpDownloadServerForCLI(address, color.Sprint(port), absDir)
+	case "Upload":
+		general.HttpUploadServerForCLI(address, color.Sprint(port), absDir)
+	case "All":
+		general.HttpAllServerForCLI(address, color.Sprint(port), absDir)
+	default:
+		color.Error.Println("Please select service")
+		return
 	}
 }

@@ -24,7 +24,13 @@ var guiCmd = &cobra.Command{
 	Short: "Start the GUI version of skynet",
 	Long:  `Start the skynet Graphical User Interface`,
 	Run: func(cmd *cobra.Command, args []string) {
+		var (
+			errorSlogan []string // 错误标语
+		)
+
+		// 检查平台
 		if general.Platform == "linux" {
+			// 检查是否远程连接
 			if general.GetVariable("DISPLAY") != "" {
 				// 设置字体
 				if err := gui.SetFont(); err != nil {
@@ -33,7 +39,7 @@ var guiCmd = &cobra.Command{
 				// 启动 GUI
 				gui.StartGraphicalUserInterface()
 			} else {
-				color.Printf("%s\n", general.ErrorText("Could not connect to display"))
+				errorSlogan = append(errorSlogan, "Could not connect to display")
 			}
 		} else if general.Platform == "windows" {
 			// 设置字体
@@ -50,7 +56,15 @@ var guiCmd = &cobra.Command{
 			// 启动 GUI
 			gui.StartGraphicalUserInterface()
 		} else {
-			color.Printf("%s\n", general.ErrorText("Current platform is not supported"))
+			errorSlogan = append(errorSlogan, "Current platform is not supported")
+		}
+
+		// 输出标语
+		if len(errorSlogan) > 0 {
+			color.Println()
+			for _, slogan := range errorSlogan {
+				color.Error.Tips(general.PrimaryText(slogan))
+			}
 		}
 	},
 }

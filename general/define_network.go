@@ -15,12 +15,12 @@ import (
 	"github.com/gookit/color"
 )
 
-// GetNetInterfacesForCli 为 CLI 获取网卡信息
+// GetNetInterfacesForCLI 为 CLI 获取网卡信息
 //
 // 返回：
 //   - 网卡信息
 //   - 错误信息
-func GetNetInterfacesForCli() (map[int]map[string]string, error) {
+func GetNetInterfacesForCLI() (map[int]map[string]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
 	if err != nil {
 		return nil, err
@@ -53,12 +53,12 @@ func GetNetInterfacesForCli() (map[int]map[string]string, error) {
 	return netInterfacesData, nil
 }
 
-// GetNetInterfacesForGui 为 GUI 获取网卡信息
+// GetNetInterfacesForGUI 为 GUI 获取网卡信息
 //
 // 返回：
 //   - 网卡信息
 //   - 错误信息
-func GetNetInterfacesForGui() ([]string, error) {
+func GetNetInterfacesForGUI() ([]string, error) {
 	netInterfacesInfo, err := net.Interfaces()
 	if err != nil {
 		return nil, err
