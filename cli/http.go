@@ -38,9 +38,9 @@ func HttpDownloadServer(address string, port string, dir string) {
 	} else {
 		// 成功后输出服务信息
 		url := fmt.Sprintf("http://%s:%v", address, port)
-		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyan(dir)) // 服务地址
-		color.Info.Tips("HTTP server url is %s", general.FgBlue(url))                                          // URL
-		codeString, err := general.QrCodeString(url)                                                           // 二维码
+		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
+		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
+		codeString, err := general.QrCodeString(url)                                                               // 二维码
 		if err != nil {
 			color.Error.Println(err)
 		} else {
@@ -100,9 +100,9 @@ func HttpUploadServer(address string, port string, dir string) {
 	} else {
 		// 成功后输出服务信息
 		url := fmt.Sprintf("http://%s:%v", address, port)
-		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyan(dir)) // 服务地址
-		color.Info.Tips("HTTP server url is %s", general.FgBlue(url))                                          // URL
-		codeString, err := general.QrCodeString(url)                                                           // 二维码
+		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
+		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
+		codeString, err := general.QrCodeString(url)                                                               // 二维码
 		if err != nil {
 			color.Error.Println(err)
 		} else {
@@ -194,9 +194,9 @@ func HttpAllServer(address string, port string, dir string) {
 	} else {
 		// 成功后输出服务信息
 		url := fmt.Sprintf("http://%s:%v", address, port)
-		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyan(dir)) // 服务地址
-		color.Info.Tips("HTTP server url is %s", general.FgBlue(url))                                          // URL
-		codeString, err := general.QrCodeString(url)                                                           // 二维码
+		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
+		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
+		codeString, err := general.QrCodeString(url)                                                               // 二维码
 		if err != nil {
 			color.Error.Println(err)
 		} else {

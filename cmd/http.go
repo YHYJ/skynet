@@ -63,7 +63,7 @@ var httpCmd = &cobra.Command{
 			// 输出网卡信息供用户选择，输出格式为：[序号] 网卡名称 网卡IP
 			for i := 1; i <= len(netInterfacesData); i++ {
 				// 输出网卡信息
-				color.Printf("%s %s: %s\n", general.FgGreen("[", i, "]"), general.LightText(netInterfacesData[i]["name"]), general.LightText(netInterfacesData[i]["ip"]))
+				color.Printf("%s %s: %s\n", general.FgGreenText("[", i, "]"), general.LightText(netInterfacesData[i]["name"]), general.LightText(netInterfacesData[i]["ip"]))
 			}
 			// 选择网卡编号
 			color.Printf("%s", general.QuestionText("Please select the interface number: "))
@@ -88,7 +88,7 @@ var httpCmd = &cobra.Command{
 			// 输出支持的服务类型供用户选择，输出格式为：[序号] 服务类型
 			for i := 1; i <= len(serviceSlice); i++ {
 				// 输出服务类型
-				color.Printf("%s %s\n", general.FgGreen("[", i, "]"), general.LightText(serviceSlice[i]))
+				color.Printf("%s %s\n", general.FgGreenText("[", i, "]"), general.LightText(serviceSlice[i]))
 			}
 			// 选择服务编号
 			color.Printf("%s", general.QuestionText("Please select the service number: "))

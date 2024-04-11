@@ -28,7 +28,7 @@ var guiCmd = &cobra.Command{
 			if general.GetVariable("DISPLAY") != "" {
 				// 设置字体
 				if err := gui.SetFont(); err != nil {
-					log.Println(general.FgRed(err))
+					log.Println(general.FgRedText(err))
 				}
 				// 启动 GUI
 				gui.StartGraphicalUserInterface()
@@ -38,14 +38,14 @@ var guiCmd = &cobra.Command{
 		} else if general.Platform == "windows" {
 			// 设置字体
 			if err := gui.SetFont(); err != nil {
-				log.Println(general.FgRed(err))
+				log.Println(general.FgRedText(err))
 			}
 			// 启动 GUI
 			gui.StartGraphicalUserInterface()
 		} else if general.Platform == "darwin" {
 			// 设置字体
 			if err := gui.SetFont(); err != nil {
-				log.Println(general.FgRed(err))
+				log.Println(general.FgRedText(err))
 			}
 			// 启动 GUI
 			gui.StartGraphicalUserInterface()
