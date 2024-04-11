@@ -10,7 +10,6 @@ Description: 子命令 'http' 的实现
 package cli
 
 import (
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -37,7 +36,7 @@ func HttpDownloadServer(address string, port string, dir string) {
 		color.Error.Println(err)
 	} else {
 		// 成功后输出服务信息
-		url := fmt.Sprintf("http://%s:%v", address, port)
+		url := color.Sprintf("http://%s:%v", address, port)
 		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
 		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
 		codeString, err := general.QrCodeString(url)                                                               // 二维码
@@ -53,7 +52,7 @@ func HttpDownloadServer(address string, port string, dir string) {
 			// 列出文件夹中的所有文件，并提供下载链接
 			files, err := os.ReadDir(dir)
 			if err != nil {
-				fmt.Fprintf(w, "Error reading download directory: %s", err)
+				color.Fprintf(w, "Error reading download directory: %s", err)
 			}
 
 			templateString := `
@@ -99,7 +98,7 @@ func HttpUploadServer(address string, port string, dir string) {
 		color.Error.Println(err)
 	} else {
 		// 成功后输出服务信息
-		url := fmt.Sprintf("http://%s:%v", address, port)
+		url := color.Sprintf("http://%s:%v", address, port)
 		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
 		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
 		codeString, err := general.QrCodeString(url)                                                               // 二维码
@@ -142,13 +141,13 @@ func HttpUploadServer(address string, port string, dir string) {
 					return
 				}
 				// 返回包含 JavaScript 的响应以显示弹窗通知
-				js := fmt.Sprintf(`
+				js := color.Sprintf(`
 				<script>
 					alert("File uploaded successfully\n%s");
 					window.location.href = '/upload';
 				</script>
 				`, handler.Filename)
-				fmt.Fprintln(w, js)
+				color.Fprintln(w, js)
 			} else {
 				// 显示文件上传表单
 				templateString := `
@@ -193,7 +192,7 @@ func HttpAllServer(address string, port string, dir string) {
 		color.Error.Println(err)
 	} else {
 		// 成功后输出服务信息
-		url := fmt.Sprintf("http://%s:%v", address, port)
+		url := color.Sprintf("http://%s:%v", address, port)
 		color.Info.Tips("Starting HTTP [%s] server at '%s'", general.SuccessText(method), general.FgCyanText(dir)) // 服务地址
 		color.Info.Tips("HTTP server url is %s", general.FgBlueText(url))                                          // URL
 		codeString, err := general.QrCodeString(url)                                                               // 二维码
@@ -253,13 +252,13 @@ func HttpAllServer(address string, port string, dir string) {
 					return
 				}
 				// 返回包含 JavaScript 的响应以显示弹窗通知
-				js := fmt.Sprintf(`
+				js := color.Sprintf(`
 				<script>
 					alert("File uploaded successfully\n%s");
 					window.location.href = '/upload';
 				</script>
 				`, handler.Filename)
-				fmt.Fprintln(w, js)
+				color.Fprintln(w, js)
 			} else {
 				// 显示文件上传表单
 				templateString := `
@@ -287,7 +286,7 @@ func HttpAllServer(address string, port string, dir string) {
 			// 列出文件夹中的所有文件，并提供下载链接
 			files, err := os.ReadDir(dir)
 			if err != nil {
-				fmt.Fprintf(w, "Error reading download directory: %s", err)
+				color.Fprintf(w, "Error reading download directory: %s", err)
 			}
 
 			templateString := `

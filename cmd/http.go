@@ -107,11 +107,11 @@ var httpCmd = &cobra.Command{
 		// 启动 http server
 		switch serviceSlice[serviceNumber] {
 		case "Download":
-			cli.HttpDownloadServer(address, fmt.Sprint(portFlag), absDir)
+			cli.HttpDownloadServer(address, color.Sprint(portFlag), absDir)
 		case "Upload":
-			cli.HttpUploadServer(address, fmt.Sprint(portFlag), absDir)
+			cli.HttpUploadServer(address, color.Sprint(portFlag), absDir)
 		case "All":
-			cli.HttpAllServer(address, fmt.Sprint(portFlag), absDir)
+			cli.HttpAllServer(address, color.Sprint(portFlag), absDir)
 		default:
 			color.Error.Println("Please select service")
 			return

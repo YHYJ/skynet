@@ -10,8 +10,9 @@ Description: 网络操作
 package general
 
 import (
-	"fmt"
 	"net"
+
+	"github.com/gookit/color"
 )
 
 // GetNetInterfacesForCli 为 CLI 获取网卡信息
@@ -73,7 +74,7 @@ func GetNetInterfacesForGui() ([]string, error) {
 			for _, addr := range addrs {
 				ipnet, ok := addr.(*net.IPNet)
 				if ok && ipnet.IP.To4() != nil && !ipnet.IP.IsLoopback() && !IsDockerInterface(netInterfaceInfo) {
-					OtherNic = fmt.Sprintf("%s - %s", netInterfaceInfo.Name, ipnet.IP.String())
+					OtherNic = color.Sprintf("%s - %s", netInterfaceInfo.Name, ipnet.IP.String())
 					netInterfacesData = append(netInterfacesData, OtherNic)
 				}
 			}

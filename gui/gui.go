@@ -29,6 +29,7 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/flopp/go-findfont"
+	"github.com/gookit/color"
 	"github.com/yhyj/skynet/general"
 )
 
@@ -42,19 +43,19 @@ func StartGraphicalUserInterface() {
 
 	// HTTP 服务默认配置
 	var (
-		defaultIP    = "0.0.0.0"                                           // HTTP 服务默认绑定的 IP
-		defaultPort  = "8080"                                              // HTTP 服务默认监听的端口
-		defaultDir   = filepath.Join(currentUserInfo.HomeDir, "Downloads") // HTTP 服务默认启动路径
-		serviceUrl   = fmt.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP 服务默认 URL
-		serviceSlice = []string{"Download", "Upload", "All"}               // HTTP 服务默认支持启用的方法
+		defaultIP    = "0.0.0.0"                                             // HTTP 服务默认绑定的 IP
+		defaultPort  = "8080"                                                // HTTP 服务默认监听的端口
+		defaultDir   = filepath.Join(currentUserInfo.HomeDir, "Downloads")   // HTTP 服务默认启动路径
+		serviceUrl   = color.Sprintf("http://%s:%s", defaultIP, defaultPort) // HTTP 服务默认 URL
+		serviceSlice = []string{"Download", "Upload", "All"}                 // HTTP 服务默认支持启用的方法
 	)
 
 	// 界面显示配置
 	var (
-		serviceLabelText   = "Select Service:"                                                                                  // 服务选择标签默认文本
-		interfaceLabelText = "Select Interface:"                                                                                // 网卡选择标签默认文本
-		portText           = fmt.Sprintf("Port [1~65535], default %s", defaultPort)                                             // 端口框默认文本
-		selectedDirText    = fmt.Sprintf("Directory, default %s", strings.Replace(defaultDir, currentUserInfo.HomeDir, "~", 1)) // 服务启动路径框默认文本
+		serviceLabelText   = "Select Service:"                                                                                    // 服务选择标签默认文本
+		interfaceLabelText = "Select Interface:"                                                                                  // 网卡选择标签默认文本
+		portText           = color.Sprintf("Port [1~65535], default %s", defaultPort)                                             // 端口框默认文本
+		selectedDirText    = color.Sprintf("Directory, default %s", strings.Replace(defaultDir, currentUserInfo.HomeDir, "~", 1)) // 服务启动路径框默认文本
 	)
 
 	// 定义服务接口和小部件
@@ -87,7 +88,7 @@ func StartGraphicalUserInterface() {
 	appInstance.SetIcon(fyne.NewStaticResource("icon", resourceFlowerWhitePng.StaticContent))
 
 	// 创建主窗口
-	mainWindow := appInstance.NewWindow(fmt.Sprintf("%s - %s", general.Name, general.Version))
+	mainWindow := appInstance.NewWindow(color.Sprintf("%s - %s", general.Name, general.Version))
 	mainWindow.SetMaster()                                                                         // 该窗口设为主窗口
 	mainWindow.SetFixedSize(false)                                                                 // 是否固定窗口大小
 	baseWeight, baseHeight := float32(len(selectedDirText))*9.1, mainWindow.Canvas().Size().Height // 窗口基础尺寸
@@ -237,7 +238,7 @@ func StartGraphicalUserInterface() {
 			return defaultDir
 		}()
 
-		serviceUrl = fmt.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
+		serviceUrl = color.Sprintf("http://%s:%s", selectedInterfaceIP, selectedPort)
 
 		// 生成二维码
 		qrCodeImage, err := general.QrCodeImage(serviceUrl)

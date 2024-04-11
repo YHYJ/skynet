@@ -10,7 +10,6 @@ Description: 子命令 'gui' 的 httpserver 功能实现
 package gui
 
 import (
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -19,6 +18,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gookit/color"
 	"github.com/yhyj/skynet/general"
 )
 
@@ -52,7 +52,7 @@ func HttpDownloadServer(address string, port string, dir string) (*http.Server, 
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
-			fmt.Fprintf(w, "Error reading download directory: %s", err)
+			color.Fprintf(w, "Error reading download directory: %s", err)
 		}
 
 		templateString := `
@@ -155,13 +155,13 @@ func HttpUploadServer(address string, port string, dir string) (*http.Server, er
 				return
 			}
 			// JS 显示弹窗通知
-			js := fmt.Sprintf(`
+			js := color.Sprintf(`
 			<script>
 				alert("File uploaded successfully\n%s");
 				window.location.href = '/upload';
 			</script>
 			`, handler.Filename)
-			fmt.Fprintln(w, js)
+			color.Fprintln(w, js)
 		} else {
 			// 显示文件上传表单
 			templateString := `
@@ -279,13 +279,13 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 				return
 			}
 			// JS 显示弹窗通知
-			js := fmt.Sprintf(`
+			js := color.Sprintf(`
 			<script>
 				alert("File uploaded successfully\n%s");
 				window.location.href = '/upload-service';
 			</script>
 			`, handler.Filename)
-			fmt.Fprintln(w, js)
+			color.Fprintln(w, js)
 		} else {
 			// 显示文件上传表单
 			templateString := `
@@ -313,7 +313,7 @@ func HttpAllServer(address string, port string, dir string) (*http.Server, error
 		// 列出文件夹中的所有文件，并提供下载链接
 		files, err := os.ReadDir(dir)
 		if err != nil {
-			fmt.Fprintf(w, "Error reading download directory: %s", err)
+			color.Fprintf(w, "Error reading download directory: %s", err)
 		}
 
 		templateString := `
