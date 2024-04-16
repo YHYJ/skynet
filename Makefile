@@ -12,10 +12,8 @@ INSTALL_PATH := /usr/local/bin
 RESOURCE_PATH := resources
 # 资源文件安装路径
 RESOURCE_INSTALL_PATH := /usr/local/share
-# Commit哈希值
+# Commit 哈希值
 COMMIT := $(shell git rev-parse HEAD)
-# 获取系统类型
-PLATFORM := $(shell uname -s)
 
 .PHONY: all tidy build install uninstall clean
 all: build
@@ -39,19 +37,19 @@ build:
 
 install:
 	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(GENERATE_PATH)/$(TARGET) $(INSTALL_PATH)/$(TARGET)
-	ifeq ($(PLATFORM), Linux)
-		@mkdir -p $(RESOURCE_INSTALL_PATH)/applications $(RESOURCE_INSTALL_PATH)/pixmaps $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
-		@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
-		@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
-		@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) LICENSE $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)/LICENSE
-	endif
+	@mkdir -p $(RESOURCE_INSTALL_PATH)/applications
+	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
+	@mkdir -p $(RESOURCE_INSTALL_PATH)/pixmaps
+	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(RESOURCE_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
+	@mkdir -p $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
+	@install --mode=644 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) LICENSE $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)/LICENSE
 	@echo -e "\r\x1b[K\x1b[0m\x1b[32;1m[✔]\x1b[0m Successfully installed \x1b[32m$(TARGET)\x1b[0m"
 
 uninstall:
 	@rm -rf $(INSTALL_PATH)/$(TARGET)
-	ifeq ($(PLATFORM), Linux)
-		@rm -rf $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
-	endif
+	@rm -rf $(RESOURCE_INSTALL_PATH)/applications/$(TARGET).desktop
+	@rm -rf $(RESOURCE_INSTALL_PATH)/pixmaps/$(TARGET).png
+	@rm -rf $(RESOURCE_INSTALL_PATH)/licenses/$(TARGET)
 	@echo -e "\x1b[K\x1b[0m\x1b[32;1m[✔]\x1b[0m \x1b[32m$(TARGET)\x1b[0m has been \x1b[31;1muninstalled\x1b[0m"
 
 clean:
