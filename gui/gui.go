@@ -68,7 +68,7 @@ func StartGraphicalUserInterface() {
 		qrButton      *widget.Button       // 二维码显示/隐藏按钮
 		urlButton     *widget.Button       // 打开 URL 按钮
 		controlButton *widget.Button       // 服务的启动/停止按钮
-		customDialog  *dialog.CustomDialog // 自定义提示框
+		customDialog  *dialog.CustomDialog // 自定义对话框
 	)
 
 	// 定义标志位
@@ -94,7 +94,7 @@ func StartGraphicalUserInterface() {
 	baseWeight, baseHeight := float32(len(selectedDirText))*9.1, mainWindow.Canvas().Size().Height // 窗口基础尺寸
 	mainWindow.Resize(fyne.NewSize(baseWeight, baseHeight))                                        // 设置窗口大小
 
-	// 创建自定义提示框尺寸
+	// 创建自定义对话框尺寸
 	customDialogSize := fyne.NewSize(baseWeight-float32(20), baseHeight-float32(20))
 
 	// 创建网络接口选择标签
@@ -331,12 +331,12 @@ func StartGraphicalUserInterface() {
 			qrWindow.Show()
 			qrButton.SetIcon(theme.VisibilityOffIcon()) // 按钮变为点击隐藏
 			qrStatus = 1
-			log.Printf(general.NoticeText("QR Code displayed"))
+			log.Printf(general.NoticeText("Show QR Code"))
 		} else if qrStatus == 1 && serviceStatus == 1 { // 二维码已显示且服务已启动，则隐藏二维码
 			qrWindow.Hide()
 			qrButton.SetIcon(theme.VisibilityIcon()) // 按钮变为点击显示
 			qrStatus = 0
-			log.Printf(general.NoticeText("QR Code hidden"))
+			log.Printf(general.NoticeText("Hide QR Code"))
 		}
 	})
 	qrButton.Disable()                            // 禁用二维码显示/隐藏按钮
@@ -380,9 +380,19 @@ func StartGraphicalUserInterface() {
 	mainWindow.ShowAndRun()
 }
 
-// makeCustomDialog 生成自定义提示框
+// makeCustomDialog 生成自定义对话框
+//
+// 参数：
+//   - title: 对话框标题
+//   - dismiss: 按钮文本
+//   - text: 对话框内容
+//   - size: 对话框大小
+//   - parent: 父窗口
+//
+// 返回：
+//   - 对话框对象
 func makeCustomDialog(title, dismiss, text string, size fyne.Size, parent fyne.Window) *dialog.CustomDialog {
-	dialogContent := widget.NewLabel(text)     // 设置提示框内容
+	dialogContent := widget.NewLabel(text)     // 设置对话框内容
 	dialogContent.Wrapping = fyne.TextWrapWord // 设置换行方式
 	customDialog := dialog.NewCustom(title, dismiss, dialogContent, parent)
 	customDialog.Resize(size)
