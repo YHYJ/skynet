@@ -45,7 +45,7 @@
 
 ---
 
-一个网络管理器
+一个网络管理器，支持 Linux、macOS 和 Windows 平台
 
 ## Install
 
