@@ -17,9 +17,16 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
 
 	"github.com/gookit/color"
+)
+
+var (
+	HttpServer  *http.Server   // HTTP 服务
+	ServerMutex sync.Mutex     // 互斥锁
+	ServeMux    *http.ServeMux // 路由
 )
 
 // HttpDownloadServerForCLI 启动 HTTP 下载服务

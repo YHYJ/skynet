@@ -15,6 +15,11 @@ import (
 	"github.com/gookit/color"
 )
 
+var (
+	DefaultNic = color.Sprintf("%s - %s", "any", "0.0.0.0") // 默认网络接口
+	OtherNic   string                                       // 其他网络接口
+)
+
 // GetNetInterfacesForCLI 为 CLI 获取网卡信息
 //
 // 返回：
