@@ -41,7 +41,7 @@ func StartHttp(port int, dir string, interactive bool) {
 	// 使用 dir 参数
 	if !general.FileExist(dir) {
 		// 如果 dir 参数不是一个目录，则提示目录不存在并退出程序
-		color.Error.Printf("Directory '%s' does not exist.\n", dir)
+		color.Danger.Printf("Directory '%s' does not exist\n", dir)
 		os.Exit(1)
 	}
 	// 获取 dir 参数的绝对路径
@@ -104,7 +104,7 @@ func StartHttp(port int, dir string, interactive bool) {
 	case "All":
 		general.HttpAllServerForCLI(address, color.Sprint(port), absDir)
 	default:
-		color.Error.Println("Please select service")
+		color.Danger.Println("Please select service")
 		return
 	}
 }

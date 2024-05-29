@@ -63,7 +63,7 @@ var guiCmd = &cobra.Command{
 		if len(errorSlogan) > 0 {
 			color.Println()
 			for _, slogan := range errorSlogan {
-				color.Error.Tips(general.PrimaryText(slogan))
+				color.Printf("- %s\n", general.PrimaryText(slogan))
 			}
 		}
 	},

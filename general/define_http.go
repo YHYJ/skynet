@@ -33,7 +33,7 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -41,7 +41,7 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 		color.Info.Tips("HTTP server url is %s", FgBlueText(url))                                  // URL
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -79,7 +79,7 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
 			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
-			color.Error.Printf("%s: %s\n", "HTTP server error", err)
+			color.Danger.Printf("%s: %s\n", "HTTP server error", err)
 		}
 	}
 }
@@ -95,7 +95,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -103,7 +103,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 		color.Info.Tips("HTTP server url is %s", FgBlueText(url))                                  // URL
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -173,7 +173,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
 			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
-			color.Error.Printf("%s: %s\n", "HTTP server error", err)
+			color.Danger.Printf("%s: %s\n", "HTTP server error", err)
 		}
 	}
 }
@@ -189,7 +189,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -197,7 +197,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 		color.Info.Tips("HTTP server url is %s", FgBlueText(url))                                  // URL
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -314,7 +314,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
 			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
-			color.Error.Printf("%s: %s\n", "HTTP server error", err)
+			color.Danger.Printf("%s: %s\n", "HTTP server error", err)
 		}
 	}
 }
@@ -390,7 +390,7 @@ func HttpDownloadServerForGUI(address string, port string, dir string) (*http.Se
 				ServeMux = nil
 				HttpServer = nil
 			} else if err != nil {
-				log.Printf("%s %s\n", FgRedText("HTTP server error:"), ErrorText(err))
+				log.Printf("%s\n", DangerText("HTTP server error: ", err))
 				ServeMux = nil
 				HttpServer = nil
 			}
@@ -497,7 +497,7 @@ func HttpUploadServerForGUI(address string, port string, dir string) (*http.Serv
 				ServeMux = nil
 				HttpServer = nil
 			} else if err != nil {
-				log.Printf("%s %s\n", FgRedText("HTTP server error:"), ErrorText(err))
+				log.Printf("%s\n", DangerText("HTTP server error: ", err))
 				ServeMux = nil
 				HttpServer = nil
 			}
@@ -653,7 +653,7 @@ func HttpAllServerForGUI(address string, port string, dir string) (*http.Server,
 				ServeMux = nil
 				HttpServer = nil
 			} else if err != nil {
-				log.Printf("%s %s\n", FgRedText("HTTP server error:"), ErrorText(err))
+				log.Printf("%s\n", DangerText("HTTP server error: ", err))
 				ServeMux = nil
 				HttpServer = nil
 			}
