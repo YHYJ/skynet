@@ -97,17 +97,17 @@ jobs:
           mkdir -p build/darwin
           mkdir -p build/windows
       - name: "Download linux artifact"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: skynet-linux
           path: build/linux
       - name: "Download darwin artifact"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: skynet-darwin
           path: build/darwin
       - name: "Download windows artifact"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: skynet-windows
           path: build/windows
