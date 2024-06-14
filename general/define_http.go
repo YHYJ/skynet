@@ -40,7 +40,8 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := GetCallerInfo()
+		color.Danger.Printf("Listen announces error (%s:%d): %s\n", fileName, lineNo+1, err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -48,7 +49,8 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 		color.Info.Tips("HTTP server url is %s", FgBlueText(url))                                  // URL
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := GetCallerInfo()
+			color.Danger.Printf("Generate QR code error (%s:%d): %s\n", fileName, lineNo+1, err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -102,7 +104,8 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := GetCallerInfo()
+		color.Danger.Printf("Listen announces error (%s:%d): %s\n", fileName, lineNo+1, err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -110,7 +113,8 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 		color.Info.Tips("HTTP server url is %s", FgBlueText(url))                                  // URL
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := GetCallerInfo()
+			color.Danger.Printf("Generate QR code error (%s:%d): %s\n", fileName, lineNo+1, err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -196,7 +200,8 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 	// 创建 TCP 监听器
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := GetCallerInfo()
+		color.Danger.Printf("Listen announces error (%s:%d): %s\n", fileName, lineNo+1, err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -204,7 +209,8 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 		color.Info.Tips("HTTP server url is %s", FgBlueText(url))                                  // URL
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := GetCallerInfo()
+			color.Danger.Printf("General QR code error (%s:%d): %s\n", fileName, lineNo+1, err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
