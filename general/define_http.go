@@ -124,8 +124,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodPost {
 				// 解析表单
-				err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
-				if err != nil {
+				if err := r.ParseMultipartForm(10 << 20); err != nil { // 限制上传文件大小
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
@@ -146,8 +145,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 				defer targetFile.Close()
 
 				// 将上传文件内容复制到新文件
-				_, err = io.Copy(targetFile, file)
-				if err != nil {
+				if _, err = io.Copy(targetFile, file); err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
@@ -237,8 +235,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 		http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodPost {
 				// 解析表单
-				err := r.ParseMultipartForm(10 << 20) // 限制上传文件大小
-				if err != nil {
+				if err := r.ParseMultipartForm(10 << 20); err != nil { // 限制上传文件大小
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
@@ -259,8 +256,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 				defer targetFile.Close()
 
 				// 将上传文件内容复制到新文件
-				_, err = io.Copy(targetFile, file)
-				if err != nil {
+				if _, err = io.Copy(targetFile, file); err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
@@ -437,8 +433,7 @@ func HttpUploadServerForGUI(address string, port string, dir string) (*http.Serv
 	ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
-			err := r.ParseMultipartForm(100 << 20) // 限制内存最多存储100MB，超出的部分保存到磁盘
-			if err != nil {
+			if err := r.ParseMultipartForm(100 << 20); err != nil { // 限制内存最多存储100MB，超出的部分保存到磁盘
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
@@ -459,8 +454,7 @@ func HttpUploadServerForGUI(address string, port string, dir string) (*http.Serv
 			defer targetFile.Close()
 
 			// 将上传文件内容复制到新文件
-			_, err = io.Copy(targetFile, file)
-			if err != nil {
+			if _, err = io.Copy(targetFile, file); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -561,8 +555,7 @@ func HttpAllServerForGUI(address string, port string, dir string) (*http.Server,
 	ServeMux.HandleFunc("/upload-service", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			// 解析表单
-			err := r.ParseMultipartForm(100 << 20) // 限制内存最多存储100MB，超出的部分保存到磁盘
-			if err != nil {
+			if err := r.ParseMultipartForm(100 << 20); err != nil { // 限制内存最多存储100MB，超出的部分保存到磁盘
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
@@ -583,8 +576,7 @@ func HttpAllServerForGUI(address string, port string, dir string) (*http.Server,
 			defer targetFile.Close()
 
 			// 将上传文件内容复制到新文件
-			_, err = io.Copy(targetFile, file)
-			if err != nil {
+			if _, err = io.Copy(targetFile, file); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
