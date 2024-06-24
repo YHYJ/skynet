@@ -41,7 +41,8 @@ func StartHttp(port int, dir string, interactive bool) {
 	// 使用 dir 参数
 	if !general.FileExist(dir) {
 		// 如果 dir 参数不是一个目录，则提示目录不存在并退出程序
-		color.Danger.Printf("Directory '%s' does not exist\n", dir)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Printf("%s %s -> No such file or directory: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), dir)
 		os.Exit(1)
 	}
 	// 获取 dir 参数的绝对路径
@@ -69,7 +70,7 @@ func StartHttp(port int, dir string, interactive bool) {
 		// 如果 interfaceNumber 不在[0, len(netinterfacesData))范围内，则使用默认值
 		if netInterfaceNumber < 1 || netInterfaceNumber > len(netInterfacesData) {
 			netInterfaceNumber = 1
-			color.Danger.Printf("Invalid interface number, using default interface <%s>\n", netInterfacesData[netInterfaceNumber]["name"])
+			color.Warn.Printf("Invalid interface number, using default interface <%s>\n", netInterfacesData[netInterfaceNumber]["name"])
 		}
 		color.Println()
 
@@ -85,7 +86,7 @@ func StartHttp(port int, dir string, interactive bool) {
 		// 如果 serviceNumber 不在[0, len(serviceSlice))范围内，则使用默认值
 		if serviceNumber < 1 || serviceNumber > len(serviceSlice) {
 			serviceNumber = 3
-			color.Danger.Printf("Invalid service number, using default service <%s>\n", serviceSlice[serviceNumber])
+			color.Warn.Printf("Invalid service number, using default service <%s>\n", serviceSlice[serviceNumber])
 		}
 		color.Println()
 	} else { // 默认模式
@@ -104,7 +105,8 @@ func StartHttp(port int, dir string, interactive bool) {
 	case "All":
 		general.HttpAllServerForCLI(address, color.Sprint(port), absDir)
 	default:
-		color.Danger.Println("Please select service")
+		fileName, lineNo := general.GetCallerInfo()
+		color.Printf("%s %s -> Unable to start service: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), serviceSlice[serviceNumber])
 		return
 	}
 }
