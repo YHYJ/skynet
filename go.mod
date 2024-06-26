@@ -7,11 +7,11 @@ require (
 	github.com/flopp/go-findfont v0.1.0
 	github.com/gookit/color v1.5.4
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 )
 
 require (
-	fyne.io/systray v1.10.1-0.20231115130155-104f5ef7839e // indirect
+	fyne.io/systray v1.11.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fredbi/uri v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -31,10 +31,9 @@ require (
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
-	github.com/tevino/abool v1.2.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	github.com/yuin/goldmark v1.7.1 // indirect
-	golang.org/x/image v0.17.0 // indirect
+	github.com/yuin/goldmark v1.7.4 // indirect
+	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/mobile v0.0.0-20240604190613-2782386b8afd // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
