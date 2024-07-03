@@ -41,7 +41,7 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
 		fileName, lineNo := GetCallerInfo()
-		color.Printf("%s %s -> Unable to listen on %s: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), listener, err)
+		color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -50,7 +50,7 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to generate QR code: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -89,7 +89,7 @@ func HttpDownloadServerForCLI(address string, port string, dir string) {
 			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to start HTTP server: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		}
 	}
 }
@@ -106,7 +106,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
 		fileName, lineNo := GetCallerInfo()
-		color.Printf("%s %s -> Unable to listen on %s: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), listener, err)
+		color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -115,7 +115,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to generate QR code: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -184,7 +184,7 @@ func HttpUploadServerForCLI(address string, port string, dir string) {
 			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to start HTTP server: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		}
 	}
 }
@@ -201,7 +201,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 	listener, err := net.Listen("tcp", address+":"+port)
 	if err != nil {
 		fileName, lineNo := GetCallerInfo()
-		color.Printf("%s %s -> Unable to listen on %s: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), listener, err)
+		color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	} else {
 		// 成功后输出服务信息
 		url := color.Sprintf("http://%s:%v", address, port)
@@ -210,7 +210,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 		codeString, err := QrCodeString(url)                                                       // 二维码
 		if err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to generate QR code: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		} else {
 			color.Printf("\n%s\n", codeString)
 		}
@@ -326,7 +326,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 			color.Printf("HTTP Server closed\n")
 		} else if err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to start HTTP server: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		}
 	}
 }

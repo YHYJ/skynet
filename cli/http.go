@@ -42,7 +42,7 @@ func StartHttp(port int, dir string, interactive bool) {
 	if !general.FileExist(dir) {
 		// 如果 dir 参数不是一个目录，则提示目录不存在并退出程序
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> No such file or directory: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), dir)
+		color.Printf("%s %s No such file or directory: %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), dir)
 		os.Exit(1)
 	}
 	// 获取 dir 参数的绝对路径
@@ -106,7 +106,7 @@ func StartHttp(port int, dir string, interactive bool) {
 		general.HttpAllServerForCLI(address, color.Sprint(port), absDir)
 	default:
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> Unable to start service: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), serviceSlice[serviceNumber])
+		color.Printf("%s %s Unable to start service: %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), serviceSlice[serviceNumber])
 		return
 	}
 }
