@@ -31,9 +31,9 @@ var httpCmd = &cobra.Command{
 }
 
 func init() {
-	httpCmd.Flags().IntP("port", "p", 8080, "Port to listen on")
-	httpCmd.Flags().StringP("dir", "d", "PWD", "Directory to serve")
-	httpCmd.Flags().BoolP("interactive", "i", false, "Start interactive mode")
+	httpCmd.Flags().Int("port", 8080, "Port to listen on")
+	httpCmd.Flags().String("dir", "PWD", "Directory to serve")
+	httpCmd.Flags().Bool("interactive", false, "Start interactive mode")
 
 	httpCmd.Flags().BoolP("help", "h", false, "help for http command")
 	rootCmd.AddCommand(httpCmd)
