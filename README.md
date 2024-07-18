@@ -98,6 +98,8 @@ curl -fsSL https://raw.githubusercontent.com/YHYJ/skynet/main/install.sh | sudo 
 go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/general.GitCommitHash=`git rev-parse HEAD` -X github.com/yhyj/skynet/general.BuildTime=`date +%s` -X github.com/yhyj/skynet/general.BuildBy=$USER" -o build/skynet main.go
 ```
 
+> 如果是 Linux 平台，可以添加 -tags "flatpak" 参数添加对 XDG Desktop Portals 的支持
+
 ### 交叉编译
 
 使用命令`go tool dist list`查看支持的平台
@@ -105,7 +107,7 @@ go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/general.
 #### Linux
 
 ```bash
-CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/general.GitCommitHash=`git rev-parse HEAD` -X github.com/yhyj/skynet/general.BuildTime=`date +%s` -X github.com/yhyj/skynet/general.BuildBy=$USER" -o build/skynet main.go
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/skynet/general.GitCommitHash=`git rev-parse HEAD` -X github.com/yhyj/skynet/general.BuildTime=`date +%s` -X github.com/yhyj/skynet/general.BuildBy=$USER" -tags "flatpak" -o build/skynet main.go
 ```
 
 > 使用`uname -m`确定硬件架构
