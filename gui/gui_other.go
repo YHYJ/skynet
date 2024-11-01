@@ -60,15 +60,16 @@ func StartGraphicalUserInterface() {
 
 	// 定义服务接口和小部件
 	var (
-		httpServer    *http.Server         // HTTP 服务
-		qrWindow      fyne.Window          // 二维码窗口
-		windowContent *fyne.Container      // 窗口内容容器
-		refreshButton *widget.Button       // 接口刷新按钮
-		folderButton  *widget.Button       // 目录选择按钮
-		qrButton      *widget.Button       // 二维码显示/隐藏按钮
-		urlButton     *widget.Button       // 打开 URL 按钮
-		controlButton *widget.Button       // 服务的启动/停止按钮
-		customDialog  *dialog.CustomDialog // 自定义对话框
+		httpServer      *http.Server                // HTTP 服务
+		qrWindow        fyne.Window                 // 二维码窗口
+		windowContent   *fyne.Container             // 窗口内容容器
+		refreshButton   *widget.Button              // 接口刷新按钮
+		folderButton    *widget.Button              // 目录选择按钮
+		qrButton        *widget.Button              // 二维码显示/隐藏按钮
+		statusAnimation *widget.ProgressBarInfinite // HTTP 服务状态动画
+		urlButton       *widget.Button              // 打开 URL 按钮
+		controlButton   *widget.Button              // 服务的启动/停止按钮
+		customDialog    *dialog.CustomDialog        // 自定义对话框
 	)
 
 	// 定义标志位
@@ -118,6 +119,7 @@ func StartGraphicalUserInterface() {
 		log.Printf(general.NoticeText("Network interface refresh"))
 		interfaceRadio.Options = nicInfos
 		windowContent.Refresh()
+		statusAnimation.Stop() //窗口内容刷新会将进度条重置为默认状态（启动），因此添加停止动作
 	})
 
 	// 创建端口选择器
@@ -156,7 +158,7 @@ func StartGraphicalUserInterface() {
 				// 未选择文件夹，使用默认值
 				selectedDirEntry.SetText(defaultDir)
 			} else {
-				// 在标签中显示选择的文件夹路径（原始值类似 "file:///home/user"，需要切去 "file://"）
+				// 在标签中显示选择的文件夹路径（原始值类似 "file:///home/user"，显示时需要切去 "file://"）
 				selectedDirEntry.SetText(strings.Split(dir.String(), "//")[1])
 			}
 			// 关闭新窗口
@@ -185,8 +187,7 @@ func StartGraphicalUserInterface() {
 	urlButton.Disable() // 禁用 URL 按钮
 
 	// 创建服务状态显示动画
-	statusAnimation := widget.NewProgressBarInfinite()
-	statusAnimation.Stop()
+	statusAnimation = widget.NewProgressBarInfinite()
 
 	// 创建二维码窗口
 	appDriver := appInstance.Driver()
@@ -251,6 +252,9 @@ func StartGraphicalUserInterface() {
 		// 设置图像填充模式为 ImageFillOriginal ，以确保不拉伸
 		qrImage.FillMode = canvas.ImageFillOriginal
 
+		// 刷新服务状态动画
+		statusAnimation.Refresh() // 否则第一次不会启动
+
 		if serviceStatus == 0 { // Start
 			// 启动 HTTP 服务
 			switch selectedService {
@@ -270,8 +274,8 @@ func StartGraphicalUserInterface() {
 			} else {
 				// 设置服务状态
 				serviceStatus = 1             // 服务已启动
-				statusAnimation.Start()       // 服务状态动画
 				controlButton.SetText("Stop") // 修改按钮文字
+				statusAnimation.Start()       // 启动服务状态动画
 				log.Printf("Starting HTTP [%s] server at '%s'\n", general.SuccessText(selectedService), general.FgCyanText(selectedDir))
 				log.Printf("HTTP server url is %s\n", general.FgBlueText(serviceUrl))
 				// 设置二维码状态
@@ -301,8 +305,8 @@ func StartGraphicalUserInterface() {
 			}
 			// 设置服务状态
 			serviceStatus = 0              // 服务已停止
-			statusAnimation.Stop()         // 服务状态动画
 			controlButton.SetText("Start") // 修改按钮文字
+			statusAnimation.Stop()         // 停止服务状态动画
 			// 设置二维码状态
 			qrWindow.Hide()                          // 隐藏二维码窗口（NOTE: 不能使用 Close() ）
 			qrButton.Disable()                       // 禁用二维码显示/隐藏按钮
