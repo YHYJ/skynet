@@ -320,6 +320,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 			newTemplate, _ := template.New("download").Parse(templateString)
 			newTemplate.Execute(w, files)
 		})
+		http.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(dir))))
 
 		// 启动服务器
 		if err := http.Serve(listener, nil); err == http.ErrServerClosed {
