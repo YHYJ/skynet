@@ -225,6 +225,7 @@ func HttpAllServerForCLI(address string, port string, dir string) {
 				<head><title>File Service</title></head>
 				<body>
 					<h1>Welcome to the File Service</h1>
+					<hr>
 					<a href="/upload">File Upload</a><br>
 					<a href="/download">File Download</a>
 				</body>
