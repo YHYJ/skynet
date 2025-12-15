@@ -12,6 +12,7 @@ Description: 子命令 'gui' 的实现
 package gui
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -241,7 +242,8 @@ func StartGraphicalUserInterface() {
 		// 刷新服务状态动画
 		statusAnimation.Refresh() // 否则第一次不会启动
 
-		if serviceStatus == 0 { // Start
+		switch serviceStatus {
+		case 0: // Start
 			// 启动 HTTP 服务
 			switch selectedService {
 			case "Download":
@@ -280,12 +282,12 @@ func StartGraphicalUserInterface() {
 				selectedDirEntry.Disable() // 目录输入框
 				folderButton.Disable()     // 目录选择按钮
 			}
-		} else if serviceStatus == 1 { // Stop
+		case 1: // Stop
 			// 加锁，确保只有一个 goroutine 能够关闭 HTTP 服务器和注销路由
 			general.ServerMutex.Lock()
 			defer general.ServerMutex.Unlock()
 			// 停止 HTTP 服务
-			if err := httpServer.Shutdown(nil); err != nil {
+			if err := httpServer.Shutdown(context.TODO()); err != nil {
 				customDialog = makeCustomDialog("Error", "Close", err.Error(), customDialogSize, mainWindow)
 				customDialog.Show()
 			}
@@ -306,7 +308,7 @@ func StartGraphicalUserInterface() {
 			portEntry.Enable()        // 端口输入框
 			selectedDirEntry.Enable() // 目录输入框
 			folderButton.Enable()     // 目录选择按钮
-		} else {
+		default:
 			customErrText := "Unknown error"
 			customDialog = makeCustomDialog("Error", "Close", customErrText, customDialogSize, mainWindow)
 			customDialog.Show()
