@@ -159,7 +159,7 @@ func StartGraphicalUserInterface() {
 				selectedDirEntry.SetText(defaultDir)
 			} else {
 				// 在标签中显示选择的文件夹路径（原始值类似 "file:///home/user"，显示时需要切去 "file://"）
-				selectedDirEntry.SetText(strings.Split(dir.String(), "//")[1])
+				selectedDirEntry.SetText(dir.Path())
 			}
 			// 关闭新窗口
 			folderWindow.Close()
